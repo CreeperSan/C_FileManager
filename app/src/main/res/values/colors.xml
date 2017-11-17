@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- 简单对话框的颜色 -->
+    <color name="dialogInfoBackground">#66ccff</color>
+    <color name="dialogInfoBackgroundDark">#33aadd</color>
+    <color name="dialogWarmingBackground">#ff9999</color>
+    <color name="dialogWarmingBackgroundDark">#cc6666</color>
+    <color name="dialogErrorBackground">#ff0000</color>
+    <color name="dialogErrorBackgroundDark">#cc0000</color>
+
+    <!-- MainActivity侧滑菜单的颜色 -->
+    <color name="mainDrawerCategoryBackground">#ffffff</color>
+    <color name="mainDrawerItemBackground">#eeeeee</color>
+
+    <color name="white">#ffffff</color>
+
+</resources>

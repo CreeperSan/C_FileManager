@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:orientation="vertical"
+    android:id="@+id/dialogSimpleCard"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cardCornerRadius="6dp"
+    android:layout_width="256dp"
+    android:layout_margin="8dp"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/dialogSimpleContentTab"
+        android:paddingBottom="8dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/dialogSimpleTitleTab"
+            android:background="@color/dialogInfoBackground"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="176dp">
+            <ImageView
+                android:id="@+id/dialogSimpleIcon"
+                android:tint="@color/white"
+                android:padding="26dp"
+                android:src="@drawable/ic_spanner"
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/dialogSimpleTitle"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:text="Permission Require"
+                android:textStyle="bold"
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/dialogSimpleContent"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            tools:text="aasdasdasd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:visibility="gone"
+                android:id="@+id/dialogSimpleNegativeButton"
+                android:layout_margin="8dp"
+                android:minHeight="32sp"
+                android:textColor="@color/white"
+                tools:text="取消"
+                android:background="@drawable/selector_button_level_info"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:visibility="gone"
+                android:id="@+id/dialogSimplePositiveButton"
+                android:layout_margin="8dp"
+                android:minHeight="32sp"
+                android:textColor="@color/white"
+                tools:text="确认"
+                android:background="@drawable/selector_button_level_info"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

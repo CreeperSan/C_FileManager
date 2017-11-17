@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">C FileManager</string>
+
+    <!-- 通用部分 -->
+    <string name="commit">提交</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+
+    <!-- MainActivity 侧滑菜单 -->
+    <string name="categoryHeader">头部</string>
+    <string name="categoryWindow">窗口</string>
+    <string name="windowUnknown">未知窗口</string>
+    <string name="categoryLocal">本地</string>
+    <string name="localHome">主页</string>
+    <string name="localExternal">外部存储</string>
+    <string name="localRoot">根目录</string>
+    <string name="categoryBookmark">书签</string>
+    <string name="bookmarkUnknown">未知书签</string>
+    <string name="categoryLibrary">库</string>
+    <string name="libraryImage">图片库</string>
+    <string name="libraryVideo">视频库</string>
+    <string name="libraryMusic">音乐库</string>
+    <string name="libraryApplication">应用程序库</string>
+    <string name="categoryTools">工具</string>
+    <string name="toolsFileTransfer">文件快传</string>
+    <string name="categoryUnknown">未知分组</string>
+
+    <!-- 权限部分 -->
+    <string name="permissionRequire">需要权限</string>
+    <string name="needReadWriteExternalStoragePermission">我们需要读取/写入存储空间的权限来查看管理你的文件</string>
+</resources>
