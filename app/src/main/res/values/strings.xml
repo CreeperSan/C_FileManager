@@ -26,6 +26,15 @@
     <string name="toolsFileTransfer">文件快传</string>
     <string name="categoryUnknown">未知分组</string>
 
+    <!-- 文件浏览列表部分 -->
+    <string name="filePathNotExist">当前文件路径不存在</string>
+
+    <!-- 目录 -->
+    <string name="pathRoot">根目录</string>
+    <string name="pathExternal">手机存储</string>
+    <string name="pathSDCard">SD卡</string>
+    <string name="pathOTG">OTG</string>
+
     <!-- 权限部分 -->
     <string name="permissionRequire">需要权限</string>
     <string name="needReadWriteExternalStoragePermission">我们需要读取/写入存储空间的权限来查看管理你的文件</string>

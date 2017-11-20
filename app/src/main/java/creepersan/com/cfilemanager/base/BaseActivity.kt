@@ -100,10 +100,10 @@ abstract class BaseActivity : AppCompatActivity(){
     /**
      * Toast
      */
-    protected fun toast(@StringRes contentID: Int){
+    fun toast(@StringRes contentID: Int){
         toast(getString(contentID))
     }
-    protected fun toast(content: String){
+    fun toast(content: String){
         if (toast==null){
             toast = Toast.makeText(this,content,Toast.LENGTH_SHORT)
         }else{
@@ -112,10 +112,10 @@ abstract class BaseActivity : AppCompatActivity(){
         }
         toast?.show()
     }
-    protected fun toastLong(@StringRes contentID:Int){
+    fun toastLong(@StringRes contentID:Int){
         toastLong(getString(contentID))
     }
-    protected fun toastLong(content:String){
+    fun toastLong(content:String){
         if (toast==null){
             toast = Toast.makeText(this,content,Toast.LENGTH_LONG)
         }else{
@@ -124,29 +124,29 @@ abstract class BaseActivity : AppCompatActivity(){
         }
         toast?.show()
     }
-    protected fun toastNew(@StringRes content:Int){
+    fun toastNew(@StringRes content:Int){
         Toast.makeText(this,content,Toast.LENGTH_SHORT).show()
     }
-    protected fun toastNew(content:String){
+    fun toastNew(content:String){
         Toast.makeText(this,content,Toast.LENGTH_SHORT).show()
     }
-    protected fun toastLongNew(@StringRes content:Int){
+    fun toastLongNew(@StringRes content:Int){
         Toast.makeText(this,content,Toast.LENGTH_LONG).show()
     }
-    protected fun toastLongNew(content:String){
+    fun toastLongNew(content:String){
         Toast.makeText(this,content,Toast.LENGTH_LONG).show()
     }
 
     /**
      * Log
      */
-    protected fun log(content:String){
+    fun log(content:String){
         Debugger.log(javaClass::class.java.simpleName,content,Debugger.LEVEL_INFO)
     }
-    protected fun logW(content:String){
+    fun logW(content:String){
         Debugger.log(javaClass::class.java.simpleName,content,Debugger.LEVEL_WARMING)
     }
-    protected fun logE(content:String){
+    fun logE(content:String){
         Debugger.log(javaClass::class.java.simpleName,content,Debugger.LEVEL_ERROR)
     }
 

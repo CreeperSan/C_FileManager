@@ -1,7 +1,9 @@
 package creepersan.com.cfilemanager.activity
 
-import android.animation.Animator
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
@@ -9,55 +11,76 @@ import android.widget.ImageView
 import creepersan.com.cfilemanager.R
 import creepersan.com.cfilemanager.base.BaseActivity
 import creepersan.com.cfilemanager.base.BaseTabFragment
+import creepersan.com.cfilemanager.fragment.FileListFragment
+import creepersan.com.cfilemanager.util.BundleBuilder
 import creepersan.com.cfilemanager.views.holder.SimpleItemViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : BaseActivity() {
     private var tabFragmentList = ArrayList<BaseTabFragment>()          //打开的页面列表
-    private var categoryDrawerItemList = ArrayList<CategoryDrawerItem>()                //滑动展开列表队列
+    private var displayList = ArrayList<DrawerItem>()                //滑动展开列表队列
+    private lateinit var categoryHeader : DrawerItem                    //头部分类
+    private lateinit var categoryWindow : CategoryDrawerItem            //窗口分类
+    private lateinit var categoryLocal : CategoryDrawerItem             //本地分类
+    private lateinit var categoryBookmark : CategoryDrawerItem          //书签分类
+    private lateinit var categoryLibrary : CategoryDrawerItem           //库分类
+    private lateinit var categoryTools : CategoryDrawerItem             //工具分类
     private lateinit var drawerAdapter : DrawerRecyclerViewAdapter
+    private lateinit var fragmentManager : FragmentManager
+    private lateinit var fragmentPagerAdapter : TabViewPagerAdapter
 
     override fun getLayoutID(): Int = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAnimation()
         initDrawerRecyclerViewData()
         initDrawerRecyclerView()
-
+        initFragmentBase()
+        initFragment()
+        initFragmentViewPager()
     }
 
     /**
      * 各种的初始化
      */
-    private fun initAnimation(){
-
-    }
     private fun initDrawerRecyclerViewData(){
-        categoryDrawerItemList.add(CategoryDrawerItem(DrawerItem.Type.HEADER))
-        categoryDrawerItemList.add(CategoryDrawerItem(DrawerItem.Type.CATEGORY_WINDOW))
-        val localCategoryDrawerItem = CategoryDrawerItem(DrawerItem.Type.CATEGORY_LOCAL)
-        localCategoryDrawerItem.add(LocalDrawerItem(DrawerItem.Type.ITEM_LOCAL_HOME))
-        localCategoryDrawerItem.add(LocalDrawerItem(DrawerItem.Type.ITEM_LOCAL_EXTERNAL))
-        localCategoryDrawerItem.add(LocalDrawerItem(DrawerItem.Type.ITEM_LOCAL_ROOT))
-        categoryDrawerItemList.add(localCategoryDrawerItem)
-        categoryDrawerItemList.add(CategoryDrawerItem(DrawerItem.Type.CATEGORY_BOOKMARK))
-        val libraryCategoryDrawerItem = CategoryDrawerItem(DrawerItem.Type.CATEGORY_LIBRARY)
-        libraryCategoryDrawerItem.add(LibraryDrawerItem(DrawerItem.Type.ITEM_LIBRARY_IMAGE))
-        libraryCategoryDrawerItem.add(LibraryDrawerItem(DrawerItem.Type.ITEM_LIBRARY_VIDEO))
-        libraryCategoryDrawerItem.add(LibraryDrawerItem(DrawerItem.Type.ITEM_LIBRARY_MUSIC))
-        libraryCategoryDrawerItem.add(LibraryDrawerItem(DrawerItem.Type.ITEM_LIBRARY_APPLICATION))
-        categoryDrawerItemList.add(libraryCategoryDrawerItem)
-        val toolsCategoryDrawerItem = CategoryDrawerItem(DrawerItem.Type.CATEGORY_TOOLS)
-        toolsCategoryDrawerItem.add(ToolsDrawerItem(DrawerItem.Type.ITEM_TOOLS_FILE_TRANSFER))
-        categoryDrawerItemList.add(toolsCategoryDrawerItem)
-
+        //先生成
+        categoryHeader = CategoryDrawerItem(DrawerItem.Type.HEADER)
+        categoryWindow = CategoryDrawerItem(DrawerItem.Type.CATEGORY_WINDOW)
+        categoryLocal = CategoryDrawerItem(DrawerItem.Type.CATEGORY_LOCAL)
+        categoryBookmark = CategoryDrawerItem(DrawerItem.Type.CATEGORY_BOOKMARK)
+        categoryLibrary = CategoryDrawerItem(DrawerItem.Type.CATEGORY_LIBRARY)
+        categoryTools = CategoryDrawerItem(DrawerItem.Type.CATEGORY_TOOLS)
+        //后获取
+        displayList.add(categoryHeader)
+        displayList.add(categoryWindow)
+        displayList.add(categoryLocal)
+        displayList.add(categoryBookmark)
+        displayList.add(categoryLibrary)
+        displayList.add(categoryTools)
     }
     private fun initDrawerRecyclerView() {
         drawerAdapter = DrawerRecyclerViewAdapter()
         mainDrawerRecyclerView.layoutManager = LinearLayoutManager(this)
         mainDrawerRecyclerView.adapter = drawerAdapter
+    }
+    private fun initFragmentBase(){
+        fragmentManager = supportFragmentManager
+    }
+    private fun initFragment(){
+        val fileFragment1 = FileListFragment()
+        val fileFragment2 = FileListFragment()
+        fileFragment1.arguments = null
+        fileFragment2.arguments = BundleBuilder()
+                .put(FileListFragment.Argument.ROOT_PATH,FileListFragment.RootPath.SD_CARD)
+                .build()
+        tabFragmentList.add(fileFragment1)
+        tabFragmentList.add(fileFragment2)
+    }
+    private fun initFragmentViewPager(){
+        fragmentPagerAdapter = TabViewPagerAdapter()
+        mainViewPager.adapter = fragmentPagerAdapter
     }
 
 
@@ -91,6 +114,13 @@ class MainActivity : BaseActivity() {
             return type/1000 == 0
         }
     }
+    private abstract class TabDrawerItem(type: Int):DrawerItem(type){
+
+    }
+    private inner class HeaderDrawerItem() : DrawerItem(Type.HEADER){
+        override fun getTitle(): String = ""
+
+    }
     private inner class CategoryDrawerItem(type: Int) : DrawerItem(type){
 
         var isExpand = false
@@ -115,13 +145,12 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-    private inner class WindowDrawerItem(type: Int) : DrawerItem(type){
+    private inner class WindowDrawerItem(type: Int) : TabDrawerItem(type){
         override fun getTitle(): String {
             return "窗口"
         }
-
     }
-    private inner class LocalDrawerItem(type: Int) : DrawerItem(type){
+    private inner class LocalDrawerItem(type: Int) : TabDrawerItem(type){
         override fun getTitle(): String {
             when(type){
                 Type.ITEM_LOCAL_HOME -> return getString(R.string.localHome)
@@ -132,12 +161,12 @@ class MainActivity : BaseActivity() {
         }
 
     }
-    private inner class BookmarkDrawerItem(type: Int) : DrawerItem(type){
+    private inner class BookmarkDrawerItem(type: Int) : TabDrawerItem(type){
         override fun getTitle(): String {
             return ""
         }
     }
-    private inner class LibraryDrawerItem(type: Int) : DrawerItem(type){
+    private inner class LibraryDrawerItem(type: Int) : TabDrawerItem(type){
         override fun getTitle(): String {
             when(type){
                 Type.ITEM_LIBRARY_IMAGE -> return getString(R.string.libraryImage)
@@ -148,7 +177,7 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-    private inner class ToolsDrawerItem(type: Int) : DrawerItem(type){
+    private inner class ToolsDrawerItem(type: Int) : TabDrawerItem(type){
         override fun getTitle(): String {
             when(type){
                 Type.ITEM_TOOLS_FILE_TRANSFER -> return getString(R.string.toolsFileTransfer)
@@ -167,45 +196,19 @@ class MainActivity : BaseActivity() {
         val TYPE_HEADER = 0
         val TYPE_ITEM = 1
 
-        val animRotateTo180 : Animator
-        val animRotateTo0 : Animator
-
-        init {
-            animRotateTo180 = loadAnimator(R.animator.rotate_0_to_180)
-            animRotateTo0 = loadAnimator(R.animator.rotate_180_to_0)
-        }
-
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val drawerItem = displayList[position]
             when(holder){
                 is DrawerHeaderViewHolder -> {
                     holder.headerImage.loadImage(R.mipmap.test_img_bg)
                 }
                 is SimpleItemViewHolder -> {
-                    val drawerItem = categoryDrawerItemList[position]
                     holder.titleText.text = drawerItem.getTitle()
                 }
             }
         }
 
-        override fun getItemCount(): Int {
-            var count = 0
-            for (tempCategory in categoryDrawerItemList){
-                count++
-                if (tempCategory.isExpand){
-                    count += tempCategory.innerDrawerItemList.size
-                }
-            }
-            return count
-        }
-
-        fun getItem(pos:Int){
-            var count = 0
-            for (tempCategory in categoryDrawerItemList){
-                Arrays
-                count += tempCategory.size()
-                if (count)
-            }
-        }
+        override fun getItemCount(): Int = displayList.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             when(viewType){
@@ -219,7 +222,7 @@ class MainActivity : BaseActivity() {
         }
 
         override fun getItemViewType(position: Int): Int {
-            when(categoryDrawerItemList[position].type){
+            when(displayList[position].type){
                 DrawerItem.Type.HEADER -> {
                     return TYPE_HEADER
                 }
@@ -228,6 +231,12 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
+    }
+    private inner class TabViewPagerAdapter : FragmentStatePagerAdapter(fragmentManager){
+        override fun getItem(position: Int): Fragment = tabFragmentList[position]
+
+        override fun getCount(): Int = tabFragmentList.size
 
     }
 

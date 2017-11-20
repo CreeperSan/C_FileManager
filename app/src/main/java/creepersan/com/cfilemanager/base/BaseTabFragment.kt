@@ -5,4 +5,5 @@ package creepersan.com.cfilemanager.base
  */
 abstract class BaseTabFragment : BaseFragment(){
 
+    open fun onBackPressed(){}
 }
