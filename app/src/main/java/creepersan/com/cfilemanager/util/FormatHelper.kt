@@ -1,5 +1,6 @@
 package creepersan.com.cfilemanager.util
 
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -7,6 +8,8 @@ import java.util.*
  * Created by CreeperSan on 2017/11/19.
  */
 object FormatHelper {
+    private val decimalFormat = DecimalFormat("#0.00")
+
     /**
      *  时间格式化
      */
@@ -14,5 +17,9 @@ object FormatHelper {
 
     fun formatTime(timestamp:Long):String{
         return timerFormatter1.format(Date(timestamp))
+    }
+
+    fun getFormatDecimal(num: Float): String {
+        return decimalFormat.format(num)
     }
 }

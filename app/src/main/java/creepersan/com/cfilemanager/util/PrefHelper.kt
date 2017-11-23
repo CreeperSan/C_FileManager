@@ -12,7 +12,7 @@ object PrefHelper {
     private const val KEY_PREV_VERSION_CODE = "PrevVersionCode" //上一个版本的版本代码
     private const val KEY_BOOT_LOGO_TIME = "BootLogoWaitTime"   //展示LOGO的时间
 
-    private const val DEFAULT_BOOT_LOGO_TIME = 1000L
+    private const val DEFAULT_BOOT_LOGO_TIME = 0L
 
     private lateinit var context : ManageApplication
     private lateinit var configPref : SharedPreferences

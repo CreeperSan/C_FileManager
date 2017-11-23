@@ -17,5 +17,8 @@
     <color name="mainDrawerItemBackground">#eeeeee</color>
 
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="alphaWhite">#00ffffff</color>
+    <color name="alphaBlack">#00000000</color>
 
 </resources>

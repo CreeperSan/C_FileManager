@@ -12,6 +12,7 @@ class FileBean(file:File){
     var modifyTime = ""
     var innerItemCounts = 0
     var isHidden = false
+    var displaySize = ""
     //自动判断
     var fileType = 0
 
@@ -42,6 +43,20 @@ class FileBean(file:File){
                         -> {fileType = FileType.ZIP}
                 else
                         -> {fileType = FileType.FILE}
+            }
+            val size = file.length()
+            if (size < 1024){   //byte
+                displaySize = "$size B"
+            }else if (size < 1024 * 1024){  //KB
+                displaySize = "${FormatHelper.getFormatDecimal(size/1024.toFloat())} KB"
+            }else if (size < 1024 * 1024 * 1024){   //MB
+                displaySize = "${FormatHelper.getFormatDecimal(size/1024/1024.toFloat())} MB"
+            }else if (size < 1024L * 1024 * 1024 * 1024){    //GB
+                displaySize = "${FormatHelper.getFormatDecimal(size/1024/1024.toFloat())} GB"
+            }else if (size < 1024L * 1024 * 1024 * 1024 * 1024){    //TB
+                displaySize = "${FormatHelper.getFormatDecimal(size/1024/1024/1024.toFloat())} TB"
+            }else{
+                displaySize = "Ultra Big"   //TODO 字符串
             }
         }
     }

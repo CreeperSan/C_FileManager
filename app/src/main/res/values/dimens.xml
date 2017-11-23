@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FloatingActionButton -->
+    <dimen name="floatingActionButtonMargin">8dp</dimen>
+    <dimen name="floatingActionButtonLabelMarginVertical">10dp</dimen>
+    <dimen name="floatingActionButtonLabelMarginHorizontal">16dp</dimen>
+    <dimen name="floatingActionButtonLabelPaddingVertical">4dp</dimen>
+    <dimen name="floatingActionButtonLabelPaddingHorizontal">16dp</dimen>
+    <dimen name="floatingActionButtonLabelElevation">2dp</dimen>
+</resources>

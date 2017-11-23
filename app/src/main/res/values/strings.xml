@@ -38,4 +38,8 @@
     <!-- 权限部分 -->
     <string name="permissionRequire">需要权限</string>
     <string name="needReadWriteExternalStoragePermission">我们需要读取/写入存储空间的权限来查看管理你的文件</string>
+
+    <!-- FileFragment -->
+    <string name="newFile">新文件</string>
+    <string name="newFolder">新文件夹</string>
 </resources>

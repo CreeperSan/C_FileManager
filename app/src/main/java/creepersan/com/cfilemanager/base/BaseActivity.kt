@@ -160,10 +160,10 @@ abstract class BaseActivity : AppCompatActivity(){
     /**
      *  动画 Animation
      */
-    protected fun loadAnimation(@AnimRes animID:Int):Animation{
+    fun loadAnimation(@AnimRes animID:Int):Animation{
         return AnimationUtils.loadAnimation(this,animID)
     }
-    protected fun loadAnimator(@AnimatorRes animID: Int):Animator{
+    fun loadAnimator(@AnimatorRes animID: Int):Animator{
         return AnimatorInflater.loadAnimator(this,animID)
     }
 
@@ -185,6 +185,22 @@ abstract class BaseActivity : AppCompatActivity(){
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCommandEvent(command:String){
         onCommand(command)
+    }
+
+    /**
+     *  系统版本
+     */
+    fun isVersionOver(sdkVersion:Int):Boolean{
+        return Build.VERSION.SDK_INT >= sdkVersion
+    }
+    fun isVersionOverM():Boolean{
+        return isVersionOver(Build.VERSION_CODES.M)
+    }
+    fun isVersionOverN():Boolean{
+        return isVersionOver(Build.VERSION_CODES.N)
+    }
+    fun isVersionOverO():Boolean{
+        return isVersionOver(Build.VERSION_CODES.O)
     }
 
     /**
@@ -337,5 +353,11 @@ abstract class BaseActivity : AppCompatActivity(){
         if (isFinish) finish()
     }
 
+    /**
+     *  动画
+     */
+    fun View.startAnime(){
+
+    }
 }
 

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
         android:allowBackup="false"
@@ -14,6 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Provider -->
+        <provider
+            android:authorities="creepersan.com.cfilemanager.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <!-- Activity -->
         <activity android:name=".activity.LogoActivity">
             <intent-filter>
