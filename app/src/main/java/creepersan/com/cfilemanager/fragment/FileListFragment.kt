@@ -1,7 +1,5 @@
 package creepersan.com.cfilemanager.fragment
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,12 +9,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.TextView
 import creepersan.com.cfilemanager.R
 import creepersan.com.cfilemanager.base.BaseTabFragment
 import creepersan.com.cfilemanager.bean.FileBean
 import creepersan.com.cfilemanager.bean.PathItem
+import creepersan.com.cfilemanager.callback.DialogCreateFileCallback
 import creepersan.com.cfilemanager.views.holder.SimpleTextHolder
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
@@ -30,12 +30,17 @@ class FileListFragment() : BaseTabFragment(){
     private lateinit var fileLayoutManager: LinearLayoutManager
     private lateinit var fileAdapter : FileAdapter
     private val pathList = ArrayList<PathItem>()
-    private lateinit var anime0to135 : Animator
-    private lateinit var anime135to0 : Animator
-    private lateinit var animeBottomInAlpha : Animator
-    private lateinit var animeScaleIn : Animator
-    private lateinit var animeScaleOut : Animator
+    private lateinit var anime0to135 : Animation
+    private lateinit var anime135to0 : Animation
+    private lateinit var animeScaleIn : Animation
+    private lateinit var animeScaleOut : Animation
+    private lateinit var animeAlphaIn : Animation
+    private lateinit var animeAlphaOut : Animation
+    private lateinit var animeLabelIn : Animation
+    private lateinit var animeLabelOut : Animation
     private var isFloatingActionMenuOpen = false
+    //状态型变量
+    private var isAnimating = false
     //标志性变量
     private var flagRootPath = RootPath.EXTERNAL
     //实际需要使用的变量
@@ -51,6 +56,10 @@ class FileListFragment() : BaseTabFragment(){
             flagRootPath = RootPath.EXTERNAL
         }
     }
+
+    /**
+     *  生命周期
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initAnime()
@@ -60,12 +69,49 @@ class FileListFragment() : BaseTabFragment(){
         initFileRecyclerView()
         initFloatingActionButton()
     }
+    override fun onResume() {
+        super.onResume()
+        if(isFloatingActionMenuOpen){
+            showViews()
+        }else{
+            hideViews()
+        }
+    }
 
+    /**
+     *  此处进行初始化
+     */
     private fun initAnime(){
-        anime0to135 = ObjectAnimator.ofFloat(fragmentFileFloatingActionButton,"rotation",0f,135f)
-        anime0to135.setDuration(300)
-        anime135to0 = ObjectAnimator.ofFloat(fragmentFileFloatingActionButton,"rotation",135f,0f)
-        anime135to0.setDuration(300)
+        //这里是初始化动画
+        anime0to135 = activity().loadAnimation(R.anim.in_floating_button_main_button)
+        anime135to0 = activity().loadAnimation(R.anim.out_floating_button_main_button)
+        animeAlphaIn = activity().loadAnimation(R.anim.in_floating_button_background)
+        animeAlphaOut = activity().loadAnimation(R.anim.out_floating_button_background)
+        animeScaleIn = activity().loadAnimation(R.anim.in_floating_button_sub_button)
+        animeScaleOut = activity().loadAnimation(R.anim.out_floating_button_sub_button)
+        animeLabelIn = activity().loadAnimation(R.anim.in_floating_button_label)
+        animeLabelOut = activity().loadAnimation(R.anim.out_floating_button_label)
+        //这里是初始化动画结束后的回调事件
+        //打开菜单的动画
+        animeAlphaIn.setAnimationListener(object : Animation.AnimationListener{
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {
+                showViews()
+                fragmentFileFloatingActionButton.rotation = 135f
+            }
+            override fun onAnimationEnd(animation: Animation?) {
+            }
+        })
+        //关闭菜单的动画
+        animeAlphaOut.setAnimationListener(object : Animation.AnimationListener{
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {
+                fragmentFileFloatingActionButton.rotation = 0f
+            }
+            override fun onAnimationEnd(animation: Animation?) {
+                hideViews()
+            }
+        })
     }
     private fun initPathRecyclerView(){
         pathLayoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
@@ -109,25 +155,31 @@ class FileListFragment() : BaseTabFragment(){
     private fun initFloatingActionButton(){
         fragmentFileFloatingActionButton.setOnClickListener { v->
             if (isFloatingActionMenuOpen){//关闭
-                hideMenu()
+                hideViews()
+                startCloseAnime()
             }else{//打开
-                anime135to0.cancel()
-                anime0to135.start()
-                showMenu()
+                showViews()
+                startOpenAnime()
             }
             isFloatingActionMenuOpen = !isFloatingActionMenuOpen
         }
-        fragmentFileFloatingActionButtonFile.setOnClickListener {
-
-            hideMenu()
+        fragmentFileFloatingActionButtonFolder.setOnClickListener {
+            startCloseAnime()
             isFloatingActionMenuOpen = false
         }
-        fragmentFileFloatingActionButtonFolder.setOnClickListener {
-            hideMenu()
+        fragmentFileFloatingActionButtonFile.setOnClickListener {
+            activity().showCreateFileDialog(object : DialogCreateFileCallback(){
+                override fun onCommit(name: String, selection: Int) {
+                    super.onCommit(name, selection)
+                    log("文件名为 ${name} 后缀标志为 ${selection}")
+
+                }
+            })
+            startCloseAnime()
             isFloatingActionMenuOpen = false
         }
         fragmentFileMenuBackground.setOnClickListener {
-            hideMenu()
+            startCloseAnime()
             isFloatingActionMenuOpen = false
         }
     }
@@ -360,16 +412,30 @@ class FileListFragment() : BaseTabFragment(){
     /**
      *  界面上的操作
      */
-    private fun showMenu(){
+    private fun startOpenAnime(){//显示
+        fragmentFileFloatingActionButton.startAnimation(anime0to135)
+        fragmentFileMenuBackground.startAnimation(animeAlphaIn)
+        fragmentFileFloatingActionButtonFile.startAnimation(animeScaleIn)
+        fragmentFileFloatingActionButtonFolder.startAnimation(animeScaleIn)
+        fragmentFileFloatingActionButtonFolderLabel.startAnimation(animeLabelIn)
+        fragmentFileFloatingActionButtonFileLabel.startAnimation(animeLabelIn)
+    }
+    private fun startCloseAnime(){//隐藏
+        fragmentFileFloatingActionButton.startAnimation(anime135to0)
+        fragmentFileMenuBackground.startAnimation(animeAlphaOut)
+        fragmentFileFloatingActionButtonFile.startAnimation(animeScaleOut)
+        fragmentFileFloatingActionButtonFolder.startAnimation(animeScaleOut)
+        fragmentFileFloatingActionButtonFolderLabel.startAnimation(animeLabelOut)
+        fragmentFileFloatingActionButtonFileLabel.startAnimation(animeLabelOut)
+    }
+    private fun showViews(){
         fragmentFileMenuBackground.visibility = View.VISIBLE
         fragmentFileFloatingActionButtonFolderLabel.visibility = View.VISIBLE
         fragmentFileFloatingActionButtonFolder.visibility = View.VISIBLE
         fragmentFileFloatingActionButtonFileLabel.visibility = View.VISIBLE
         fragmentFileFloatingActionButtonFile.visibility = View.VISIBLE
     }
-    private fun hideMenu(){
-        anime0to135.cancel()
-        anime135to0.start()
+    private fun hideViews(){
         fragmentFileMenuBackground.visibility = View.GONE
         fragmentFileFloatingActionButtonFolderLabel.visibility = View.GONE
         fragmentFileFloatingActionButtonFolder.visibility = View.GONE

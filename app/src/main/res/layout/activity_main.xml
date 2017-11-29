@@ -16,10 +16,13 @@
         android:layout_height="wrap_content">
 
         <android.support.design.widget.AppBarLayout
+            android:theme="@style/toolbarDefault"
             android:id="@+id/mainAppbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <android.support.v7.widget.Toolbar
+                app:titleTextColor="@color/white"
+                app:subtitleTextColor="@color/white"
                 android:id="@+id/mainToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import creepersan.com.cfilemanager.R
 import creepersan.com.cfilemanager.application.ManageApplication
 import creepersan.com.cfilemanager.callback.DialogButtonCallback
+import creepersan.com.cfilemanager.callback.DialogCreateFileCallback
 import creepersan.com.cfilemanager.util.Debugger
 import creepersan.com.cfilemanager.views.component.SimpleDialogBuilder
 import creepersan.com.cfilemanager.views.holder.SimpleDialogViewHolder
@@ -279,6 +280,12 @@ abstract class BaseActivity : AppCompatActivity(){
         }
         return dialog
     }
+    fun showCreateFileDialog(callback:DialogCreateFileCallback):Dialog{
+        val dialogView = getView(R.layout.dialog_file_fragment_new)
+        val dialog = showDialog(dialogView)
+        callback.init(dialogView,dialog)
+        return dialog
+    }
     fun showDialog(dialogView:View, cancelable:Boolean = true, backgroundAlpha:Float = SimpleDialogBuilder.Params.DIM_ALPHA, animation:Int = 0):Dialog{
         val dialog = Dialog(this, R.style.dialogAlphaBackground)
         dialog.setContentView(dialogView)
@@ -358,6 +365,16 @@ abstract class BaseActivity : AppCompatActivity(){
      */
     fun View.startAnime(){
 
+    }
+
+    /**
+     *  数据类型的操作
+     */
+    fun String.isEmpty():Boolean{
+        return this == ""
+    }
+    fun String.isNotEmpty():Boolean{
+        return this != ""
     }
 }
 

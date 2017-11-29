@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Toolbar主体 -->
+    <style name="toolbarDefault" parent="AppTheme">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+    
     <!-- 对话框主题 -->
     <style name="dialogAlphaBackground" parent="AlertDialog.AppCompat.Light">
         <item name="android:windowBackground">@drawable/bg_alpha</item>

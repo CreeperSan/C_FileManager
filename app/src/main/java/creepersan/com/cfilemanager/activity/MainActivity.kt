@@ -3,9 +3,13 @@ package creepersan.com.cfilemanager.activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -35,16 +39,21 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initBaseFunction()
         initFragmentBase()
         initDrawerRecyclerViewData()
         initFragment()
         initDrawerRecyclerView()
         initFragmentViewPager()
+        initToolbar()
     }
 
     /**
      * 各种的初始化
      */
+    private fun initBaseFunction(){
+        setSupportActionBar(mainToolbar)
+    }
     private fun initFragmentBase(){
         fragmentManager = supportFragmentManager
     }
@@ -82,9 +91,9 @@ class MainActivity : BaseActivity() {
                 .put(FileListFragment.Argument.ROOT_PATH,FileListFragment.RootPath.SD_CARD)
                 .build()
         fileFragment3.arguments = null
-        categoryWindow.add(fileFragment1)
-        categoryWindow.add(fileFragment2)
-        categoryWindow.add(fileFragment3)
+        categoryWindow.addPager(fileFragment1)
+        categoryWindow.addPager(fileFragment2)
+        categoryWindow.addPager(fileFragment3)
     }
     private fun initDrawerRecyclerView() {
         drawerAdapter = DrawerRecyclerViewAdapter()
@@ -94,6 +103,51 @@ class MainActivity : BaseActivity() {
     private fun initFragmentViewPager(){
         fragmentPagerAdapter = TabViewPagerAdapter()
         mainViewPager.adapter = fragmentPagerAdapter
+        mainViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageSelected(position: Int) {
+                initToolbar()
+            }
+
+        })
+
+    }
+    private fun initToolbar(){
+        //开启返回键
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //设置DrawerToggle
+        val toolbarDrawerToggle = ActionBarDrawerToggle(this,mainDrawerLayout,R.string.openDrawer,R.string.closeDrawer)
+        toolbarDrawerToggle.syncState()
+        mainDrawerLayout.addDrawerListener(toolbarDrawerToggle)
+        refreshToolbarTitle()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> {
+                if (mainDrawerLayout.isDrawerOpen(mainDrawerRecyclerView)){
+                    mainDrawerLayout.closeDrawers()
+                }else{
+                    mainDrawerLayout.openDrawer(mainDrawerRecyclerView)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    /**
+     *  UI刷新
+     */
+    private fun refreshToolbarTitle(){
+        val viewpagerPos = mainViewPager.currentItem
+        val windowItem = categoryWindow.getDrawerItemList()[viewpagerPos]
+        title = windowItem.getTitle()
+        val subitle = windowItem.getSubTitle()
+        if (subitle.isNotEmpty()){
+            mainToolbar.subtitle = subitle
+        }
     }
 
 
@@ -121,7 +175,9 @@ class MainActivity : BaseActivity() {
         }
 
         abstract fun getTitle():String
-
+        open fun getSubTitle():String{
+            return ""
+        }
         //是否为分组
         fun isCategory():Boolean{
             return this is CategoryDrawerItem
@@ -137,10 +193,14 @@ class MainActivity : BaseActivity() {
     private open inner class CategoryDrawerItem(type: Int) : DrawerItem(type){
 
         var isExpand = false
-        private var innerDrawerItemList = ArrayList<DrawerItem>()
+        protected var innerDrawerItemList = ArrayList<DrawerItem>()
 
         open fun add(item:DrawerItem):CategoryDrawerItem{
             innerDrawerItemList.add(item)
+            return this
+        }
+        open fun remove(item:DrawerItem):CategoryDrawerItem{
+            innerDrawerItemList.remove(item)
             return this
         }
         fun size(): Int {
@@ -165,13 +225,38 @@ class MainActivity : BaseActivity() {
     private inner class CategoryFragmentDrawerItem(type:Int) : CategoryDrawerItem(type){
         val tabFragmentList = ArrayList<BaseTabFragment>()
 
-        fun add(fragment:BaseTabFragment){
+        fun addPager(fragment:BaseTabFragment){
             tabFragmentList.add(fragment)
             add(WindowDrawerItem(Type.ITEM_WINDOW))
         }
+        fun removePager(fragment:BaseTabFragment){
+            val pos = tabFragmentList.indexOf(fragment)
+            val drawerItem = innerDrawerItemList[pos]
+            removePager(pos,drawerItem,fragment)
+        }
+        fun removePager(item:DrawerItem){
+            val pos = innerDrawerItemList.indexOf(item)
+            val fragment = tabFragmentList[pos]
+            removePager(pos,item,fragment)
+        }
+        fun removePager(pos:Int,item:DrawerItem,fragment: BaseTabFragment){
+            displayList.remove(item)
+            tabFragmentList.removeAt(pos)
+            innerDrawerItemList.removeAt(pos)
+            fragmentManager.beginTransaction().remove(fragment).commit()
+        }
 
+        fun currentPosition(item:DrawerItem):Int{
+            return innerDrawerItemList.indexOf(item)
+        }
+
+        //不要调用这个方法
         override fun add(item: DrawerItem): CategoryFragmentDrawerItem {
             return super.add(item) as CategoryFragmentDrawerItem
+        }
+        //不要调用这个方法
+        override fun remove(item: DrawerItem): CategoryDrawerItem {
+            return super.remove(item) as CategoryFragmentDrawerItem
         }
     }
     private inner class WindowDrawerItem(type: Int) : TabDrawerItem(type){
@@ -237,10 +322,14 @@ class MainActivity : BaseActivity() {
                     holder.switch.visibility = View.GONE
                     holder.startIcon.visibility = if (drawerItem.isCategory()) View.GONE else View.VISIBLE
                     holder.subTitleText.visibility = if (drawerItem.isCategory()) View.GONE else View.VISIBLE
-                    holder.endIcon.visibility = if (drawerItem.isCategory()) View.VISIBLE else View.GONE
                     holder.titleText.text = drawerItem.getTitle()
-                    if (drawerItem.isCategory()){
-                        holder.endIcon.rotation = if( (drawerItem as CategoryDrawerItem).isExpand ) 180f else 0f
+                    when(drawerItem){
+                        is CategoryDrawerItem -> { displayAsCategory(drawerItem,holder) }
+                        is WindowDrawerItem -> {displayAsWindow(drawerItem,holder)}
+                        is LocalDrawerItem -> {displayAsLocal(drawerItem,holder)}
+                        is BookmarkDrawerItem -> {displayAsBookmark(drawerItem,holder)}
+                        is LibraryDrawerItem -> {displayAsLibrary(drawerItem,holder)}
+                        is ToolsDrawerItem -> {displayAsTool(drawerItem,holder)}
                     }
                     //逻辑操作
                     holder.itemView.setOnClickListener {
@@ -263,6 +352,42 @@ class MainActivity : BaseActivity() {
                     }
                 }
             }
+        }
+        //往下为显示
+        private fun displayAsCategory(drawerItem:CategoryDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(true,R.drawable.ic_down,if (drawerItem.isExpand)180f else 0f)
+            holder.setupStartIcon(View.GONE)
+            holder.setupBackground(R.drawable.bg_drawer_item_category)
+        }
+        private fun displayAsWindow(drawerItem:WindowDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(true,R.drawable.ic_close,0f,View.OnClickListener {
+                categoryWindow.removePager(drawerItem)
+                drawerAdapter.notifyDataSetChanged()
+                fragmentPagerAdapter.notifyDataSetChanged()
+                toast("点击了")
+            })
+            holder.setupStartIcon(View.VISIBLE,if (categoryWindow.currentPosition(drawerItem) == mainViewPager.currentItem) R.drawable.ic_eye else R.drawable.ic_desktop_windows )
+            holder.setupBackground(R.drawable.bg_drawer_item_item)
+        }
+        private fun displayAsLocal(drawerItem:LocalDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(false)
+            holder.setupStartIcon(View.VISIBLE,R.drawable.ic_desktop_windows)
+            holder.setupBackground(R.drawable.bg_drawer_item_item)
+        }
+        private fun displayAsBookmark(drawerItem:BookmarkDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(false)
+            holder.setupStartIcon(View.VISIBLE,R.drawable.ic_desktop_windows)
+            holder.setupBackground(R.drawable.bg_drawer_item_item)
+        }
+        private fun displayAsLibrary(drawerItem:LibraryDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(false)
+            holder.setupStartIcon(View.VISIBLE,R.drawable.ic_desktop_windows)
+            holder.setupBackground(R.drawable.bg_drawer_item_item)
+        }
+        private fun displayAsTool(drawerItem:ToolsDrawerItem,holder:SimpleItemViewHolder){
+            holder.setupEndIcon(false)
+            holder.setupStartIcon(View.VISIBLE,R.drawable.ic_desktop_windows)
+            holder.setupBackground(R.drawable.bg_drawer_item_item)
         }
 
         override fun getItemCount(): Int = displayList.size
@@ -290,15 +415,21 @@ class MainActivity : BaseActivity() {
         }
 
     }
-    private inner class TabViewPagerAdapter : FragmentPagerAdapter(fragmentManager){
+    private inner class TabViewPagerAdapter : FragmentStatePagerAdapter(fragmentManager){
         override fun getItem(position: Int): Fragment = categoryWindow.tabFragmentList[position]
 
         override fun getCount(): Int = categoryWindow.tabFragmentList.size
 
+        override fun getItemPosition(`object`: Any?): Int {
+            return PagerAdapter.POSITION_NONE
+        }
+
     }
 
     override fun onBackPressed() {
-        if (!categoryWindow.tabFragmentList[mainViewPager.currentItem].onBackPressed()){
+        if (categoryWindow.tabFragmentList.size == 0 ){
+            finish()
+        }else if (!categoryWindow.tabFragmentList[mainViewPager.currentItem].onBackPressed()){
             super.onBackPressed()
         }
     }
