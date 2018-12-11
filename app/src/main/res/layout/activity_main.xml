@@ -1,47 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mainDrawerLayout"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="creepersan.com.cfilemanager.activity.MainActivity">
-
-
-    <!-- 内容 -->
-    <LinearLayout
-        android:id="@+id/mainContentLayout"
-        android:orientation="vertical"
+<android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
-            android:theme="@style/toolbarDefault"
-            android:id="@+id/mainAppbarLayout"
+
+    <FrameLayout
+            android:id="@+id/mainFrameLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.Toolbar
-                app:titleTextColor="@color/white"
-                app:subtitleTextColor="@color/white"
-                android:id="@+id/mainToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </android.support.design.widget.AppBarLayout>
+            android:layout_height="match_parent">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/mainViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    </FrameLayout>
 
-    </LinearLayout>
-
-    <!-- 抽屉 -->
-
-    <android.support.v7.widget.RecyclerView
-        android:background="@color/white"
-        android:id="@+id/mainDrawerRecyclerView"
-        android:layout_gravity="start"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
 </android.support.v4.widget.DrawerLayout>

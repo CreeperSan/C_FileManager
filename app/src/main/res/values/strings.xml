@@ -1,55 +1,10 @@
 <resources>
-    <string name="app_name">C FileManager</string>
+    <string name="app_name">File</string>
 
-    <!-- 通用部分 -->
-    <string name="commit">提交</string>
-    <string name="confirm">确认</string>
-    <string name="cancel">取消</string>
-    <string name="ok">确定</string>
-    <string name="folder">文件夹</string>
-    <string name="file">文件</string>
-    <string name="new_">新建</string>
+    <string name="bootTitle">文件</string>
 
-    <!-- 文件类型标注 -->
-    <string name="txtFile">Txt文本文档</string>
-    <string name="markdownFile">Markdown</string>
-
-    <!-- MainActivity 侧滑菜单 -->
-    <string name="categoryHeader">头部</string>
-    <string name="categoryWindow">窗口</string>
-    <string name="windowUnknown">未知窗口</string>
-    <string name="categoryLocal">本地</string>
-    <string name="localHome">主页</string>
-    <string name="localExternal">外部存储</string>
-    <string name="localRoot">根目录</string>
-    <string name="categoryBookmark">书签</string>
-    <string name="bookmarkUnknown">未知书签</string>
-    <string name="categoryLibrary">库</string>
-    <string name="libraryImage">图片库</string>
-    <string name="libraryVideo">视频库</string>
-    <string name="libraryMusic">音乐库</string>
-    <string name="libraryApplication">应用程序库</string>
-    <string name="categoryTools">工具</string>
-    <string name="toolsFileTransfer">文件快传</string>
-    <string name="categoryUnknown">未知分组</string>
-    <string name="openDrawer">打开管理面板</string>
-    <string name="closeDrawer">关闭管理面板</string>
-
-    <!-- 文件浏览列表部分 -->
-    <string name="filePathNotExist">当前文件路径不存在</string>
-    <string name="pleaseEnterName">请输入名称</string>
-
-    <!-- 目录 -->
-    <string name="pathRoot">根目录</string>
-    <string name="pathExternal">手机存储</string>
-    <string name="pathSDCard">SD卡</string>
-    <string name="pathOTG">OTG</string>
-
-    <!-- 权限部分 -->
-    <string name="permissionRequire">需要权限</string>
-    <string name="needReadWriteExternalStoragePermission">我们需要读取/写入存储空间的权限来查看管理你的文件</string>
-
-    <!-- FileFragment -->
-    <string name="newFile">新文件</string>
-    <string name="newFolder">新文件夹</string>
+    <string name="baseAlertPermissionDeniedTitle">请赋予我们权限</string>
+    <string name="baseAlertPermissionDeniedMessage">我们需要读取您设备的本地存储的权限来运作，请赋予我们权限</string>
+    <string name="baseAlertPositiveButtonText">好的</string>
+    <string name="baseAlertNegativeButtonText">取消</string>
 </resources>

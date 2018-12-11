@@ -1,25 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <!-- Toolbar主体 -->
-    <style name="toolbarDefault" parent="AppTheme">
-        <item name="colorControlNormal">@color/white</item>
-    </style>
-    
-    <!-- 对话框主题 -->
-    <style name="dialogAlphaBackground" parent="AlertDialog.AppCompat.Light">
-        <item name="android:windowBackground">@drawable/bg_alpha</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>
