@@ -7,4 +7,14 @@
     <string name="baseAlertPermissionDeniedMessage">我们需要读取您设备的本地存储的权限来运作，请赋予我们权限</string>
     <string name="baseAlertPositiveButtonText">好的</string>
     <string name="baseAlertNegativeButtonText">取消</string>
+
+    <string name="fileFragmentItemCount">%d 项</string>
+    <string name="fileFragmentItemCounts">%d 项</string>
+    <string name="fileFragmentItemSizeB">%s B</string>
+    <string name="fileFragmentItemSizeKB">%s KB</string>
+    <string name="fileFragmentItemSizeMB">%s MB</string>
+    <string name="fileFragmentItemSizeGB">%s GB</string>
+    <string name="fileFragmentItemSizeTB">%s TB</string>
+
+    <string name="debugProcessing">正在开发中…</string>
 </resources>

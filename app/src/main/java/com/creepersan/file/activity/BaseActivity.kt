@@ -9,6 +9,7 @@ import android.os.Parcelable
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.utils.Logger
@@ -88,5 +89,8 @@ abstract class BaseActivity : AppCompatActivity() {
         Logger.logE(content, javaClass.simpleName)
     }
 
+    fun toast(message:String){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
 }
