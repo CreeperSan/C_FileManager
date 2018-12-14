@@ -79,13 +79,13 @@ abstract class BaseActivity : AppCompatActivity() {
     /**
      *  调试类
      */
-    protected fun log(content:String){
+    fun log(content:String){
         Logger.log(content, javaClass.simpleName)
     }
-    protected fun logW(content:String){
+    fun logW(content:String){
         Logger.logW(content, javaClass.simpleName)
     }
-    protected fun logE(content:String){
+    fun logE(content:String){
         Logger.logE(content, javaClass.simpleName)
     }
 

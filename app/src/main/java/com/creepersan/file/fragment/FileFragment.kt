@@ -2,6 +2,7 @@ package com.creepersan.file.fragment
 
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -13,12 +14,15 @@ import com.creepersan.file.bean.FileItem
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
 import java.util.*
+import kotlin.math.log
 
 class FileFragment : BaseFragment(){
     override val mLayoutID: Int = R.layout.fragment_file
     private val mFileAdapter by lazy { FileAdapter() }
     private val mPathAdapter by lazy { PathAdapter() }
     private val mFileStack by lazy { LinkedList<FileStackInfo>() }
+
+    private var mTmpFileRecyclerViewScrollPos = 0
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +45,25 @@ class FileFragment : BaseFragment(){
         fragmentFileFileRecyclerView.adapter = mFileAdapter
     }
 
+    /**
+     *  操作统一入口
+     */
+    fun updatePathRecyclerView(){
+        mPathAdapter.notifyDataSetChanged()
+        fragmentFilePathRecyclerView.scrollToPosition(mFileStack.size-1)
+    }
+    fun updateFileRecyclerView(){
+        mFileAdapter.notifyDataSetChanged()
+
+        val layoutManager = fragmentFileFileRecyclerView.layoutManager
+
+        when(layoutManager){
+            is LinearLayoutManager -> {
+                layoutManager.scrollToPositionWithOffset(mFileStack.last.mScrollYAxisPosition,0)
+            }
+        }
+
+    }
 
     /**
      *  事件回调
@@ -48,8 +71,8 @@ class FileFragment : BaseFragment(){
     fun onBackPressed():Boolean{
         return if (mFileStack.size > 1){
             mFileStack.removeLast()
-            mFileAdapter.notifyDataSetChanged()
-            mPathAdapter.notifyDataSetChanged()
+            updatePathRecyclerView()
+            updateFileRecyclerView()
             true
         }else{
             false
@@ -72,6 +95,7 @@ class FileFragment : BaseFragment(){
 
         override fun onBindViewHolder(holder: FileHolder, p1: Int) {
             val item = mFileStack.last.mFileList[p1]
+            val layoutManager = fragmentFileFileRecyclerView.layoutManager
 
             holder.icon.setImageResource(item.icon)
             holder.title.text = item.name
@@ -81,14 +105,22 @@ class FileFragment : BaseFragment(){
 
             holder.itemView.setOnClickListener{
                 if(item.isFolder){
+                    // 记录滚动距离
+                    when(layoutManager){
+                        is LinearLayoutManager -> {
+                            mTmpFileRecyclerViewScrollPos = layoutManager.findFirstVisibleItemPosition()
+                        }
+                    }
+                    mFileStack.last.mScrollYAxisPosition = mTmpFileRecyclerViewScrollPos
+                    mTmpFileRecyclerViewScrollPos = 0
+                    // 添加新的文件栈
                     mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
                 }else{
                     toast(item.size.toString())
                 }
 
-                mFileAdapter.notifyDataSetChanged()
-                mPathAdapter.notifyDataSetChanged()
-                fragmentFilePathRecyclerView.smoothScrollToPosition(mFileStack.size)
+                updatePathRecyclerView()
+                updateFileRecyclerView()
             }
             holder.itemView.setOnLongClickListener{
                 toast(getString(R.string.debugProcessing))
@@ -96,7 +128,6 @@ class FileFragment : BaseFragment(){
             }
         }
     }
-
     inner class FileHolder(container:ViewGroup) : RecyclerView.ViewHolder(layoutInflater.inflate(R.layout.item_file_file, container, false)){
         val icon = itemView.findViewById<ImageView>(R.id.itemFileFileIcon)
         val more = itemView.findViewById<ImageView>(R.id.itemFileFileMore)
@@ -104,7 +135,6 @@ class FileFragment : BaseFragment(){
         val content = itemView.findViewById<TextView>(R.id.itemFileFileContent)
         val contentExtra = itemView.findViewById<TextView>(R.id.itemFileFileContentExtra)
     }
-
     inner class PathAdapter : RecyclerView.Adapter<PathHolder>(){
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): PathHolder {
             return PathHolder(p0)
@@ -126,14 +156,13 @@ class FileFragment : BaseFragment(){
                     mFileStack.removeLast()
                 }
 
-                mFileAdapter.notifyDataSetChanged()
-                mPathAdapter.notifyDataSetChanged()
+                updatePathRecyclerView()
+                updateFileRecyclerView()
             }
 
         }
 
     }
-
     inner class PathHolder(container: ViewGroup) : RecyclerView.ViewHolder(layoutInflater.inflate(R.layout.item_file_path, container, false)){
         val icon = itemView.findViewById<ImageView>(R.id.itemFilePathIcon)
         val title = itemView.findViewById<TextView>(R.id.itemFilePathTitle)
@@ -142,7 +171,6 @@ class FileFragment : BaseFragment(){
     /**
      * Item Bean
      */
-
     class FileStackInfo private constructor(){
 
         companion object {
@@ -168,10 +196,12 @@ class FileFragment : BaseFragment(){
         }
 
         var mFileList = ArrayList<FileItem>()
+        var mScrollYAxisPosition = 0
         var mName = ""
         var mPath = ""
 
 
     }
+
 
 }

@@ -1,43 +1,43 @@
 package com.creepersan.file.bean
 
 import android.content.Context
+import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import java.io.File
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 class FileItem private constructor(){
     companion object {
         private var mTimeFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        private val mDecimalFormatter = DecimalFormat("#.00")
 
-        fun fromFile(file:File, context:Context):FileItem{
+        fun fromFile(file:File):FileItem{
             val item = FileItem()
             item.name = file.name
             item.path = file.path
             item.isHidden = file.isHidden
             item.isFolder = file.isDirectory
 
+            val app = FileApplication.getInstance()
+
             // 计算大小文本
             if (item.isFolder){// 文件夹的
                 val itemCount = file.list().size.toLong()
                 if (itemCount > 1){
-                    item.size = String.format(context.getString(R.string.fileFragmentItemCounts), itemCount)
+                    item.size = String.format(app.getString(R.string.fileFragmentItemCounts), itemCount)
                 }else{
-                    item.size = String.format(context.getString(R.string.fileFragmentItemCount), itemCount)
+                    item.size = String.format(app.getString(R.string.fileFragmentItemCount), itemCount)
                 }
-                item.size = itemCount.toString()
             }else{ // 文件的
                 val itemSize = file.length()
-                if (itemSize < 1024L){
-                    item.size = String.format(context.getString(R.string.fileFragmentItemSizeB), itemSize.toString())
-                }else if (itemSize < 1024*1024L){
-
-                }else if (itemSize < 1024*1024*1024L){
-                    
-                }else if (itemSize < 1024*1024*1024*1024L){
-
-                }else{
-                    item.size = itemSize.toString()
+                when {
+                    itemSize < 1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()))
+                    itemSize < 1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024))
+                    itemSize < 1024*1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024/1024))
+                    itemSize < 1024*1024*1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024/1024/1024))
+                    else -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()))
                 }
             }
 

@@ -23,7 +23,7 @@
     <ImageView
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:padding="8dp"
