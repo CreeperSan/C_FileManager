@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.utils.ConfigUtil
 import com.creepersan.file.utils.Logger
 import com.creepersan.file.utils.PermissionUtil
 import java.io.Serializable
@@ -24,6 +25,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     abstract val mLayoutID : Int
     protected val mPermissionUtil by lazy { PermissionUtil }
+    protected val mConfig by lazy { FileApplication.getConfigInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

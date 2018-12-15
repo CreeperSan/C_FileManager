@@ -2,19 +2,20 @@ package com.creepersan.file.fragment
 
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
+import com.creepersan.file.utils.ConfigUtil
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
 import java.util.*
-import kotlin.math.log
+import kotlin.collections.ArrayList
 
 class FileFragment : BaseFragment(){
     override val mLayoutID: Int = R.layout.fragment_file
@@ -183,10 +184,66 @@ class FileFragment : BaseFragment(){
                 // 初始化当前目录的基础信息
                 mStackInfo.mName = file.name
                 mStackInfo.mPath = file.path
+
                 // 初始化当前目录下的文件信息
-                file.listFiles().forEach { tmpFile ->
-                    mStackInfo.mFileList.add(FileItem.fromFile(tmpFile))
+                val tmpFileList = ArrayList<File>()
+                val tmpFolderList = ArrayList<File>()
+                val tmpConfig = FileApplication.getConfigInstance()
+                val isFolderFirst = tmpConfig.getFileIsFolderFirst()
+                val isShowHiddenFile = tmpConfig.getFileIsShowHiddenFile()
+                val sortType = tmpConfig.getFileSortOrder()
+                val isReverse = tmpConfig.getFileIsOrderReverse()
+                val tmpSort = file.listFiles().toMutableList()
+
+                when(sortType){
+                    ConfigUtil.VAL_FILE_SORT_TYPE -> {
+                        if (isReverse){
+                            tmpSort.sortByDescending { it.name }
+                        }else{
+                            tmpSort.sortBy { it.name }
+                        }
+                    }
+                    ConfigUtil.VAL_FILE_SORT_SIZE -> {
+                        if (isReverse){
+                            tmpSort.sortByDescending { it.length() }
+                        }else{
+                            tmpSort.sortBy { it.length() }
+                        }
+                    }
+                    ConfigUtil.VAL_FILE_SORT_MODIFY_TIME -> {
+                        if (isReverse){
+                            tmpSort.sortByDescending { it.lastModified() }
+                        }else{
+                            tmpSort.sortBy { it.lastModified() }
+                        }
+                    }
+                    ConfigUtil.VAL_FILE_SORT_NAME -> {
+                        if (isReverse){
+                            tmpSort.sortByDescending { it.name }
+                        }else{
+                            tmpSort.sortBy { it.name }
+                        }
+                    }
                 }
+                tmpSort.forEach { tmpFile ->
+                    if (tmpFile.isHidden && !isShowHiddenFile){
+                        return@forEach // 如果是隐藏文件并且不显示隐藏文件的话就跳过文件的扫描
+                    }
+                    if (isFolderFirst){
+                        if (tmpFile.isDirectory){
+                            tmpFolderList.add(tmpFile)
+                        }else{
+                            tmpFileList.add(tmpFile)
+                        }
+                    }else{
+                        tmpFileList.add(tmpFile)
+                    }
+                }
+
+                // 添加数据
+                tmpFolderList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it)) }
+                tmpFileList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it)) }
+
                 return mStackInfo
             }
 
