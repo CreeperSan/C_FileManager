@@ -18,6 +18,13 @@ abstract class BaseFragment : Fragment() {
         return inflater.inflate(mLayoutID, container, false)
     }
 
+    /**
+     * 快速方法
+     */
+    fun getView(layoutID:Int, viewGroup: ViewGroup? = null, attachToRoot:Boolean=false): View {
+        return mActivity.getView(layoutID, viewGroup, attachToRoot)
+    }
+
 
 
     /**

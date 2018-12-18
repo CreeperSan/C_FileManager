@@ -15,6 +15,13 @@
     <string name="fileFragmentItemSizeMB">%s MB</string>
     <string name="fileFragmentItemSizeGB">%s GB</string>
     <string name="fileFragmentItemSizeTB">%s TB</string>
+    <string name="menuFileFragmentNew">新建</string>
+    <string name="menuFileFragmentChoose">选择</string>
+    <string name="menuFileFragmentSearch">搜索</string>
+    <string name="menuFileFragmentRefresh">刷新</string>
+    <string name="dialogFileFragmentNewTitle">新建…</string>
+    <string name="dialogFileFragmentNewPosText">创建</string>
+    <string name="dialogFileFragmentNewNegText">取消</string>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>

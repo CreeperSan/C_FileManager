@@ -1,6 +1,7 @@
 package com.creepersan.file.bean
 
 import android.content.Context
+import android.support.v7.app.AlertDialog
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import java.io.File

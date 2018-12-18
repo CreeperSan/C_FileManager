@@ -5,6 +5,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <android.support.design.widget.AppBarLayout
+            android:id="@+id/fragmentFileActionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/fragmentFileActionBarToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
+    </android.support.design.widget.AppBarLayout>
+
     <android.support.v7.widget.RecyclerView
             android:id="@+id/fragmentFilePathRecyclerView"
             android:layout_width="wrap_content"

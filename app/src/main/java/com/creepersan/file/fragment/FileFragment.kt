@@ -1,11 +1,15 @@
 package com.creepersan.file.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.creepersan.file.FileApplication
@@ -17,22 +21,41 @@ import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FileFragment : BaseFragment(){
+class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
+
     override val mLayoutID: Int = R.layout.fragment_file
     private val mFileAdapter by lazy { FileAdapter() }
     private val mPathAdapter by lazy { PathAdapter() }
     private val mFileStack by lazy { LinkedList<FileStackInfo>() }
+    private val mCreateFileDialog by lazy {
+        val dialogView = getView(R.layout.dialog_file_fragment_new)
+        val titleEditText = dialogView.findViewById<EditText>(R.id.dialogFileFragmentNewName)
+        AlertDialog.Builder(mActivity).setView(dialogView)
+            .setTitle(R.string.dialogFileFragmentNewTitle)
+            .setPositiveButton(R.string.dialogFileFragmentNewPosText) { _, _ ->
+                toast(titleEditText.text.toString())
+            }
+            .setNegativeButton(R.string.dialogFileFragmentNewNegText, null)
+            .create()
+    }
+
+
 
     private var mTmpFileRecyclerViewScrollPos = 0
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         initStack()
         initPathRecyclerView()
         initFileRecyclerView()
     }
 
+    private fun initToolbar(){
+        fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file)
+        fragmentFileActionBarToolbar.setOnMenuItemClickListener(this)
+    }
     private fun initStack(){
         mFileStack.push(FileStackInfo.fromExternalStorage())
     }
@@ -78,6 +101,23 @@ class FileFragment : BaseFragment(){
         }else{
             false
         }
+    }
+    override fun onMenuItemClick(p0: MenuItem?): Boolean {
+        when(p0?.itemId){
+            R.id.menuFileFragmentNew -> {
+                mCreateFileDialog.show()
+            }
+            R.id.menuFileFragmentChoose -> {
+
+            }
+            R.id.menuFileFragmentRefresh -> {
+
+            }
+            R.id.menuFileFragmentSearch -> {
+
+            }
+        }
+        return true
     }
 
 

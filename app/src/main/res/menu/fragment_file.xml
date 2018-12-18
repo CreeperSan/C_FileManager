@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_choose_white"
+            android:id="@+id/menuFileFragmentChoose"
+            android:title="@string/menuFileFragmentChoose"/>
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_search_white"
+            android:id="@+id/menuFileFragmentSearch"
+            android:title="@string/menuFileFragmentSearch"/>
+    <item
+            app:showAsAction="ifRoom"
+            android:icon="@drawable/ic_file_refresh_white"
+            android:id="@+id/menuFileFragmentRefresh"
+            android:title="@string/menuFileFragmentRefresh"/>
+    <item
+            app:showAsAction="ifRoom"
+            android:icon="@drawable/ic_file_new_white"
+            android:id="@+id/menuFileFragmentNew"
+            android:title="@string/menuFileFragmentNew"/>
+</menu>
