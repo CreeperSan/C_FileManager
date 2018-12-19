@@ -22,6 +22,13 @@
     <string name="dialogFileFragmentNewTitle">新建…</string>
     <string name="dialogFileFragmentNewPosText">创建</string>
     <string name="dialogFileFragmentNewNegText">取消</string>
+    <string name="dialogFileFragmentNewFile">文件</string>
+    <string name="dialogFileFragmentNewFolder">文件夹</string>
+    <string name="dialogFileFragmentNewHintFileNameEmpty">文件名称不能为空</string>
+    <string name="dialogFileFragmentNewHintFileNameExist">文件名称已经存在</string>
+    <string name="dialogFileFragmentNewHintFileNameIllegal">文件名称不合法</string>
+    <string name="dialogFileFragmentNewHintFileCreateFail">创建文件失败</string>
+    <string name="dialogFileFragmentNewHintFileCreateSuccess">创建成功</string>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>

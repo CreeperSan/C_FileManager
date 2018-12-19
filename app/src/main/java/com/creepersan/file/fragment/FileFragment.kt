@@ -9,15 +9,14 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.utils.ConfigUtil
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,20 +28,61 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     private val mFileStack by lazy { LinkedList<FileStackInfo>() }
     private val mCreateFileDialog by lazy {
         val dialogView = getView(R.layout.dialog_file_fragment_new)
+        val hintText = dialogView.findViewById<TextView>(R.id.dialogFileFragmentHintText)
         val titleEditText = dialogView.findViewById<EditText>(R.id.dialogFileFragmentNewName)
-        AlertDialog.Builder(mActivity).setView(dialogView)
+        val typeRadioGroup = dialogView.findViewById<RadioGroup>(R.id.dialogFileFragmentRadioGroup)
+        val typeFileRadioButton = dialogView.findViewById<RadioButton>(R.id.dialogFileFragmentRadioButtonFile)
+        val typeFolderRadioButton = dialogView.findViewById<RadioButton>(R.id.dialogFileFragmentRadioButtonFolder)
+
+        val dialog = AlertDialog.Builder(mActivity).setView(dialogView)
             .setTitle(R.string.dialogFileFragmentNewTitle)
             .setPositiveButton(R.string.dialogFileFragmentNewPosText) { _, _ ->
-                toast(titleEditText.text.toString())
+                val fileName = titleEditText.text.toString()
+                // 防止文件名称重复
+                if (fileName == ""){
+                    hintText.visibility = View.VISIBLE
+                    hintText.setText(R.string.dialogFileFragmentNewHintFileNameEmpty)
+                    toast(getString(R.string.dialogFileFragmentNewHintFileNameEmpty))
+                    return@setPositiveButton
+                }
+                // 防止文件名称已经存在
+                mFileStack.last.mFileList.forEach {  tmpFileItem ->
+                    if (tmpFileItem.name == fileName){
+                        hintText.visibility = View.VISIBLE
+                        hintText.setText(R.string.dialogFileFragmentNewHintFileNameExist)
+                        toast(getString(R.string.dialogFileFragmentNewHintFileNameExist))
+                        return@setPositiveButton
+                    }
+                }
+                // 判断创建的是文件还是文件夹
+                val prefix = mFileStack.last.mPath
+                val tmpFile = File("$prefix/$fileName")
+                try {
+                    when(typeRadioGroup.checkedRadioButtonId){
+                        typeFileRadioButton.id -> {
+                            tmpFile.createNewFile()
+                        }
+                        typeFolderRadioButton.id -> {
+                            tmpFile.mkdir()
+                        }
+                    }
+                }catch (e:IOException){
+                    toast(getString(R.string.dialogFileFragmentNewHintFileNameIllegal))
+                }
+                toast(getString(R.string.dialogFileFragmentNewHintFileCreateSuccess))
             }
             .setNegativeButton(R.string.dialogFileFragmentNewNegText, null)
             .create()
+        dialog.setOnShowListener {
+            hintText.visibility = View.GONE
+            titleEditText.setText("")
+            typeRadioGroup.check(typeFileRadioButton.id)
+        }
+        dialog
     }
 
-
-
     private var mTmpFileRecyclerViewScrollPos = 0
-
+    private var isMultiChoising = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -108,10 +148,19 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mCreateFileDialog.show()
             }
             R.id.menuFileFragmentChoose -> {
-
+                if (!isMultiChoising){
+                    isMultiChoising = true
+                    mFileAdapter.notifyDataSetChanged()
+                }
             }
             R.id.menuFileFragmentRefresh -> {
+                isMultiChoising = false
 
+                val tmpPath = mFileStack.last.mPath
+                mFileStack.removeLast()
+                mFileStack.addLast(FileStackInfo.fromPath(tmpPath))
+                mFileAdapter.notifyDataSetChanged()
+                mPathAdapter.notifyDataSetChanged()
             }
             R.id.menuFileFragmentSearch -> {
 
