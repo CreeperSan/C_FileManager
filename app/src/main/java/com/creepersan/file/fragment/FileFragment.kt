@@ -14,6 +14,7 @@ import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.utils.ConfigUtil
+import com.creepersan.file.view.DialogBuilder
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
 import java.io.IOException
@@ -163,7 +164,7 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mPathAdapter.notifyDataSetChanged()
             }
             R.id.menuFileFragmentSearch -> {
-
+                DialogBuilder().create(mActivity).show()
             }
         }
         return true
