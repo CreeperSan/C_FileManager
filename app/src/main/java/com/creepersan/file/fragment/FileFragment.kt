@@ -14,7 +14,7 @@ import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.utils.ConfigUtil
-import com.creepersan.file.view.DialogBuilder
+import com.creepersan.file.view.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
 import java.io.IOException
@@ -81,9 +81,25 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         }
         dialog
     }
+    private val mFileMoreDialog by lazy {
+        SimpleDialog(context!!, SimpleDialog.DIRECTION_BOTTOM, SimpleDialog.TYPE_LIST)
+            .setItems(arrayListOf(
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopyAdd), R.drawable.ic_file_copy),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete)
+            ),object : SimpleDialog.OnDialogListItemClickListener{
+                override fun onItemClick(dialog: SimpleDialog, item: SimpleDialog.DialogListItem, pos: Int) {
+                    toast(item.title)
+                    dialog.dismiss()
+                }
+            })
+    }
 
     private var mTmpFileRecyclerViewScrollPos = 0
-    private var isMultiChoising = false
+    private var isMultiChosing = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -149,13 +165,13 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mCreateFileDialog.show()
             }
             R.id.menuFileFragmentChoose -> {
-                if (!isMultiChoising){
-                    isMultiChoising = true
+                if (!isMultiChosing){
+                    isMultiChosing = true
                     mFileAdapter.notifyDataSetChanged()
                 }
             }
             R.id.menuFileFragmentRefresh -> {
-                isMultiChoising = false
+                isMultiChosing = false
 
                 val tmpPath = mFileStack.last.mPath
                 mFileStack.removeLast()
@@ -164,7 +180,33 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mPathAdapter.notifyDataSetChanged()
             }
             R.id.menuFileFragmentSearch -> {
-                DialogBuilder().create(mActivity).show()
+                SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER,SimpleDialog.TYPE_MESSAGE)
+                    .setTitle("操作文件")
+                    .setPosButton("好的", object : SimpleDialog.OnDialogButtonClickListener {
+                        override fun onButtonClick(dialog: SimpleDialog) {
+                            toast("好的")
+                            dialog.dismiss()
+                        }
+                    })
+                    .setNegButton("不好", object : SimpleDialog.OnDialogButtonClickListener {
+                        override fun onButtonClick(dialog: SimpleDialog) {
+                            toast("不好")
+                        }
+                    })
+//                    .setItems(arrayListOf(
+//                        SimpleDialog.DialogListItem("编辑", R.drawable.ic_file_selected),
+//                        SimpleDialog.DialogListItem("剪切", R.drawable.ic_file_selected),
+//                        SimpleDialog.DialogListItem("复制", R.drawable.ic_file_selected),
+//                        SimpleDialog.DialogListItem("添加到复制", R.drawable.ic_file_selected),
+//                        SimpleDialog.DialogListItem("删除", R.drawable.ic_file_selected),
+//                        SimpleDialog.DialogListItem("关于", R.drawable.ic_file_selected)
+//                    ), object : SimpleDialog.OnDialogListItemClickListener {
+//                        override fun onItemClick(item: SimpleDialog.DialogListItem, pos: Int) {
+//                            toast(item.title)
+//                        }
+//                    })
+                    .setMessage("这还是一条点单的消息")
+                    .show()
             }
         }
         return true
@@ -179,11 +221,9 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): FileHolder {
             return FileHolder(p0)
         }
-
         override fun getItemCount(): Int {
             return mFileStack.last.mFileList.size
         }
-
         override fun onBindViewHolder(holder: FileHolder, p1: Int) {
             val item = mFileStack.last.mFileList[p1]
             val layoutManager = fragmentFileFileRecyclerView.layoutManager
@@ -193,6 +233,11 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             holder.more.setImageResource(R.drawable.ic_file_more)
             holder.contentExtra.text = item.modifyTime
             holder.content.text = item.size
+
+            holder.more.setOnClickListener {
+                mFileMoreDialog.setTitle(item.name)
+                mFileMoreDialog.show()
+            }
 
             holder.itemView.setOnClickListener{
                 if(item.isFolder){
