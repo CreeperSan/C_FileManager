@@ -3,11 +3,13 @@
 
     <string name="bootTitle">文件</string>
 
+    
     <string name="baseAlertPermissionDeniedTitle">请赋予我们权限</string>
     <string name="baseAlertPermissionDeniedMessage">我们需要读取您设备的本地存储的权限来运作，请赋予我们权限</string>
     <string name="baseAlertPositiveButtonText">好的</string>
     <string name="baseAlertNegativeButtonText">取消</string>
 
+    
     <string name="fileFragmentItemCount">%d 项</string>
     <string name="fileFragmentItemCounts">%d 项</string>
     <string name="fileFragmentItemSizeB">%s B</string>
@@ -32,9 +34,30 @@
     <string name="dialogFileFragmentFileOperationOpen">打开</string>
     <string name="dialogFileFragmentFileOperationCut">剪切</string>
     <string name="dialogFileFragmentFileOperationCopy">复制</string>
-    <string name="dialogFileFragmentFileOperationCopyAdd">添加到复制</string>
+    <string name="dialogFileFragmentFileOperationOperationListAppend">添加到操作列表</string>
     <string name="dialogFileFragmentFileOperationInfo">关于</string>
     <string name="dialogFileFragmentFileOperationDelete">删除</string>
+    <string name="dialogFileFragmentFileDeleteFileTitle">删除文件</string>
+    <string name="dialogFileFragmentFileDeleteFolderTitle">删除文件夹</string>
+    <string name="dialogFileFragmentFileDeleteConfirmMessage">您确定要删除 %s 吗？此操作不可逆！</string>
+    <string name="dialogFileFragmentFilesDeleteConfirmMessage">您确定要删除这些文件吗？此操作不可逆！</string>
+    <string name="toastFileFragmentFileNotExist">文件不存在</string>
+    <string name="toastFileFragmentFileDeleteSuccess">删除成功</string>
+    <string name="toastFileFragmentFileDeleteFail">删除失败</string>
+    <string name="toastFileFragmentFileNoFileSelected">还没有选择文件</string>
+    <string name="toastFileFragmentDeleteSuccessFileMissed">删除文件成功，有部分文件已经不存在</string>
+    <string name="toastFileFragmentDeleteSuccessFileExist">删除成功</string>
+    <string name="toastFileFragmentDeletePartlySuccessFileMissed">删除部分文件成功，有部分文件已经不存在或可能正在占用</string>
+    <string name="toastFileFragmentDeletePartlySuccessFileExist">删除部分文件成功，有部分文件可能正在占用</string>
+    <string name="toastFileFragmentDeleteFailSuccessFileMissed">删除文件失败，有部分文件已经不存在</string>
+    <string name="toastFileFragmentDeleteFailSuccessFileExist">删除文件失败，有部分文件可能正在占用</string>
+    
+    
+    <string name="textMainEndDrawerTitleText">文件剪切板</string>
+    <string name="textMainEndDrawerOperationAllMoveTo">全部移动到</string>
+    <string name="textMainEndDrawerOperationAllPasteTo">全部粘贴到</string>
+    <string name="textMainEndDrawerOperationAllDelete">全部删除</string>
+    <string name="textMainEndDrawerOperationAllClear">全部清除</string>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>

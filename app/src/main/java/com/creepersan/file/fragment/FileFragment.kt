@@ -23,6 +23,15 @@ import kotlin.collections.ArrayList
 
 class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
 
+    companion object {
+        private const val ID_MORE_ACTION_OPEN = 0
+        private const val ID_MORE_ACTION_CUT = 1
+        private const val ID_MORE_ACTION_COPY = 2
+        private const val ID_MORE_ACTION_APPEND_OPERATION_LIST = 3
+        private const val ID_MORE_ACTION_ABOUT = 4
+        private const val ID_MORE_ACTION_DELETE = 5
+    }
+
     override val mLayoutID: Int = R.layout.fragment_file
     private val mFileAdapter by lazy { FileAdapter() }
     private val mPathAdapter by lazy { PathAdapter() }
@@ -81,25 +90,51 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         }
         dialog
     }
+    private var mFileMoreDialogTmpFilePathArrayList = ArrayList<String>() // 更多对话框弹出时选择的文件
     private val mFileMoreDialog by lazy {
-        SimpleDialog(context!!, SimpleDialog.DIRECTION_BOTTOM, SimpleDialog.TYPE_LIST)
+        val dialog = SimpleDialog(context!!, SimpleDialog.DIRECTION_BOTTOM, SimpleDialog.TYPE_LIST)
             .setItems(arrayListOf(
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopyAdd), R.drawable.ic_file_copy),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete)
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open, ID_MORE_ACTION_OPEN),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOperationListAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_APPEND_OPERATION_LIST),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_ABOUT),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
             ),object : SimpleDialog.OnDialogListItemClickListener{
                 override fun onItemClick(dialog: SimpleDialog, item: SimpleDialog.DialogListItem, pos: Int) {
                     toast(item.title)
+                    when(item.id){
+                        ID_MORE_ACTION_OPEN -> {
+
+                        }
+                        ID_MORE_ACTION_CUT -> {
+                            cutFile()
+                        }
+                        ID_MORE_ACTION_COPY -> {
+
+                        }
+                        ID_MORE_ACTION_APPEND_OPERATION_LIST -> {
+
+                        }
+                        ID_MORE_ACTION_ABOUT -> {
+
+                        }
+                        ID_MORE_ACTION_DELETE -> {
+                            deleteFile()
+                            refreshFileRecyclerView()
+                        }
+                    }
                     dialog.dismiss()
                 }
             })
+        dialog
+    }
+    private val mMessageDialog by lazy {
+        SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_MESSAGE)
     }
 
     private var mTmpFileRecyclerViewScrollPos = 0
-    private var isMultiChosing = false
+    private var isMultiChoosing = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -129,10 +164,12 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     /**
      *  操作统一入口
      */
+    // 用于文件目录堆栈返回是刷新用的，已经是2个不同的文件夹
     fun updatePathRecyclerView(){
         mPathAdapter.notifyDataSetChanged()
         fragmentFilePathRecyclerView.scrollToPosition(mFileStack.size-1)
     }
+    // 用于文件目录堆栈返回是刷新用的，已经是2个不同的文件夹
     fun updateFileRecyclerView(){
         mFileAdapter.notifyDataSetChanged()
 
@@ -145,6 +182,114 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         }
 
     }
+    // 用于当前所在的文件发生变化用的，还是同一个文件夹
+    fun refreshFileRecyclerView(){
+        isMultiChoosing = false
+
+        val tmpPath = mFileStack.last.mPath
+        mFileStack.removeLast()
+        mFileStack.addLast(FileStackInfo.fromPath(tmpPath))
+        mFileAdapter.notifyDataSetChanged()
+        mPathAdapter.notifyDataSetChanged()
+    }
+    // 打开文件
+    fun openFile(){
+
+    }
+    fun deleteFile(){
+        // 防止操作的文件为空
+        if (mFileMoreDialogTmpFilePathArrayList.size == 0){
+            toast(getString(R.string.toastFileFragmentFileNoFileSelected))
+            return
+        }
+        // 整理对话框提示消息
+        if (mFileMoreDialogTmpFilePathArrayList.size == 1){
+            val tmpFile = File(mFileMoreDialogTmpFilePathArrayList[0])
+            if (tmpFile.isDirectory){
+                mMessageDialog.setTitle(getString(R.string.dialogFileFragmentFileDeleteFolderTitle))
+            }else{
+                mMessageDialog.setTitle(getString(R.string.dialogFileFragmentFileDeleteFileTitle))
+            }
+            mMessageDialog.setMessage(String.format(getString(R.string.dialogFileFragmentFileDeleteConfirmMessage), tmpFile.name))
+        }else{
+            mMessageDialog.setMessage(getString(R.string.dialogFileFragmentFilesDeleteConfirmMessage))
+        }
+        // 设置点击的按钮事件
+        mMessageDialog.setPosButton(getString(R.string.baseAlertPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+            override fun onButtonClick(dialog: SimpleDialog) {
+                // 检查里面是否存在不存在的文件
+                val fileList = ArrayList<File>()
+                var isHasFileMissed = false
+                var isHasFileExist = false
+                mFileMoreDialogTmpFilePathArrayList.forEach {
+                    val tmpFile = File(it)
+                    if (tmpFile.exists()){
+                        fileList.add(tmpFile)
+                        isHasFileExist = true
+                    }else{
+                        isHasFileMissed = true
+                    }
+                }
+                if (!isHasFileExist){
+                    toast(getString(R.string.toastFileFragmentFileNotExist))
+                    return
+                }
+                // 删除文件
+                var isAllDeleteSuccess = true
+                var isAllFail = true
+                fileList.forEach { tmpFile ->
+                    if (tmpFile.delete()){ // 删除失败
+                        isAllFail = false
+                    }else{ // 删除成功
+                        isAllDeleteSuccess = false
+                    }
+                }
+                // 弹出提示
+                if (isAllFail){ // 删除文件全都失败
+                    if (isHasFileMissed){ // 有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeleteFailSuccessFileMissed))
+                    }else{ // 没有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeleteFailSuccessFileExist))
+                    }
+                }else if (isAllDeleteSuccess){ // 删除文件部分失败
+                    if (isHasFileMissed){ // 有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeleteSuccessFileMissed))
+                    }else{ // 没有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeleteSuccessFileExist))
+                    }
+                }else{ // 删除文件全部成功
+                    if (isHasFileMissed){ // 有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeletePartlySuccessFileMissed))
+                    }else{ // 没有文件丢失
+                        toast(getString(R.string.toastFileFragmentDeletePartlySuccessFileExist))
+                    }
+                }
+                // 隐藏对话框
+                dialog.dismiss()
+            }
+        })
+        mMessageDialog.setNegButton(getString(R.string.baseAlertNegativeButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+            override fun onButtonClick(dialog: SimpleDialog) {
+                dialog.dismiss()
+            }
+        })
+        // 显示对话框
+        mMessageDialog.show()
+    }
+    fun infoFile(){
+
+    }
+    fun copyFile(){
+
+    }
+    fun copyAppendFile(){
+
+    }
+    fun cutFile(){
+
+    }
+
+
 
     /**
      *  事件回调
@@ -165,19 +310,13 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mCreateFileDialog.show()
             }
             R.id.menuFileFragmentChoose -> {
-                if (!isMultiChosing){
-                    isMultiChosing = true
+                if (!isMultiChoosing){
+                    isMultiChoosing = true
                     mFileAdapter.notifyDataSetChanged()
                 }
             }
             R.id.menuFileFragmentRefresh -> {
-                isMultiChosing = false
-
-                val tmpPath = mFileStack.last.mPath
-                mFileStack.removeLast()
-                mFileStack.addLast(FileStackInfo.fromPath(tmpPath))
-                mFileAdapter.notifyDataSetChanged()
-                mPathAdapter.notifyDataSetChanged()
+                refreshFileRecyclerView()
             }
             R.id.menuFileFragmentSearch -> {
                 SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER,SimpleDialog.TYPE_MESSAGE)
@@ -235,6 +374,10 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             holder.content.text = item.size
 
             holder.more.setOnClickListener {
+                // 添加文件
+                mFileMoreDialogTmpFilePathArrayList.clear()
+                mFileMoreDialogTmpFilePathArrayList.add(item.path)
+                // 设置并弹出对话框
                 mFileMoreDialog.setTitle(item.name)
                 mFileMoreDialog.show()
             }

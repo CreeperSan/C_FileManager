@@ -127,13 +127,16 @@ class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type:Int=
             view.visibility = View.INVISIBLE
         }else{
             view.text = name
+            view.isClickable = true
+            view.isFocusable = true
+            view.visibility = View.VISIBLE
             view.setOnClickListener{
                 listener.onButtonClick(this)
             }
         }
     }
 
-    class DialogListItem(var title:String,var icon:Int=0,var description:String="")
+    class DialogListItem(var title:String,var icon:Int=0, var id:Int=0,var description:String="")
     class TypeUnmatchException:RuntimeException()
     class DialogListAdapter(val dialog:SimpleDialog,var items:ArrayList<DialogListItem>, var listener:OnDialogListItemClickListener) : RecyclerView.Adapter<DialogListItemViewHolder>(){
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DialogListItemViewHolder {

@@ -2,15 +2,44 @@
 <android.support.v4.widget.DrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools">
 
 
     <FrameLayout
             android:id="@+id/mainFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
     </FrameLayout>
+
+    <LinearLayout
+            android:id="@+id/mainEndDrawerLayout"
+            android:background="@color/white"
+            android:layout_gravity="end"
+            android:orientation="vertical"
+            android:minWidth="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+        <TextView
+                android:id="@+id/mainEndDrawerTitle"
+                android:textColor="@color/black"
+                android:padding="6dp"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:text="@string/textMainEndDrawerTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/mainEndDrawerFileRecyclerView"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"/>
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/mainEndDrawerOperationDrawerView"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 
 </android.support.v4.widget.DrawerLayout>
