@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:clickable="true"
+              android:focusable="true"
+              android:background="?attr/selectableItemBackground"
+              android:orientation="horizontal"
+              android:gravity="center"
+              android:padding="8dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <ImageView
+            android:src="@drawable/ic_file_delete"
+            android:id="@+id/itemMainStartDrawerItemTypeIcon"
+            android:layout_width="48dp"
+            android:layout_height="28dp"/>
+
+    <TextView
+            android:textSize="15sp"
+            tools:text="收藏"
+            android:layout_margin="8dp"
+            android:textColor="@color/black"
+            android:layout_weight="1"
+            android:id="@+id/itemMainStartDrawerItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    <CheckBox
+            android:id="@+id/itemMainStartDrawerItemCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</LinearLayout>

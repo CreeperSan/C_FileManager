@@ -1,6 +1,7 @@
 package com.creepersan.file.fragment
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,7 +14,7 @@ import android.widget.*
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
-import com.creepersan.file.utils.ConfigUtil
+import com.creepersan.file.utils.*
 import com.creepersan.file.view.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_file.*
 import java.io.File
@@ -28,7 +29,7 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         private const val ID_MORE_ACTION_CUT = 1
         private const val ID_MORE_ACTION_COPY = 2
         private const val ID_MORE_ACTION_APPEND_OPERATION_LIST = 3
-        private const val ID_MORE_ACTION_ABOUT = 4
+        private const val ID_MORE_ACTION_INFO = 4
         private const val ID_MORE_ACTION_DELETE = 5
     }
 
@@ -98,7 +99,7 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOperationListAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_APPEND_OPERATION_LIST),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_ABOUT),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_INFO),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
             ),object : SimpleDialog.OnDialogListItemClickListener{
                 override fun onItemClick(dialog: SimpleDialog, item: SimpleDialog.DialogListItem, pos: Int) {
@@ -116,8 +117,8 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                         ID_MORE_ACTION_APPEND_OPERATION_LIST -> {
 
                         }
-                        ID_MORE_ACTION_ABOUT -> {
-
+                        ID_MORE_ACTION_INFO -> {
+                            infoFile()
                         }
                         ID_MORE_ACTION_DELETE -> {
                             deleteFile()
@@ -131,6 +132,56 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     }
     private val mMessageDialog by lazy {
         SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_MESSAGE)
+    }
+    private val mInfoDialog by lazy {
+        val dialog = object : SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_CUSTOM_VIEW){
+            lateinit var textFileName : TextView
+            lateinit var imageFileIcon : ImageView
+            lateinit var textFileType : TextView
+            lateinit var textFilePath : TextView
+            lateinit var textFileSize : TextView
+            lateinit var textModifyTime : TextView
+            lateinit var textReadable : TextView
+            lateinit var textWritable : TextView
+            lateinit var textExecutable : TextView
+            lateinit var textHidden : TextView
+
+            override fun initCustomView(customView: View) {
+                textFileName = customView.findViewById(R.id.dialogBaseFileInfoTitle)
+                imageFileIcon = customView.findViewById(R.id.dialogBaseFileInfoIcon)
+                textFileType = customView.findViewById(R.id.dialogBaseFileInfoFileType)
+                textFilePath = customView.findViewById(R.id.dialogBaseFileInfoFilePath)
+                textFileSize = customView.findViewById(R.id.dialogBaseFileInfoFileSize)
+                textModifyTime = customView.findViewById(R.id.dialogBaseFileInfoModifyTime)
+                textReadable = customView.findViewById(R.id.dialogBaseFileInfoReadable)
+                textWritable = customView.findViewById(R.id.dialogBaseFileInfoWritable)
+                textExecutable = customView.findViewById(R.id.dialogBaseFileInfoExecutable)
+                textHidden = customView.findViewById(R.id.dialogBaseFileInfoHidden)
+            }
+
+            fun setFile(file:File){
+                textFileName.text = file.name
+                imageFileIcon.setImageResource(file.getTypeIconID())
+                textFileType.text = file.getTypeName(context)
+                textFilePath.text = file.path
+                textFileSize.text = String.format(getString(R.string.dialogFileFragmentInfoFileSize), file.getFileSize(context), file.getFileSizeByte(context))
+                textModifyTime.text = file.getFileModifyTimeString()
+                textReadable.text = file.isReadableString(context)
+                textWritable.text = file.isWritableString(context)
+                textExecutable.text = file.isExecutableString(context)
+                textHidden.text = file.isHiddenString(context)
+            }
+
+
+        }
+        dialog.setCustomView(layoutInflater.inflate(R.layout.dialog_base_custom_view_file_info, dialog.viewCustomViewGroup, false))
+            .setTitle(getString(R.string.dialogFileFragmentFileOperationInfo))
+            .setPosButton(getString(R.string.baseAlertPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+                override fun onButtonClick(dialog: SimpleDialog) {
+                dialog.dismiss()
+                }
+            })
+        dialog
     }
 
     private var mTmpFileRecyclerViewScrollPos = 0
@@ -147,6 +198,7 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     private fun initToolbar(){
         fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file)
         fragmentFileActionBarToolbar.setOnMenuItemClickListener(this)
+        stopMultiChoosing()
     }
     private fun initStack(){
         mFileStack.push(FileStackInfo.fromExternalStorage())
@@ -277,7 +329,17 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         mMessageDialog.show()
     }
     fun infoFile(){
-
+        if (mFileMoreDialogTmpFilePathArrayList.size < 1){
+            toast(getString(R.string.toastFileFragmentFileNoFileSelected))
+            return
+        }
+        val file = File(mFileMoreDialogTmpFilePathArrayList[0])
+        if (!file.exists()){
+            toast(getString(R.string.toastFileFragmentFileNotExist))
+            return
+        }
+        mInfoDialog.setFile(file)
+        mInfoDialog.show()
     }
     fun copyFile(){
 
@@ -288,6 +350,40 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     fun cutFile(){
 
     }
+    // 状态改变
+    fun startMultiChoosing(){
+        // 改变标志位
+        isMultiChoosing = true
+        // 改变菜单
+        fragmentFileActionBarToolbar.menu.clear()
+        fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file_choosing)
+        // 设置返回按钮以及标题
+        fragmentFileActionBarToolbar.title = "0/25"
+        fragmentFileActionBarToolbar.setNavigationIcon(R.drawable.ic_file_right_arrow_white)
+        fragmentFileActionBarToolbar.setNavigationOnClickListener {
+            stopMultiChoosing()
+        }
+        // 清楚标志
+        mFileMoreDialogTmpFilePathArrayList.clear()
+    }
+    fun stopMultiChoosing(){
+        // 改变标志位
+        isMultiChoosing = false
+        // 改变菜单
+        fragmentFileActionBarToolbar.menu.clear()
+        fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file)
+        // 设置返回按钮以及标题
+        fragmentFileActionBarToolbar.title = "文件"
+        fragmentFileActionBarToolbar.navigationIcon = null
+        // 刷新文件
+        mFileAdapter.notifyDataSetChanged()
+        // 清楚标志
+        mFileMoreDialogTmpFilePathArrayList.clear()
+    }
+    fun refreshToolbarChoosingTitle(){
+        fragmentFileActionBarToolbar.title = "${mFileMoreDialogTmpFilePathArrayList.size}/${mFileStack.last.mFileList.size}"
+    }
+    //
 
 
 
@@ -295,24 +391,31 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
      *  事件回调
      */
     fun onBackPressed():Boolean{
-        return if (mFileStack.size > 1){
-            mFileStack.removeLast()
-            updatePathRecyclerView()
-            updateFileRecyclerView()
-            true
-        }else{
-            false
+        return when {
+            isMultiChoosing -> {
+                stopMultiChoosing()
+                true
+            }
+            mFileStack.size > 1 -> {
+                mFileStack.removeLast()
+                updatePathRecyclerView()
+                updateFileRecyclerView()
+                true
+            }
+            else -> false
         }
     }
     override fun onMenuItemClick(p0: MenuItem?): Boolean {
         when(p0?.itemId){
+            // 以下是在平常状态下
             R.id.menuFileFragmentNew -> {
                 mCreateFileDialog.show()
             }
             R.id.menuFileFragmentChoose -> {
-                if (!isMultiChoosing){
-                    isMultiChoosing = true
-                    mFileAdapter.notifyDataSetChanged()
+                if(isMultiChoosing){
+                   startMultiChoosing()
+                }else{
+                    stopMultiChoosing()
                 }
             }
             R.id.menuFileFragmentRefresh -> {
@@ -347,6 +450,22 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                     .setMessage("这还是一条点单的消息")
                     .show()
             }
+            // 以下是在选择文件状态下
+            R.id.menuFileFragmentSelectAll -> {
+
+            }
+            R.id.menuFileFragmentCopy -> {
+
+            }
+            R.id.menuFileFragmentCut -> {
+
+            }
+            R.id.menuFileFragmentDelete -> {
+
+            }
+            R.id.menuFileFragmentRename -> {
+
+            }
         }
         return true
     }
@@ -357,14 +476,25 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
      */
 
     inner class FileAdapter : RecyclerView.Adapter<FileHolder>(){
+        private fun chooseFile(path:String, pos: Int){
+            if (mFileMoreDialogTmpFilePathArrayList.contains(path)){
+                mFileMoreDialogTmpFilePathArrayList.remove(path)
+            }else{
+                mFileMoreDialogTmpFilePathArrayList.add(path)
+            }
+            notifyItemChanged(pos)
+            refreshToolbarChoosingTitle()
+
+        }
+
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): FileHolder {
             return FileHolder(p0)
         }
         override fun getItemCount(): Int {
             return mFileStack.last.mFileList.size
         }
-        override fun onBindViewHolder(holder: FileHolder, p1: Int) {
-            val item = mFileStack.last.mFileList[p1]
+        override fun onBindViewHolder(holder: FileHolder, pos: Int) {
+            val item = mFileStack.last.mFileList[pos]
             val layoutManager = fragmentFileFileRecyclerView.layoutManager
 
             holder.icon.setImageResource(item.icon)
@@ -372,6 +502,8 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             holder.more.setImageResource(R.drawable.ic_file_more)
             holder.contentExtra.text = item.modifyTime
             holder.content.text = item.size
+
+            holder.setChoose(isMultiChoosing && mFileMoreDialogTmpFilePathArrayList.contains(item.path)) // TODO : 这里可以优化
 
             holder.more.setOnClickListener {
                 // 添加文件
@@ -383,26 +515,30 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             }
 
             holder.itemView.setOnClickListener{
-                if(item.isFolder){
-                    // 记录滚动距离
-                    when(layoutManager){
-                        is LinearLayoutManager -> {
-                            mTmpFileRecyclerViewScrollPos = layoutManager.findFirstVisibleItemPosition()
+                if (isMultiChoosing){ // 正在多选
+                    chooseFile(item.path, pos)
+                }else{ // 没在多选
+                    if(item.isFolder){
+                        // 记录滚动距离
+                        when(layoutManager){
+                            is LinearLayoutManager -> {
+                                mTmpFileRecyclerViewScrollPos = layoutManager.findFirstVisibleItemPosition()
+                            }
                         }
+                        mFileStack.last.mScrollYAxisPosition = mTmpFileRecyclerViewScrollPos
+                        mTmpFileRecyclerViewScrollPos = 0
+                        // 添加新的文件栈
+                        mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
+                    }else{
+                        toast(item.size.toString())
                     }
-                    mFileStack.last.mScrollYAxisPosition = mTmpFileRecyclerViewScrollPos
-                    mTmpFileRecyclerViewScrollPos = 0
-                    // 添加新的文件栈
-                    mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
-                }else{
-                    toast(item.size.toString())
+                    updatePathRecyclerView()
+                    updateFileRecyclerView()
                 }
-
-                updatePathRecyclerView()
-                updateFileRecyclerView()
             }
             holder.itemView.setOnLongClickListener{
-                toast(getString(R.string.debugProcessing))
+                startMultiChoosing()
+                chooseFile(item.path, pos)
                 true
             }
         }
@@ -413,6 +549,16 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         val title = itemView.findViewById<TextView>(R.id.itemFileFileTitle)
         val content = itemView.findViewById<TextView>(R.id.itemFileFileContent)
         val contentExtra = itemView.findViewById<TextView>(R.id.itemFileFileContentExtra)
+
+        private val DEFAULT_COLOR = Color.WHITE
+
+        fun setChoose(state:Boolean){
+            itemView.setBackgroundColor(if (state){
+                context?.getColor(R.color.lightgray) ?: DEFAULT_COLOR
+            }else{
+                context?.getColor(R.color.white) ?: DEFAULT_COLOR
+            })
+        }
     }
     inner class PathAdapter : RecyclerView.Adapter<PathHolder>(){
         override fun onCreateViewHolder(p0: ViewGroup, p1: Int): PathHolder {

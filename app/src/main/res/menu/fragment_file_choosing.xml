@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_select_all_white"
+            android:id="@+id/menuFileFragmentSelectAll"
+            android:title="@string/menuFileFragmentSelectAll"/>
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_copy_white"
+            android:id="@+id/menuFileFragmentCopy"
+            android:title="@string/menuFileFragmentCopy"/>
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_cut_white"
+            android:id="@+id/menuFileFragmentCut"
+            android:title="@string/menuFileFragmentCut"/>
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_delete_white"
+            android:id="@+id/menuFileFragmentDelete"
+            android:title="@string/menuFileFragmentDelete"/>
+    <item
+            app:showAsAction="always"
+            android:icon="@drawable/ic_file_rename_white"
+            android:id="@+id/menuFileFragmentRename"
+            android:title="@string/menuFileFragmentRename"/>
+</menu>

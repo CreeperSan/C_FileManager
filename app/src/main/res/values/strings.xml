@@ -21,6 +21,11 @@
     <string name="menuFileFragmentChoose">选择</string>
     <string name="menuFileFragmentSearch">搜索</string>
     <string name="menuFileFragmentRefresh">刷新</string>
+    <string name="menuFileFragmentCopy">复制</string>
+    <string name="menuFileFragmentCut">剪切</string>
+    <string name="menuFileFragmentDelete">删除</string>
+    <string name="menuFileFragmentSelectAll">全选</string>
+    <string name="menuFileFragmentRename">重命名</string>
     <string name="dialogFileFragmentNewTitle">新建…</string>
     <string name="dialogFileFragmentNewPosText">创建</string>
     <string name="dialogFileFragmentNewNegText">取消</string>
@@ -41,6 +46,15 @@
     <string name="dialogFileFragmentFileDeleteFolderTitle">删除文件夹</string>
     <string name="dialogFileFragmentFileDeleteConfirmMessage">您确定要删除 %s 吗？此操作不可逆！</string>
     <string name="dialogFileFragmentFilesDeleteConfirmMessage">您确定要删除这些文件吗？此操作不可逆！</string>
+    <string name="dialogFileFragmentInfoFileSize">%s ( %s )</string>
+    <string name="dialogFileFragmentInfoFileTopicType">类型</string>
+    <string name="dialogFileFragmentInfoFileTopicPath">路径</string>
+    <string name="dialogFileFragmentInfoFileTopicSize">大小</string>
+    <string name="dialogFileFragmentInfoFileTopicModifyTime">修改时间</string>
+    <string name="dialogFileFragmentInfoFileTopicReadable">可读</string>
+    <string name="dialogFileFragmentInfoFileTopicWritable">可写</string>
+    <string name="dialogFileFragmentInfoFileTopicExecutable">可执行</string>
+    <string name="dialogFileFragmentInfoFileTopicHidden">隐藏</string>
     <string name="toastFileFragmentFileNotExist">文件不存在</string>
     <string name="toastFileFragmentFileDeleteSuccess">删除成功</string>
     <string name="toastFileFragmentFileDeleteFail">删除失败</string>
@@ -52,12 +66,18 @@
     <string name="toastFileFragmentDeleteFailSuccessFileMissed">删除文件失败，有部分文件已经不存在</string>
     <string name="toastFileFragmentDeleteFailSuccessFileExist">删除文件失败，有部分文件可能正在占用</string>
     
-    
     <string name="textMainEndDrawerTitleText">文件剪切板</string>
     <string name="textMainEndDrawerOperationAllMoveTo">全部移动到</string>
     <string name="textMainEndDrawerOperationAllPasteTo">全部粘贴到</string>
     <string name="textMainEndDrawerOperationAllDelete">全部删除</string>
     <string name="textMainEndDrawerOperationAllClear">全部清除</string>
+
+    <string name="fileTypeFile">文件</string>
+    <string name="fileTypeFolder">文件夹</string>
+
+    <string name="booleanTrue">是</string>
+    <string name="booleanFalse">否</string>
+
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>

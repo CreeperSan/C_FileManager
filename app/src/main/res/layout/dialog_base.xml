@@ -13,6 +13,7 @@
 
     <!-- 自定义View -->
     <ViewStub
+            android:layout="@layout/dialog_base_custom_view"
             android:id="@+id/dialogBaseCustomView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
