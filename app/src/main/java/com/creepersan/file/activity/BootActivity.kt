@@ -44,10 +44,10 @@ class BootActivity : BaseActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.baseAlertPermissionDeniedTitle)
             .setMessage(R.string.baseAlertPermissionDeniedMessage)
-            .setPositiveButton(R.string.baseAlertPositiveButtonText) { _, _ ->
+            .setPositiveButton(R.string.baseDialogPositiveButtonText) { _, _ ->
                 requireStoragePermission()
             }
-            .setNegativeButton(R.string.baseAlertNegativeButtonText) { _, _ ->
+            .setNegativeButton(R.string.baseDialogNegativeButtonText) { _, _ ->
                 getFileApplication().exit()
             }
             .show()

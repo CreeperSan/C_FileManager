@@ -2,6 +2,7 @@ package com.creepersan.file.fragment
 
 import android.app.AlertDialog
 import android.graphics.Color
+import android.media.Image
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.activity.MainActivity
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.utils.*
 import com.creepersan.file.view.SimpleDialog
@@ -22,13 +24,14 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
+class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener {
 
     companion object {
         private const val ID_MORE_ACTION_OPEN = 0
         private const val ID_MORE_ACTION_CUT = 1
         private const val ID_MORE_ACTION_COPY = 2
         private const val ID_MORE_ACTION_APPEND_OPERATION_LIST = 3
+        private const val ID_MORE_ACTION_RENAME = 6
         private const val ID_MORE_ACTION_INFO = 4
         private const val ID_MORE_ACTION_DELETE = 5
     }
@@ -99,30 +102,32 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOperationListAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_APPEND_OPERATION_LIST),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationRename), R.drawable.ic_file_rename, ID_MORE_ACTION_RENAME),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_INFO),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
             ),object : SimpleDialog.OnDialogListItemClickListener{
                 override fun onItemClick(dialog: SimpleDialog, item: SimpleDialog.DialogListItem, pos: Int) {
-                    toast(item.title)
                     when(item.id){
                         ID_MORE_ACTION_OPEN -> {
-
+                            openFile()
                         }
                         ID_MORE_ACTION_CUT -> {
                             cutFile()
                         }
                         ID_MORE_ACTION_COPY -> {
-
+                            copyFile()
                         }
                         ID_MORE_ACTION_APPEND_OPERATION_LIST -> {
 
+                        }
+                        ID_MORE_ACTION_RENAME -> {
+                            renameFile()
                         }
                         ID_MORE_ACTION_INFO -> {
                             infoFile()
                         }
                         ID_MORE_ACTION_DELETE -> {
                             deleteFile()
-                            refreshFileRecyclerView()
                         }
                     }
                     dialog.dismiss()
@@ -176,11 +181,48 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         }
         dialog.setCustomView(layoutInflater.inflate(R.layout.dialog_base_custom_view_file_info, dialog.viewCustomViewGroup, false))
             .setTitle(getString(R.string.dialogFileFragmentFileOperationInfo))
-            .setPosButton(getString(R.string.baseAlertPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+            .setPosButton(getString(R.string.baseDialogPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
                 override fun onButtonClick(dialog: SimpleDialog) {
                 dialog.dismiss()
                 }
             })
+        dialog
+    }
+    private val mRenameDialog by lazy {
+        val dialog = object : SimpleDialog(context!!, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_CUSTOM_VIEW){
+            lateinit var editTextFileName : EditText
+            lateinit var imageClear : ImageView
+
+            override fun initCustomView(customView: View) {
+                editTextFileName = customView.findViewById(R.id.dialogBaseFileRenameFileName)
+                imageClear = customView.findViewById(R.id.dialogBaseFileRenameClear)
+
+                imageClear.setOnClickListener {
+                    clearText()
+                }
+            }
+
+            fun getNewName():String{
+                return editTextFileName.text.toString().trim()
+            }
+
+            fun setName(fileName:String){
+                editTextFileName.setText(fileName)
+            }
+
+            fun clearText(){
+                editTextFileName.setText("")
+            }
+
+            override fun show() {
+                super.show()
+                if (mFileMoreDialogTmpFilePathArrayList.size > 1){
+                    clearText()
+                }
+            }
+
+        }
+        dialog.setCustomView(layoutInflater.inflate(R.layout.dialog_base_main_rename, dialog.viewCustomViewGroup, false))
         dialog
     }
 
@@ -246,7 +288,8 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
     }
     // 打开文件
     fun openFile(){
-
+        toast("打开文件 ${mFileMoreDialogTmpFilePathArrayList.toString()}")
+        mFileMoreDialogTmpFilePathArrayList.clear()
     }
     fun deleteFile(){
         // 防止操作的文件为空
@@ -264,10 +307,11 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             }
             mMessageDialog.setMessage(String.format(getString(R.string.dialogFileFragmentFileDeleteConfirmMessage), tmpFile.name))
         }else{
+            mMessageDialog.setTitle(getString(R.string.dialogFileFragmentFileDeleteFilesTitle))
             mMessageDialog.setMessage(getString(R.string.dialogFileFragmentFilesDeleteConfirmMessage))
         }
         // 设置点击的按钮事件
-        mMessageDialog.setPosButton(getString(R.string.baseAlertPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+        mMessageDialog.setPosButton(getString(R.string.baseDialogPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
             override fun onButtonClick(dialog: SimpleDialog) {
                 // 检查里面是否存在不存在的文件
                 val fileList = ArrayList<File>()
@@ -320,13 +364,18 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 dialog.dismiss()
             }
         })
-        mMessageDialog.setNegButton(getString(R.string.baseAlertNegativeButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+        mMessageDialog.setNegButton(getString(R.string.baseDialogNegativeButtonText), object : SimpleDialog.OnDialogButtonClickListener{
             override fun onButtonClick(dialog: SimpleDialog) {
                 dialog.dismiss()
             }
         })
         // 显示对话框
         mMessageDialog.show()
+        // 退出多选模式
+        mMessageDialog.setOnDismissListener {
+            stopMultiChoosing()
+            mMessageDialog.setOnDismissListener(null)
+        }
     }
     fun infoFile(){
         if (mFileMoreDialogTmpFilePathArrayList.size < 1){
@@ -342,13 +391,85 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         mInfoDialog.show()
     }
     fun copyFile(){
-
+        stopMultiChoosing()
     }
     fun copyAppendFile(){
-
+        stopMultiChoosing()
     }
     fun cutFile(){
 
+    }
+    fun renameFile(){
+        val size = mFileMoreDialogTmpFilePathArrayList.size
+        if (size <= 0){ // 没有选择文件
+            toast(getString(R.string.toastFileFragmentFileNoFileSelected))
+            return
+        }else if (size == 1){ // 选择了1个文件
+            mRenameDialog.setTitle(getString(R.string.titleDialogFileFileFragmentRenameFileText))
+            val filePath = mFileMoreDialogTmpFilePathArrayList[0]
+            if (filePath.contains("/")){
+                mRenameDialog.setName(filePath.substring(filePath.lastIndexOf("/")+1))
+            }
+        }else{ // 选择了多个文件
+            mRenameDialog.setTitle(getString(R.string.titleDialogFileFileFragmentRenameFilesText))
+        }
+        mRenameDialog
+            .setPosButton(getString(R.string.baseDialogPositiveButtonText),object : SimpleDialog.OnDialogButtonClickListener{
+                override fun onButtonClick(dialog: SimpleDialog) {
+                    val nameFile = mRenameDialog.getNewName().trim()
+                    val isMultiFile = mFileMoreDialogTmpFilePathArrayList.size > 1
+                    // 检查是否为空
+                    if(nameFile == ""){
+                        toast(getString(R.string.hintDialogFileFragmentRenameNameEmpty))
+                        return
+                    }
+                    // 检查文件名称是否存在
+                    mFileStack.last.mFileList.forEach {  item ->
+                        if (item.name.trim() == nameFile){
+                            toast(getString(R.string.hintDialogFileFileFragmentRenameFilesFileNameExist))
+                            return
+                        }
+                    }
+                    // 重命名
+                    var tmpIndex = 1
+                    mFileMoreDialogTmpFilePathArrayList.forEach {filePath ->
+                        val tmpFile = File(filePath)
+                        if (tmpFile.exists()){
+                            // 计算后缀
+                            var numStr = ""
+                            var postFix = ""
+                            if(filePath.contains(".") && mFileMoreDialogTmpFilePathArrayList.size > 1){
+                                postFix = filePath.substring(filePath.lastIndexOf("."))
+                            }
+                            // 计算索引序号
+                            if (isMultiFile){
+                                numStr = String.format("%${mFileMoreDialogTmpFilePathArrayList.size.toString().length}d", tmpIndex).replace(" ","0")
+                                tmpIndex += 1
+                            }
+                            tmpFile.renameTo(File("${tmpFile.parentFile.absolutePath}/$nameFile$numStr$postFix"))
+                        }
+                    }
+                    dialog.dismiss()
+                }
+            })
+            .setNegButton(getString(R.string.baseDialogNegativeButtonText),object : SimpleDialog.OnDialogButtonClickListener{
+                override fun onButtonClick(dialog: SimpleDialog) {
+                    dialog.dismiss()
+                }
+            })
+            .setOnDismissListener {
+                stopMultiChoosing()
+                mRenameDialog.setOnDismissListener(null)
+            }
+        mRenameDialog.show()
+    }
+    fun selectAllFile(){
+        mFileMoreDialogTmpFilePathArrayList.clear()
+        mFileStack.last.mFileList.forEach { tmpFileItem ->
+            mFileMoreDialogTmpFilePathArrayList.add(tmpFileItem.path)
+        }
+        updateFileRecyclerView()
+        refreshToolbarChoosingTitle()
     }
     // 状态改变
     fun startMultiChoosing(){
@@ -358,13 +479,16 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
         fragmentFileActionBarToolbar.menu.clear()
         fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file_choosing)
         // 设置返回按钮以及标题
-        fragmentFileActionBarToolbar.title = "0/25"
         fragmentFileActionBarToolbar.setNavigationIcon(R.drawable.ic_file_right_arrow_white)
         fragmentFileActionBarToolbar.setNavigationOnClickListener {
             stopMultiChoosing()
         }
         // 清楚标志
         mFileMoreDialogTmpFilePathArrayList.clear()
+        // 更新状态
+        updateFileRecyclerView()
+        // 更新标题
+        refreshToolbarChoosingTitle()
     }
     fun stopMultiChoosing(){
         // 改变标志位
@@ -413,9 +537,9 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             }
             R.id.menuFileFragmentChoose -> {
                 if(isMultiChoosing){
-                   startMultiChoosing()
-                }else{
                     stopMultiChoosing()
+                }else{
+                    startMultiChoosing()
                 }
             }
             R.id.menuFileFragmentRefresh -> {
@@ -452,19 +576,19 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             }
             // 以下是在选择文件状态下
             R.id.menuFileFragmentSelectAll -> {
-
+                selectAllFile()
             }
             R.id.menuFileFragmentCopy -> {
-
+                copyFile()
             }
             R.id.menuFileFragmentCut -> {
-
+                cutFile()
             }
             R.id.menuFileFragmentDelete -> {
-
+                deleteFile()
             }
             R.id.menuFileFragmentRename -> {
-
+                renameFile()
             }
         }
         return true
@@ -513,6 +637,7 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                 mFileMoreDialog.setTitle(item.name)
                 mFileMoreDialog.show()
             }
+            holder.setMoreButtonVisiable(!isMultiChoosing)
 
             holder.itemView.setOnClickListener{
                 if (isMultiChoosing){ // 正在多选
@@ -530,7 +655,9 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
                         // 添加新的文件栈
                         mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
                     }else{
-                        toast(item.size.toString())
+                        mFileMoreDialogTmpFilePathArrayList.clear()
+                        mFileMoreDialogTmpFilePathArrayList.add(item.path)
+                        openFile()
                     }
                     updatePathRecyclerView()
                     updateFileRecyclerView()
@@ -558,6 +685,15 @@ class FileFragment : BaseFragment(), Toolbar.OnMenuItemClickListener {
             }else{
                 context?.getColor(R.color.white) ?: DEFAULT_COLOR
             })
+        }
+        fun setMoreButtonVisiable(isVisable:Boolean){
+            if (isVisable){
+                more.visibility = View.VISIBLE
+                more.isEnabled = true
+            }else{
+                more.visibility = View.INVISIBLE
+                more.isEnabled = false
+            }
         }
     }
     inner class PathAdapter : RecyclerView.Adapter<PathHolder>(){

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <EditText
+            android:paddingStart="4dp"
+            android:paddingEnd="40dp"
+            tools:text="新文件"
+            android:id="@+id/dialogBaseFileRenameFileName"
+            android:hint="@string/hintDialogFileFileFragmentRenameEditText"
+            android:maxLines="3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <ImageView
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="0dp"
+            android:id="@+id/dialogBaseFileRenameClear"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:layout_gravity="end|center"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
+
+</FrameLayout>

@@ -11,7 +11,6 @@ import com.creepersan.file.R
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.fragment.FileFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import org.w3c.dom.Text
 
 class MainActivity : BaseActivity() {
     override val mLayoutID: Int = R.layout.activity_main
@@ -21,7 +20,7 @@ class MainActivity : BaseActivity() {
         EndOperationItem(R.drawable.ic_file_paste, getString(R.string.textMainEndDrawerOperationAllPasteTo)),
         EndOperationItem(R.drawable.ic_file_cut, getString(R.string.textMainEndDrawerOperationAllMoveTo)),
         EndOperationItem(R.drawable.ic_file_delete, getString(R.string.textMainEndDrawerOperationAllDelete)),
-        EndOperationItem(R.drawable.ic_file_clear, getString(R.string.textMainEndDrawerOperationAllClear))
+        EndOperationItem(R.drawable.ic_close, getString(R.string.textMainEndDrawerOperationAllClear))
         ) }
     private val mOperationAdapter by lazy { EndDrawerOperationAdapter() }
     private val mOperationList by lazy { ArrayList<FileItem>() }

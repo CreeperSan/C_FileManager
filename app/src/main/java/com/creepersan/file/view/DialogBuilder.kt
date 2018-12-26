@@ -2,6 +2,7 @@ package com.creepersan.file.view
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
