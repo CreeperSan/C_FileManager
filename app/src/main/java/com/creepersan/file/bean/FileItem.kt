@@ -4,6 +4,8 @@ import android.content.Context
 import android.support.v7.app.AlertDialog
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.utils.getFileModifyTimeShortString
+import com.creepersan.file.utils.getFileSize
 import java.io.File
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -14,7 +16,7 @@ class FileItem private constructor(){
         private var mTimeFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         private val mDecimalFormatter = DecimalFormat("#.00")
 
-        fun fromFile(file:File):FileItem{
+        fun fromFile(file:File, context: Context):FileItem{
             val item = FileItem()
             item.name = file.name
             item.path = file.path
@@ -32,19 +34,11 @@ class FileItem private constructor(){
                     item.size = String.format(app.getString(R.string.fileFragmentItemCount), itemCount)
                 }
             }else{ // 文件的
-                val itemSize = file.length()
-                when {
-                    itemSize < 1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()))
-                    itemSize < 1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024))
-                    itemSize < 1024*1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024/1024))
-                    itemSize < 1024*1024*1024*1024L -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()/1024/1024/1024))
-                    else -> item.size = String.format(app.getString(R.string.fileFragmentItemSizeB), mDecimalFormatter.format(itemSize.toDouble()))
-                }
+                item.size = file.getFileSize(context)
             }
 
             // 计算时间
-            val tmpModifyTime = file.lastModified()
-            item.modifyTime = mTimeFormatter.format(tmpModifyTime)
+            item.modifyTime = file.getFileModifyTimeShortString()
 
             // 获取图标
             if (item.isFolder){

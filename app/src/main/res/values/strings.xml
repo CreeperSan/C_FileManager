@@ -39,7 +39,6 @@
     <string name="dialogFileFragmentFileOperationOpen">打开</string>
     <string name="dialogFileFragmentFileOperationCut">剪切</string>
     <string name="dialogFileFragmentFileOperationCopy">复制</string>
-    <string name="dialogFileFragmentFileOperationOperationListAppend">添加到操作列表</string>
     <string name="dialogFileFragmentFileOperationInfo">关于</string>
     <string name="dialogFileFragmentFileOperationRename">重命名</string>
     <string name="dialogFileFragmentFileOperationDelete">删除</string>
@@ -78,6 +77,11 @@
     <string name="textMainEndDrawerOperationAllPasteTo">全部粘贴到</string>
     <string name="textMainEndDrawerOperationAllDelete">全部删除</string>
     <string name="textMainEndDrawerOperationAllClear">全部清除</string>
+    <string name="textMainEndDrawerFileOperationCopy">复制</string>
+    <string name="textMainEndDrawerFileOperationCut">剪切</string>
+    <string name="toastMainOperationFinish">操作完成</string>
+    <string name="textMainDialogTitleDeleteFiles">删除文件</string>
+    <string name="textMainDialogMessageDeleteFiles">您确定要删除剪切板中的所有文件吗？真的会删掉的哦！</string>
 
     <string name="fileTypeFile">文件</string>
     <string name="fileTypeFolder">文件夹</string>

@@ -30,7 +30,6 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         private const val ID_MORE_ACTION_OPEN = 0
         private const val ID_MORE_ACTION_CUT = 1
         private const val ID_MORE_ACTION_COPY = 2
-        private const val ID_MORE_ACTION_APPEND_OPERATION_LIST = 3
         private const val ID_MORE_ACTION_RENAME = 6
         private const val ID_MORE_ACTION_INFO = 4
         private const val ID_MORE_ACTION_DELETE = 5
@@ -99,9 +98,8 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         val dialog = SimpleDialog(context!!, SimpleDialog.DIRECTION_BOTTOM, SimpleDialog.TYPE_LIST)
             .setItems(arrayListOf(
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open, ID_MORE_ACTION_OPEN),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOperationListAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_APPEND_OPERATION_LIST),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationRename), R.drawable.ic_file_rename, ID_MORE_ACTION_RENAME),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_INFO),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
@@ -116,9 +114,6 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                         }
                         ID_MORE_ACTION_COPY -> {
                             copyFile()
-                        }
-                        ID_MORE_ACTION_APPEND_OPERATION_LIST -> {
-
                         }
                         ID_MORE_ACTION_RENAME -> {
                             renameFile()
@@ -256,6 +251,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     }
 
     /**
+     *  覆写一部分方法
+     */
+    override fun isCanPasteFileHere(): Boolean = true
+
+    /**
      *  操作统一入口
      */
     // 用于文件目录堆栈返回是刷新用的，已经是2个不同的文件夹
@@ -391,13 +391,14 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         mInfoDialog.show()
     }
     fun copyFile(){
-        stopMultiChoosing()
-    }
-    fun copyAppendFile(){
+        activity.fragmentCopyFile(mFileMoreDialogTmpFilePathArrayList)
+        mFileMoreDialogTmpFilePathArrayList.clear()
         stopMultiChoosing()
     }
     fun cutFile(){
-
+        activity.fragmentCutFile(mFileMoreDialogTmpFilePathArrayList)
+        mFileMoreDialogTmpFilePathArrayList.clear()
+        stopMultiChoosing()
     }
     fun renameFile(){
         val size = mFileMoreDialogTmpFilePathArrayList.size
@@ -507,9 +508,14 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     fun refreshToolbarChoosingTitle(){
         fragmentFileActionBarToolbar.title = "${mFileMoreDialogTmpFilePathArrayList.size}/${mFileStack.last.mFileList.size}"
     }
-    //
 
 
+    /**
+     *  用于给Activity获取信息
+     */
+    fun getCurrentPath():String{
+        return mFileStack.last.mPath
+    }
 
     /**
      *  事件回调
@@ -801,8 +807,8 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 }
 
                 // 添加数据
-                tmpFolderList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it)) }
-                tmpFileList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it)) }
+                tmpFolderList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it,FileApplication.getInstance())) }
+                tmpFileList.forEach { mStackInfo.mFileList.add(FileItem.fromFile(it,FileApplication.getInstance())) }
 
                 return mStackInfo
             }

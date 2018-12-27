@@ -36,7 +36,7 @@ fun File.getFileSize(context:Context):String{
     var fileSize = this.length().toDouble()
     var sizeLevel = 0
     while (fileSize > 1024 && sizeLevel < 4){
-        fileSize %= 1024
+        fileSize /= 1024
         sizeLevel += 1
     }
     val stringID = when(sizeLevel){
