@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_EXIT
 import com.creepersan.file.fragment.FileFragment
 import com.creepersan.file.utils.getTypeIconID
 import com.creepersan.file.view.SimpleDialog
@@ -34,7 +36,9 @@ class MainActivity : BaseActivity() {
     private val mDrawerStartItemList by lazy {
         ArrayList<StartActionBaseItem>().apply {
             add(StartActionCatalogItem(R.drawable.ic_file_delete, "删除", true))
-            add(StartActionCatalogItem(R.drawable.ic_file_more, "更多", false))
+            add(StartActionSimpleItem(R.drawable.ic_file_setting, "退出", StartActionBaseItem.ID_EXIT))
+            add(StartActionSimpleItem(R.drawable.ic_file_info, "退出", StartActionBaseItem.ID_EXIT))
+            add(StartActionSimpleItem(R.drawable.ic_file_exit, "退出", StartActionBaseItem.ID_EXIT))
         }
     }
     private var isShowFloatingActionButton = false
@@ -280,16 +284,32 @@ class MainActivity : BaseActivity() {
     /**
      *  左边Drawer相关
      */
-    abstract class StartActionBaseItem(val name:String)
-    class StartActionCatalogItem(val icon:Int,name:String, var state:Boolean):StartActionBaseItem(name)
+    abstract class StartActionBaseItem(val name:String, val id:Int){
+        companion object {
+            const val ID_UNDEFINE = 0
+            const val ID_EXIT = 1
+        }
+    }
+    class StartActionCatalogItem(val icon:Int,name:String, var state:Boolean, id:Int=StartActionBaseItem.ID_UNDEFINE):StartActionBaseItem(name, id)
+    class StartActionSimpleItem(val icon:Int, name:String, id:Int=StartActionBaseItem.ID_UNDEFINE):StartActionBaseItem(name, id)
+
     inner class StartDrawerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+        val TYPE_SIMPLE = 0
+        val TYPE_CATELOG = 1
+        val TYPE_UNDEFINE = -1
 
         override fun getItemViewType(position: Int): Int {
-            return super.getItemViewType(position)
+            return when(mDrawerStartItemList[position]){
+                is StartActionCatalogItem -> TYPE_CATELOG
+                is StartActionSimpleItem -> TYPE_SIMPLE
+                else -> TYPE_UNDEFINE
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, type: Int): RecyclerView.ViewHolder {
             return when(type){
+                TYPE_SIMPLE -> StartDrawerSimpleItemViewHolder(parent)
+                TYPE_CATELOG -> StartDrawerCatalogViewHolder(parent)
                 else -> { StartDrawerCatalogViewHolder(parent) }
             }
         }
@@ -304,6 +324,17 @@ class MainActivity : BaseActivity() {
                 is StartDrawerCatalogViewHolder -> {
                     val item = tmpItem as StartActionCatalogItem
                     holder.setState(item.icon, item.name, item.state)
+                }
+                is StartDrawerSimpleItemViewHolder -> {
+                    val item = tmpItem as StartActionSimpleItem
+                    holder.initView(item)
+                }
+            }
+            holder.itemView.setOnClickListener {
+                when(tmpItem.id){
+                    ID_EXIT -> {
+                        FileApplication.getInstance().exit()
+                    }
                 }
             }
         }
@@ -336,6 +367,15 @@ class MainActivity : BaseActivity() {
         val nameText = itemView.findViewById<TextView>(R.id.itemMainStartDrawerItemName)
         val stateCheckBox = itemView.findViewById<CheckBox>(R.id.itemMainStartDrawerItemCheckbox)
 
+    }
+    inner class StartDrawerSimpleItemViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(layoutInflater.inflate(R.layout.item_main_start_drawer_simple, parent, false)){
+        val imageIcon = itemView.findViewById<ImageView>(R.id.itemMainStartDrawerSimpleIcon)
+        val textName = itemView.findViewById<TextView>(R.id.itemMainStartDrawerSimpleName)
+
+        fun initView(item:StartActionSimpleItem){
+            imageIcon.setImageResource(item.icon)
+            textName.text = item.name
+        }
     }
 
 }
