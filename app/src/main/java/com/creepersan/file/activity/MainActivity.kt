@@ -1,16 +1,28 @@
 package com.creepersan.file.activity
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_ABOUT
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_EXIT
+import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_SETTING
+import com.creepersan.file.fragment.BaseMainActivityFragment
 import com.creepersan.file.fragment.FileFragment
 import com.creepersan.file.utils.getTypeIconID
 import com.creepersan.file.view.SimpleDialog
@@ -36,10 +48,98 @@ class MainActivity : BaseActivity() {
     private val mDrawerStartItemList by lazy {
         ArrayList<StartActionBaseItem>().apply {
             add(StartActionCatalogItem(R.drawable.ic_file_delete, "删除", true))
-            add(StartActionSimpleItem(R.drawable.ic_file_setting, "退出", StartActionBaseItem.ID_EXIT))
-            add(StartActionSimpleItem(R.drawable.ic_file_info, "退出", StartActionBaseItem.ID_EXIT))
-            add(StartActionSimpleItem(R.drawable.ic_file_exit, "退出", StartActionBaseItem.ID_EXIT))
+            add(StartActionSimpleItem(R.drawable.ic_file_setting, getString(R.string.mainStartDrawerSetting), StartActionBaseItem.ID_SETTING))
+            add(StartActionSimpleItem(R.drawable.ic_file_info, getString(R.string.mainStartDrawerInfo), StartActionBaseItem.ID_ABOUT))
+            add(StartActionSimpleItem(R.drawable.ic_file_exit, getString(R.string.mainStartDrawerExit), StartActionBaseItem.ID_EXIT))
         }
+    }
+    private val mFragmentPagerAdapter by lazy { MainPagerAdapter() }
+    private val mFragmentList by lazy { ArrayList<BaseMainActivityFragment>() }
+    private val mViewPagerPageChangeListener by lazy { object : ViewPager.OnPageChangeListener{
+        override fun onPageScrollStateChanged(p0: Int) {
+        }
+
+        override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+        }
+
+        override fun onPageSelected(p0: Int) {
+            refreshTopWindowText()
+        }
+
+    } }
+    private val mWindowManagerDialog by lazy {
+        /* 窗口管理器的列表 */
+        class WindowManagerViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(layoutInflater.inflate(R.layout.item_main_window_manager, parent, false)){
+            val imageClose = itemView.findViewById<ImageView>(R.id.itemMainWindowManagerClose)
+            val textTitle = itemView.findViewById<TextView>(R.id.itemMainWindowManagerTitle)
+            val imageIcon = itemView.findViewById<ImageView>(R.id.itemMainWindowManagerIcon)
+
+            fun initView(icon: Int, title:String){
+                imageIcon.setImageResource(icon)
+                textTitle.text = title
+            }
+        }
+        class WindowManagerAdapter(val dialog:SimpleDialog) : RecyclerView.Adapter<WindowManagerViewHolder>(){
+            override fun onCreateViewHolder(p0: ViewGroup, p1: Int): WindowManagerViewHolder {
+                return WindowManagerViewHolder(p0)
+            }
+
+            override fun getItemCount(): Int {
+                return mFragmentList.size
+            }
+
+            override fun onBindViewHolder(p0: WindowManagerViewHolder, p1: Int) {
+                val fragment = mFragmentList[p1]
+                p0.initView(fragment.getIcon(), fragment.getTitle())
+                p0.itemView.setOnClickListener {
+                    onJumpFragmentClick(p0.adapterPosition)
+                }
+                p0.imageClose.setOnClickListener {
+                    onCloseFragmentClick(p0.adapterPosition)
+                }
+            }
+
+            fun onJumpFragmentClick(pos:Int){
+                mainViewPager.setCurrentItem(pos, true)
+                dialog.dismiss()
+            }
+
+            fun onCloseFragmentClick(pos:Int){
+                if(mFragmentList.size <= 1){
+                    toast(getString(R.string.mainToastWindowManagerAlreadyLastWindow))
+                    return
+                }
+                mFragmentList.removeAt(pos)
+                mFragmentPagerAdapter.notifyDataSetChanged()
+                notifyDataSetChanged()
+                dialog.dismiss()
+                refreshTopWindowText()
+            }
+
+        }
+
+        val dialog = object : SimpleDialog(this@MainActivity, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_CUSTOM_VIEW){
+            lateinit var windowList : RecyclerView
+            private val mWindowManagerAdapter by lazy { WindowManagerAdapter(this) }
+
+            override fun initCustomView(customView: View) {
+                super.initCustomView(customView)
+                windowList = customView as RecyclerView
+                // 初始化列表
+                windowList.layoutManager = LinearLayoutManager(this@MainActivity)
+                windowList.adapter = mWindowManagerAdapter
+            }
+
+
+        }
+            .setTitle(getString(R.string.mainTitleWindowManager))
+            .setCustomView(layoutInflater.inflate(R.layout.dialog_main_window_manager, null))
+            .setPosButton(getString(R.string.baseDialogPositiveButtonText), object :SimpleDialog.OnDialogButtonClickListener{
+                override fun onButtonClick(dialog: SimpleDialog) {
+                    dialog.dismiss()
+                }
+            })
+        dialog
     }
     private var isShowFloatingActionButton = false
 
@@ -48,9 +148,16 @@ class MainActivity : BaseActivity() {
         initFloatActionButton()
         initRightDrawer()
         initLeftDrawer()
-        initFrameLayout()
+        initViewPager()
+        initTitle()
     }
 
+    private fun initTitle(){
+        mainTitle.setOnClickListener {
+            mWindowManagerDialog.show()
+        }
+        refreshTopWindowText()
+    }
     private fun initFloatActionButton(){
         mainFloatActionButton.hide()
         mainFloatActionButton.setOnClickListener {
@@ -73,9 +180,39 @@ class MainActivity : BaseActivity() {
         mainStartDrawerList.layoutManager = LinearLayoutManager(this)
         mainStartDrawerList.adapter = mDrawerStartAdapter
     }
-    private fun initFrameLayout(){
-        supportFragmentManager.beginTransaction().add(mainFrameLayout.id, fragment).commitNow()
+    private fun initViewPager(){
+        mainViewPager.offscreenPageLimit = Int.MAX_VALUE
+        mFragmentList.add(FileFragment())
+        mFragmentList.add(FileFragment())
+        mFragmentList.add(FileFragment())
+        mainViewPager.adapter = mFragmentPagerAdapter
+        mFragmentPagerAdapter.notifyDataSetChanged()
+        mainViewPager.addOnPageChangeListener(mViewPagerPageChangeListener)
     }
+
+    private fun hideStartDrawer(){
+        mainDrawerLayout.closeDrawer(Gravity.START)
+    }
+    private fun refreshTopWindowText(){
+        val rootTextSpanBuilder = SpannableStringBuilder()
+        var startPos = -1
+        var endPos = -1
+        mFragmentList.forEachIndexed { index, fragment ->
+            rootTextSpanBuilder.append(" ") // 分割符
+            if (index == mainViewPager.currentItem){ // 如果是选择上的
+                startPos = rootTextSpanBuilder.length
+                val title = fragment.getTitle()
+                rootTextSpanBuilder.append(title)
+                endPos = rootTextSpanBuilder.length
+            }else{ // 如果是没有选择上的
+                rootTextSpanBuilder.append(fragment.getTitle())
+            }
+            rootTextSpanBuilder.append(" ") // 分割符
+        }
+        rootTextSpanBuilder.setSpan(ForegroundColorSpan(getColor(R.color.textThemeAlpha50)), startPos, endPos, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        mainTitle.text = rootTextSpanBuilder
+    }
+
 
     override fun onBackPressed() {
         if (!fragment.onBackPressed()){
@@ -86,14 +223,23 @@ class MainActivity : BaseActivity() {
     /**
      * 供Fragment调用的
      */
+    fun fragmentCopyAppendFile(filePathArray:ArrayList<String>){
+        filePathArray.forEach { fragmentAddFile(EndFileItem.OPERATION_COPY, it) }
+        fragmentAfterAddFile()
+    }
+    fun fragmentCutAppendFile(filePathArray:ArrayList<String>){
+        filePathArray.forEach { fragmentAddFile(EndFileItem.OPERATION_CUT, it) }
+        fragmentAfterAddFile()
+    }
     fun fragmentCopyFile(filePathArray:ArrayList<String>){
+        fragmentClearFile()
         filePathArray.forEach { fragmentAddFile(EndFileItem.OPERATION_COPY, it) }
         fragmentAfterAddFile()
     }
     fun fragmentCutFile(filePathArray:ArrayList<String>){
+        fragmentClearFile()
         filePathArray.forEach { fragmentAddFile(EndFileItem.OPERATION_CUT, it) }
         fragmentAfterAddFile()
-
     }
     private fun fragmentAddFile(operation:Int, filePath:String){
         val tmpFile = File(filePath)
@@ -120,6 +266,9 @@ class MainActivity : BaseActivity() {
     }
     private fun fragmentAfterAddFile(){
         mainFloatActionButton.show()
+    }
+    private fun fragmentClearFile(){
+        mDrawerEndFileList.clear()
     }
 
     /**
@@ -288,6 +437,8 @@ class MainActivity : BaseActivity() {
         companion object {
             const val ID_UNDEFINE = 0
             const val ID_EXIT = 1
+            const val ID_SETTING = 2
+            const val ID_ABOUT = 3
         }
     }
     class StartActionCatalogItem(val icon:Int,name:String, var state:Boolean, id:Int=StartActionBaseItem.ID_UNDEFINE):StartActionBaseItem(name, id)
@@ -332,6 +483,14 @@ class MainActivity : BaseActivity() {
             }
             holder.itemView.setOnClickListener {
                 when(tmpItem.id){
+                    ID_SETTING -> {
+                        startActivity(SettingActivity::class.java)
+                        hideStartDrawer()
+                    }
+                    ID_ABOUT -> {
+                        startActivity(AboutActivity::class.java)
+                        hideStartDrawer()
+                    }
                     ID_EXIT -> {
                         FileApplication.getInstance().exit()
                     }
@@ -376,6 +535,23 @@ class MainActivity : BaseActivity() {
             imageIcon.setImageResource(item.icon)
             textName.text = item.name
         }
+    }
+
+    /* ViewPager */
+    inner class MainPagerAdapter : FragmentStatePagerAdapter(supportFragmentManager){
+        override fun getItem(p0: Int): Fragment {
+            return mFragmentList[p0]
+        }
+
+
+        override fun getCount(): Int {
+            return mFragmentList.size
+        }
+
+        override fun getItemPosition(`object`: Any): Int {
+            return PagerAdapter.POSITION_NONE
+        }
+
     }
 
 }

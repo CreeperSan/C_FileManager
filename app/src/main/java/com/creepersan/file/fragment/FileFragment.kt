@@ -2,19 +2,18 @@ package com.creepersan.file.fragment
 
 import android.app.AlertDialog
 import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
-import com.creepersan.file.activity.MainActivity
 import com.creepersan.file.bean.FileItem
 import com.creepersan.file.utils.*
 import com.creepersan.file.view.SimpleDialog
@@ -29,7 +28,9 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     companion object {
         private const val ID_MORE_ACTION_OPEN = 0
         private const val ID_MORE_ACTION_CUT = 1
+        private const val ID_MORE_ACTION_CUT_APPEND = 7
         private const val ID_MORE_ACTION_COPY = 2
+        private const val ID_MORE_ACTION_COPY_APPEND = 8
         private const val ID_MORE_ACTION_RENAME = 6
         private const val ID_MORE_ACTION_INFO = 4
         private const val ID_MORE_ACTION_DELETE = 5
@@ -100,6 +101,8 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open, ID_MORE_ACTION_OPEN),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopyAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_COPY_APPEND),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCutAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_CUT_APPEND),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationRename), R.drawable.ic_file_rename, ID_MORE_ACTION_RENAME),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_INFO),
                 SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
@@ -114,6 +117,12 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                         }
                         ID_MORE_ACTION_COPY -> {
                             copyFile()
+                        }
+                        ID_MORE_ACTION_CUT_APPEND -> {
+                            cutAppendFile()
+                        }
+                        ID_MORE_ACTION_COPY_APPEND -> {
+                            copyAppendFile()
                         }
                         ID_MORE_ACTION_RENAME -> {
                             renameFile()
@@ -220,9 +229,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         dialog.setCustomView(layoutInflater.inflate(R.layout.dialog_base_main_rename, dialog.viewCustomViewGroup, false))
         dialog
     }
+    private val mTitle by lazy { FileApplication.getInstance().getString(R.string.fileFragmentTitle) }
 
     private var mTmpFileRecyclerViewScrollPos = 0
     private var isMultiChoosing = false
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -238,6 +249,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         stopMultiChoosing()
     }
     private fun initStack(){
+        mFileStack.clear()
         mFileStack.push(FileStackInfo.fromExternalStorage())
     }
     private fun initPathRecyclerView(){
@@ -390,6 +402,16 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         mInfoDialog.setFile(file)
         mInfoDialog.show()
     }
+    fun copyAppendFile(){
+        activity.fragmentCopyAppendFile(mFileMoreDialogTmpFilePathArrayList)
+        mFileMoreDialogTmpFilePathArrayList.clear()
+        stopMultiChoosing()
+    }
+    fun cutAppendFile(){
+        activity.fragmentCutAppendFile(mFileMoreDialogTmpFilePathArrayList)
+        mFileMoreDialogTmpFilePathArrayList.clear()
+        stopMultiChoosing()
+    }
     fun copyFile(){
         activity.fragmentCopyFile(mFileMoreDialogTmpFilePathArrayList)
         mFileMoreDialogTmpFilePathArrayList.clear()
@@ -510,6 +532,14 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     }
 
 
+    /* 重写的方法 */
+    override fun getTitle(): String {
+        return mTitle
+    }
+    override fun getIcon(): Int {
+        return R.drawable.ic_file_file
+    }
+
     /**
      *  用于给Activity获取信息
      */
@@ -585,10 +615,10 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 selectAllFile()
             }
             R.id.menuFileFragmentCopy -> {
-                copyFile()
+                copyAppendFile()
             }
             R.id.menuFileFragmentCut -> {
-                cutFile()
+                cutAppendFile()
             }
             R.id.menuFileFragmentDelete -> {
                 deleteFile()
