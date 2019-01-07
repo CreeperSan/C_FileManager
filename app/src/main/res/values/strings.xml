@@ -90,6 +90,11 @@
     <string name="textMainDialogMessageDeleteFiles">您确定要删除剪切板中的所有文件吗？真的会删掉的哦！</string>
     <string name="mainTitleWindowManager">窗口管理器</string>
     <string name="mainToastWindowManagerAlreadyLastWindow">只剩下最后一个窗口了</string>
+    <string name="mainStartDrawerCatalogCreateWindow">创建窗口</string>
+    <string name="mainStartDrawerCatalogItemHome">主页</string>
+    <string name="mainStartDrawerCatalogItemInternalStorage">内部存储</string>
+
+    <string name="fragmentHomeTitle">主页</string>
 
     <string name="fileTypeFile">文件</string>
     <string name="fileTypeFolder">文件夹</string>

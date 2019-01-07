@@ -7,4 +7,8 @@ abstract class BaseMainActivityFragment : BaseFragment(){
     protected open fun isCanPasteFileHere():Boolean = false
     abstract fun getTitle():String
     abstract fun getIcon():Int
+
+    open fun onBackPressed():Boolean{
+        return false
+    }
 }

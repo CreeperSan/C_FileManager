@@ -2,7 +2,6 @@ package com.creepersan.file.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
@@ -21,9 +20,13 @@ import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_ABOUT
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_EXIT
+import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_HOME
+import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_INTERNAL_STORAGE
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_SETTING
 import com.creepersan.file.fragment.BaseMainActivityFragment
 import com.creepersan.file.fragment.FileFragment
+import com.creepersan.file.fragment.HomeFragment
+import com.creepersan.file.utils.Logger
 import com.creepersan.file.utils.getTypeIconID
 import com.creepersan.file.view.SimpleDialog
 import kotlinx.android.synthetic.main.activity_main.*
@@ -34,7 +37,6 @@ class MainActivity : BaseActivity() {
 
     private val mMessageDialog by lazy { SimpleDialog(this, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_MESSAGE) }
 
-    private val fragment by lazy { FileFragment() }
     private val mOperationActionList by lazy { arrayListOf(
         EndOperationItem(R.drawable.ic_file_paste, getString(R.string.textMainEndDrawerOperationAllPasteTo), EndOperationItem.PASTE_ALL),
         EndOperationItem(R.drawable.ic_file_cut, getString(R.string.textMainEndDrawerOperationAllMoveTo), EndOperationItem.CUT_ALL),
@@ -47,7 +49,9 @@ class MainActivity : BaseActivity() {
     private val mDrawerStartAdapter by lazy { StartDrawerAdapter() }
     private val mDrawerStartItemList by lazy {
         ArrayList<StartActionBaseItem>().apply {
-            add(StartActionCatalogItem(R.drawable.ic_file_delete, "删除", true))
+            add(StartActionCatalogItem(R.drawable.ic_main_create_window, getString(R.string.mainStartDrawerCatalogCreateWindow), true))
+            add(StartActionSimpleItem(R.drawable.ic_file_home, getString(R.string.mainStartDrawerCatalogItemHome), ID_HOME))
+            add(StartActionSimpleItem(R.drawable.ic_file_phone, getString(R.string.mainStartDrawerCatalogItemInternalStorage), ID_INTERNAL_STORAGE))
             add(StartActionSimpleItem(R.drawable.ic_file_setting, getString(R.string.mainStartDrawerSetting), StartActionBaseItem.ID_SETTING))
             add(StartActionSimpleItem(R.drawable.ic_file_info, getString(R.string.mainStartDrawerInfo), StartActionBaseItem.ID_ABOUT))
             add(StartActionSimpleItem(R.drawable.ic_file_exit, getString(R.string.mainStartDrawerExit), StartActionBaseItem.ID_EXIT))
@@ -183,8 +187,6 @@ class MainActivity : BaseActivity() {
     private fun initViewPager(){
         mainViewPager.offscreenPageLimit = Int.MAX_VALUE
         mFragmentList.add(FileFragment())
-        mFragmentList.add(FileFragment())
-        mFragmentList.add(FileFragment())
         mainViewPager.adapter = mFragmentPagerAdapter
         mFragmentPagerAdapter.notifyDataSetChanged()
         mainViewPager.addOnPageChangeListener(mViewPagerPageChangeListener)
@@ -209,12 +211,17 @@ class MainActivity : BaseActivity() {
             }
             rootTextSpanBuilder.append(" ") // 分割符
         }
+        if (startPos <= -1 || endPos <= -1){
+            Logger.logE("MainActivity获取窗口名称时没有找到当前页面的Fragment，可能是没有Fragment导致的")
+            return
+        }
         rootTextSpanBuilder.setSpan(ForegroundColorSpan(getColor(R.color.textThemeAlpha50)), startPos, endPos, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
         mainTitle.text = rootTextSpanBuilder
     }
 
 
     override fun onBackPressed() {
+        val fragment = mFragmentList[mainViewPager.currentItem]
         if (!fragment.onBackPressed()){
             super.onBackPressed()
         }
@@ -276,28 +283,33 @@ class MainActivity : BaseActivity() {
      */
     fun onClickFloatActionButton(){
         mDrawerEndFileList.forEach { item ->
-            val newPath = fragment.getCurrentPath()
-            val file = File(item.path)
-            when(item.operation){
-                EndFileItem.OPERATION_DELETE -> {
-                    file.delete()
-                }
-                EndFileItem.OPERATION_CUT -> {
-                    val newFile = File("$newPath/${item.name}")
-                    if (!newFile.exists()){
-                        file.renameTo(newFile)
-                    }else{
-                        // 移动失败，文件已存在
+            val currentFragment = mFragmentList[mainViewPager.currentItem]
+            if (currentFragment is FileFragment){
+                val newPath = currentFragment.getCurrentPath()
+                val file = File(item.path)
+                when(item.operation){
+                    EndFileItem.OPERATION_DELETE -> {
+                        file.delete()
+                    }
+                    EndFileItem.OPERATION_CUT -> {
+                        val newFile = File("$newPath/${item.name}")
+                        if (!newFile.exists()){
+                            file.renameTo(newFile)
+                        }else{
+                            // 移动失败，文件已存在
+                        }
+                    }
+                    EndFileItem.OPERATION_COPY -> {
+                        val newFile = File("$newPath/${item.name}")
+                        if (!newFile.exists()){
+                            file.copyTo(newFile)
+                        }else{
+                            // 复制失败，文件已存在
+                        }
                     }
                 }
-                EndFileItem.OPERATION_COPY -> {
-                    val newFile = File("$newPath/${item.name}")
-                    if (!newFile.exists()){
-                        file.copyTo(newFile)
-                    }else{
-                        // 复制失败，文件已存在
-                    }
-                }
+            }else{
+                Logger.logE("所粘贴的Fragment不是FileFragment，还没有做相应处理")
             }
         }
         // 弹出提示
@@ -439,6 +451,8 @@ class MainActivity : BaseActivity() {
             const val ID_EXIT = 1
             const val ID_SETTING = 2
             const val ID_ABOUT = 3
+            const val ID_INTERNAL_STORAGE = 4
+            const val ID_HOME = 5
         }
     }
     class StartActionCatalogItem(val icon:Int,name:String, var state:Boolean, id:Int=StartActionBaseItem.ID_UNDEFINE):StartActionBaseItem(name, id)
@@ -494,6 +508,18 @@ class MainActivity : BaseActivity() {
                     ID_EXIT -> {
                         FileApplication.getInstance().exit()
                     }
+                    ID_HOME -> {
+                        mFragmentList.add(HomeFragment())
+                        mFragmentPagerAdapter.notifyDataSetChanged()
+                        hideStartDrawer()
+                        refreshTopWindowText()
+                    }
+                    ID_INTERNAL_STORAGE -> {
+                        mFragmentList.add(FileFragment())
+                        mFragmentPagerAdapter.notifyDataSetChanged()
+                        hideStartDrawer()
+                        refreshTopWindowText()
+                    }
                 }
             }
         }
@@ -535,6 +561,7 @@ class MainActivity : BaseActivity() {
             imageIcon.setImageResource(item.icon)
             textName.text = item.name
         }
+
     }
 
     /* ViewPager */

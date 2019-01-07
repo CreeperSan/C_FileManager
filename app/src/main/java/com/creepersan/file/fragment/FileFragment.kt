@@ -300,7 +300,15 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     }
     // 打开文件
     fun openFile(){
-        toast("打开文件 ${mFileMoreDialogTmpFilePathArrayList.toString()}")
+
+        if (mFileMoreDialogTmpFilePathArrayList.size > 0){
+            val path = mFileMoreDialogTmpFilePathArrayList[0]
+            if (!File(path).openFileWithIntent(mActivity)) {
+                toast("打开文件失败，可能是不存在或者为文件夹")
+            }
+        }else{
+            toast("还没有选择文件")
+        }
         mFileMoreDialogTmpFilePathArrayList.clear()
     }
     fun deleteFile(){
@@ -550,7 +558,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     /**
      *  事件回调
      */
-    fun onBackPressed():Boolean{
+    override fun onBackPressed():Boolean{
         return when {
             isMultiChoosing -> {
                 stopMultiChoosing()
@@ -690,13 +698,14 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                         mTmpFileRecyclerViewScrollPos = 0
                         // 添加新的文件栈
                         mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
+                        // 刷新显示
+                        updatePathRecyclerView()
+                        updateFileRecyclerView()
                     }else{
                         mFileMoreDialogTmpFilePathArrayList.clear()
                         mFileMoreDialogTmpFilePathArrayList.add(item.path)
                         openFile()
                     }
-                    updatePathRecyclerView()
-                    updateFileRecyclerView()
                 }
             }
             holder.itemView.setOnLongClickListener{
@@ -790,6 +799,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 val sortType = tmpConfig.getFileSortOrder()
                 val isReverse = tmpConfig.getFileIsOrderReverse()
                 val tmpSort = file.listFiles().toMutableList()
+                val isCaseSensitive = tmpConfig.getFileIsSortCaseSensitive()
 
                 when(sortType){
                     ConfigUtil.VAL_FILE_SORT_TYPE -> {
@@ -815,9 +825,9 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                     }
                     ConfigUtil.VAL_FILE_SORT_NAME -> {
                         if (isReverse){
-                            tmpSort.sortByDescending { it.name }
+                            tmpSort.sortByDescending { if (isCaseSensitive){ it.name }else{ it.name.toUpperCase() } }
                         }else{
-                            tmpSort.sortBy { it.name }
+                            tmpSort.sortBy { if (isCaseSensitive){ it.name }else{ it.name.toUpperCase() } }
                         }
                     }
                 }

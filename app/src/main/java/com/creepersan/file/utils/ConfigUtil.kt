@@ -24,6 +24,8 @@ class ConfigUtil(context:Context) {
         const val VAL_FILE_SORT_TYPE = 4
         private const val KEY_FILE_IS_SORT_ORDER_REVERSE = "is_sort_order_reverse"
         private const val VAL_FILE_IS_SORT_ORDER_REVERSE = false
+        private const val KEY_FILE_IS_SORT_CASE_SENSITIVE = "is_sort_case_sensitive"
+        private const val VAL_FILE_IS_SORT_CASE_SENSITIVE = false
     }
 
     init {
@@ -65,6 +67,12 @@ class ConfigUtil(context:Context) {
     }
     fun setFileIsOrderReverse(status:Boolean){
         mFileConfig.edit().putBoolean(KEY_FILE_IS_SORT_ORDER_REVERSE, status).apply()
+    }
+    fun getFileIsSortCaseSensitive():Boolean{
+        return mFileConfig.getBoolean(KEY_FILE_IS_SORT_CASE_SENSITIVE, VAL_FILE_IS_SORT_CASE_SENSITIVE)
+    }
+    fun setFileIsSortCaseSensitive(state:Boolean){
+        mFileConfig.edit().putBoolean(KEY_FILE_IS_SORT_CASE_SENSITIVE, state).apply()
     }
 
 
