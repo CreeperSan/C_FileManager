@@ -14,7 +14,6 @@ import java.util.*
 
 private val mediumSimpleDateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
 private val shortSimpleDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
-private val mDecimalFormatter = DecimalFormat("#0.00")
 private const val FILE_POSTFIX_CHAR = "."
 
 
@@ -98,21 +97,7 @@ fun File.getFileSizeByte(context:Context):String{
 }
 
 fun File.getFileSize(context:Context):String{
-    var fileSize = this.length().toDouble()
-    var sizeLevel = 0
-    while (fileSize > 1024 && sizeLevel < 4){
-        fileSize /= 1024
-        sizeLevel += 1
-    }
-    val stringID = when(sizeLevel){
-        0 -> { R.string.fileFragmentItemSizeB }
-        1 -> { R.string.fileFragmentItemSizeKB }
-        2 -> { R.string.fileFragmentItemSizeMB }
-        3 -> { R.string.fileFragmentItemSizeGB }
-        4 -> { R.string.fileFragmentItemSizeTB }
-        else -> { R.string.fileFragmentItemSizeTB }
-    }
-    return String.format(context.getString(stringID), mDecimalFormatter.format(fileSize))
+    return this.length().toFormattedStorageString(context)
 }
 
 fun File.getFileModifyTimeString():String{

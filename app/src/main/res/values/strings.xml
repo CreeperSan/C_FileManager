@@ -94,6 +94,17 @@
     <string name="mainStartDrawerCatalogItemHome">主页</string>
     <string name="mainStartDrawerCatalogItemInternalStorage">内部存储</string>
 
+    <string name="homeFragmentOperationTitleImage">图片</string>
+    <string name="homeFragmentOperationTitleMusic">音乐</string>
+    <string name="homeFragmentOperationTitleVideo">视频</string>
+    <string name="homeFragmentOperationTitleDocument">文档</string>
+    <string name="homeFragmentOperationTitleApplication">应用</string>
+    <string name="homeFragmentOperationTitleCollection">收藏</string>
+    <string name="homeFragmentOperationTitleDownload">下载</string>
+    <string name="homeFragmentOperationTitleMore">更多</string>
+    <string name="homeFragmentOperationTitle">快速访问</string>
+    <string name="homeFragmentStorageTitle">存储空间</string>
+
     <string name="fragmentHomeTitle">主页</string>
 
     <string name="fileTypeFile">文件</string>

@@ -186,6 +186,7 @@ class MainActivity : BaseActivity() {
     }
     private fun initViewPager(){
         mainViewPager.offscreenPageLimit = Int.MAX_VALUE
+        mFragmentList.add(HomeFragment())
         mFragmentList.add(FileFragment())
         mainViewPager.adapter = mFragmentPagerAdapter
         mFragmentPagerAdapter.notifyDataSetChanged()

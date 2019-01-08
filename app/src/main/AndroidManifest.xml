@@ -24,16 +24,48 @@
         <activity android:name=".activity.MainActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activity.AboutActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activity.SettingActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".activity.MusicPlayerActivity" android:screenOrientation="portrait">
+        <activity android:name=".function.music.activity.MusicPlayerActivity" android:screenOrientation="portrait" android:label="音乐播放器">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:scheme="file"/>
                 <data android:host="*"/>
-                <data android:mimeType="*/*"/>
-                <data android:pathPattern=".*\\.mp3" />
+                <data android:mimeType="audio/*"/>
+                <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
+        <activity android:name=".function.text.TextViewerActivity" android:screenOrientation="portrait" android:label="文本浏览器">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="text/*"/>
+                <data android:pathPattern=".*\\..*"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".function.image.ImageViewerActivity" android:screenOrientation="portrait" android:label="图片浏览器">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="image/*"/>
+                <data android:pathPattern=".*\\..*"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".function.video.VideoPlayerActivity" android:screenOrientation="portrait" android:label="视频播放器">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="video/*"/>
+                <data android:pathPattern=".*\\..*"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".function.music.service.MusicPlayerService"/>
 
     </application>
 
