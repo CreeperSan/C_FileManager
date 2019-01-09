@@ -67,6 +67,12 @@
 
         <service android:name=".function.music.service.MusicPlayerService"/>
 
+        <receiver android:name=".function.music.broadcast.MusicPlayerBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.creepersan.c_filemanager.musicplayer"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

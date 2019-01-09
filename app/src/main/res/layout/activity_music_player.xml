@@ -1,71 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:gravity="center_horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:orientation="vertical"
+                                             android:gravity="center_horizontal"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.v7.widget.Toolbar
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"/>
 
-        <android.support.v7.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
-    </android.support.design.widget.AppBarLayout>
+    <ImageView
+            android:id="@+id/musicPlayerImage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicPlayerTitle"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+    <TextView
+            android:id="@+id/musicPlayerTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicPlayerArtist"
+            app:layout_constraintTop_toBottomOf="@id/musicPlayerImage"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="32dp"
+            android:layout_gravity="start"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:text="KILL☆ER☆TUNE☆R"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicPlayerAlbum"
+            app:layout_constraintTop_toBottomOf="@id/musicPlayerTitle"
+            android:id="@+id/musicPlayerArtist"
+            android:layout_marginStart="32dp"
+            android:layout_gravity="start"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:textSize="14sp"
+            android:text="Tokyo 7th シスターズ"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicPlayerProgressBar"
+            app:layout_constraintTop_toBottomOf="@id/musicPlayerArtist"
+            android:id="@+id/musicPlayerAlbum"
+            android:layout_marginStart="32dp"
+            android:layout_gravity="start"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="12sp"
+            android:text="H-A-J-I-M-A-R-U-U-T-A"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
 
     <LinearLayout
-            android:gravity="center"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
-
-        <ImageView
-                android:src="@drawable/ic_home_storage_sdcard"
-                android:layout_width="300dp"
-                android:layout_height="300dp"/>
-
-        <TextView
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:text="KILL☆ER☆TUNE☆R"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <TextView
-                android:layout_marginTop="8dp"
-                android:textSize="14sp"
-                android:text="Tokyo 7th シスターズ"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/musicPlayerAlbum"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/musicPlayerControlBar"
+            android:id="@+id/musicPlayerProgressBar"
             android:layout_marginTop="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content">
         <TextView
+                android:id="@+id/musicPlayerPositionTimeText"
                 android:gravity="center"
-                android:text="16:36"
-                android:layout_width="64dp"
+                tools:text="16:36"
+                android:layout_width="52dp"
                 android:layout_height="wrap_content"/>
         <SeekBar
+                android:id="@+id/musicPlayerSeekBar"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
         <TextView
+                android:id="@+id/musicPlayerDurationTimeText"
                 android:gravity="center"
-                android:text="16:36"
-                android:layout_width="64dp"
+                tools:text="16:36"
+                android:layout_width="52dp"
                 android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
+            app:layout_constraintTop_toBottomOf="@id/musicPlayerProgressBar"
+            android:id="@+id/musicPlayerControlBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:gravity="center_vertical"
@@ -74,16 +112,7 @@
             android:layout_height="wrap_content">
 
         <ImageView
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_music_player_random"
-                android:layout_width="36dp"
-                android:layout_height="36dp"/>
-
-        <ImageView
+                android:id="@+id/musicPlayerControlPrevious"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
@@ -94,6 +123,7 @@
                 android:layout_height="48dp"/>
 
         <ImageView
+                android:id="@+id/musicPlayerControlPlay"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
@@ -104,6 +134,7 @@
                 android:layout_height="56dp"/>
 
         <ImageView
+                android:id="@+id/musicPlayerControlNext"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
@@ -113,16 +144,6 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"/>
 
-        <ImageView
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_music_player_list"
-                android:layout_width="36dp"
-                android:layout_height="36dp"/>
-
     </LinearLayout>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
