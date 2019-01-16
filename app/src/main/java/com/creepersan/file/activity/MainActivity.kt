@@ -23,6 +23,7 @@ import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.I
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_HOME
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_INTERNAL_STORAGE
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_SETTING
+import com.creepersan.file.fragment.ApplicationFragment
 import com.creepersan.file.fragment.BaseMainActivityFragment
 import com.creepersan.file.fragment.FileFragment
 import com.creepersan.file.fragment.HomeFragment
@@ -146,6 +147,8 @@ class MainActivity : BaseActivity() {
         dialog
     }
     private var isShowFloatingActionButton = false
+    private var mPrevBackTime : Long = 0
+    private val mBackPressedTimeMax by lazy { mConfig.getMainConfirmOnExitDelay() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,6 +191,7 @@ class MainActivity : BaseActivity() {
         mainViewPager.offscreenPageLimit = Int.MAX_VALUE
         mFragmentList.add(HomeFragment())
         mFragmentList.add(FileFragment())
+        mFragmentList.add(ApplicationFragment())
         mainViewPager.adapter = mFragmentPagerAdapter
         mFragmentPagerAdapter.notifyDataSetChanged()
         mainViewPager.addOnPageChangeListener(mViewPagerPageChangeListener)
@@ -224,6 +228,19 @@ class MainActivity : BaseActivity() {
     override fun onBackPressed() {
         val fragment = mFragmentList[mainViewPager.currentItem]
         if (!fragment.onBackPressed()){
+            activityOnBackPressed()
+        }
+    }
+    private fun activityOnBackPressed(){
+        val currentTime = System.currentTimeMillis()
+        if(mConfig.getConfirmOnExit()){
+            if (currentTime - mPrevBackTime > mBackPressedTimeMax){
+                toast(getString(R.string.mainToastConfirmOnBackPressed))
+                mPrevBackTime = currentTime
+            }else{
+                super.onBackPressed()
+            }
+        }else{
             super.onBackPressed()
         }
     }

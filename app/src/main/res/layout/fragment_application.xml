@@ -5,25 +5,24 @@
                                              xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.AppBarLayout
-            android:id="@+id/settingAppBarLayout"
             app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/applicationFragmentAppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         <android.support.v7.widget.Toolbar
                 app:titleTextColor="@color/white"
-                app:title="@string/settingToolbarTitle"
-                android:id="@+id/settingToolbar"
+                app:title="@string/applicationFragmentTitle"
+                android:id="@+id/applicationFragmentToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
+                android:layout_height="wrap_content"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/settingSettingList"
-            app:layout_constraintTop_toBottomOf="@id/settingAppBarLayout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/applicationFragmentAppBarLayout"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="0dp"
+            android:id="@+id/applicationFragmentRecyclerView"
+            android:layout_width="match_parent"
             android:layout_height="0dp"/>
+
 
 </android.support.constraint.ConstraintLayout>

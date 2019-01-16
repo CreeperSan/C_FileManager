@@ -93,6 +93,7 @@
     <string name="mainStartDrawerCatalogCreateWindow">创建窗口</string>
     <string name="mainStartDrawerCatalogItemHome">主页</string>
     <string name="mainStartDrawerCatalogItemInternalStorage">内部存储</string>
+    <string name="mainToastConfirmOnBackPressed">请再按一下返回退出</string>
 
     <string name="homeFragmentOperationTitleImage">图片</string>
     <string name="homeFragmentOperationTitleMusic">音乐</string>
@@ -104,6 +105,13 @@
     <string name="homeFragmentOperationTitleMore">更多</string>
     <string name="homeFragmentOperationTitle">快速访问</string>
     <string name="homeFragmentStorageTitle">存储空间</string>
+
+    <string name="aboutToolbarTitle">关于</string>
+    <string name="aboutDescriptionString">就只是一个自己用的简单的文件管理器</string>
+
+    <string name="applicationFragmentTitle">应用</string>
+
+    <string name="settingToolbarTitle">设置</string>
 
     <string name="fragmentHomeTitle">主页</string>
 

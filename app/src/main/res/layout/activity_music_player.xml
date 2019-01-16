@@ -33,7 +33,8 @@
             android:layout_gravity="start"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:text="KILL☆ER☆TUNE☆R"
+            android:lines="1"
+            tools:text="KILL☆ER☆TUNE☆R"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
@@ -48,7 +49,8 @@
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
             android:textSize="14sp"
-            android:text="Tokyo 7th シスターズ"
+            android:lines="1"
+            tools:text="Tokyo 7th シスターズ"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
@@ -59,11 +61,12 @@
             app:layout_constraintTop_toBottomOf="@id/musicPlayerArtist"
             android:id="@+id/musicPlayerAlbum"
             android:layout_marginStart="32dp"
+            android:lines="1"
             android:layout_gravity="start"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:textSize="12sp"
-            android:text="H-A-J-I-M-A-R-U-U-T-A"
+            tools:text="H-A-J-I-M-A-R-U-U-T-A"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
@@ -79,17 +82,20 @@
             android:orientation="horizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content">
+
         <TextView
                 android:id="@+id/musicPlayerPositionTimeText"
                 android:gravity="center"
                 tools:text="16:36"
                 android:layout_width="52dp"
                 android:layout_height="wrap_content"/>
+
         <SeekBar
                 android:id="@+id/musicPlayerSeekBar"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
+
         <TextView
                 android:id="@+id/musicPlayerDurationTimeText"
                 android:gravity="center"

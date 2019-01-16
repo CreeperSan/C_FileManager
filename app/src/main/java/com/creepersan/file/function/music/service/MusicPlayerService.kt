@@ -2,17 +2,23 @@ package com.creepersan.file.function.music.service
 
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
-import com.creepersan.file.function.music.broadcast.MusicBean
+import com.creepersan.file.function.music.bean.MusicBean
+import com.creepersan.file.utils.Logger
 import java.io.File
 import java.lang.Exception
+import java.lang.IllegalStateException
 
 class MusicPlayerService : Service() {
     private val mBinder by lazy { MusicPlayerServiceBinder() }
     private val mMediaPlayer by lazy { MediaPlayer() }
     private val mMusicList by lazy { ArrayList<MusicBean>() }
+    private val retriever by lazy { MediaMetadataRetriever() }
     private var mState = STATE_NOT_PREPARE
 
     companion object {
@@ -44,10 +50,6 @@ class MusicPlayerService : Service() {
         }
     }
 
-    fun loadMusicInfo(filePath: String):MusicBean{
-        
-    }
-
     fun loadMusic(filePath:String):Boolean{
         return loadMusic(File(filePath))
     }
@@ -71,7 +73,12 @@ class MusicPlayerService : Service() {
         if (!file.exists()){
             return false
         }
-        mMediaPlayer.setDataSource(file.absolutePath)
+        mMediaPlayer.reset()
+        try {
+            mMediaPlayer.setDataSource(file.absolutePath)
+        }catch(e:IllegalStateException){
+            Logger.logE("播放器加载文件${file.absolutePath}失败")
+        }
         mMediaPlayer.prepareAsync()
         mState = STATE_PREPARING
         mMediaPlayer.setOnPreparedListener {
@@ -146,7 +153,15 @@ class MusicPlayerService : Service() {
         return currentPos/duration
     }
 
+    fun getMusicFileInfo(filePath:String){
+    }
 
+    fun getImage(filePath: String):Bitmap?{
+        retriever.setDataSource(filePath)
+        val picData = retriever.embeddedPicture
+        picData ?: return null
+        return BitmapFactory.decodeByteArray(retriever.embeddedPicture, 0, picData.size)
+    }
 
 
 

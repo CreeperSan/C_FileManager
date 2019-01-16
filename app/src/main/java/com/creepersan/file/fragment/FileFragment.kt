@@ -7,7 +7,6 @@ import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +33,17 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         private const val ID_MORE_ACTION_RENAME = 6
         private const val ID_MORE_ACTION_INFO = 4
         private const val ID_MORE_ACTION_DELETE = 5
+
+        private const val KEY_ROOT_PATH = "RootPath"
+        private val DEFAULT_ROOT_PATH = Environment.getExternalStorageState()
+
+        fun newInstance(rootPath:String = DEFAULT_ROOT_PATH):FileFragment{
+            val fragment = FileFragment()
+            fragment.arguments = Bundle().apply {
+                putString(KEY_ROOT_PATH, rootPath)
+            }
+            return fragment
+        }
     }
 
     override val mLayoutID: Int = R.layout.fragment_file
@@ -237,12 +247,17 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initArgument()
         initToolbar()
         initStack()
         initPathRecyclerView()
         initFileRecyclerView()
     }
 
+    private fun initArgument(){
+        val bundle = arguments ?: return
+        bundle.getString(KEY_ROOT_PATH, DEFAULT_ROOT_PATH)
+    }
     private fun initToolbar(){
         fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file)
         fragmentFileActionBarToolbar.setOnMenuItemClickListener(this)
@@ -725,11 +740,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         private val DEFAULT_COLOR = Color.WHITE
 
         fun setChoose(state:Boolean){
-            itemView.setBackgroundColor(if (state){
-                context?.getColor(R.color.lightgray) ?: DEFAULT_COLOR
+            if (state){
+                itemView.setBackgroundColor(context?.getColor(R.color.lightgray) ?: DEFAULT_COLOR)
             }else{
-                context?.getColor(R.color.white) ?: DEFAULT_COLOR
-            })
+                itemView.background = null
+            }
         }
         fun setMoreButtonVisiable(isVisable:Boolean){
             if (isVisable){
@@ -802,28 +817,28 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 val isCaseSensitive = tmpConfig.getFileIsSortCaseSensitive()
 
                 when(sortType){
-                    ConfigUtil.VAL_FILE_SORT_TYPE -> {
+                    ConfigUtil.DEFAULT_FILE_SORT_TYPE -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.name }
                         }else{
                             tmpSort.sortBy { it.name }
                         }
                     }
-                    ConfigUtil.VAL_FILE_SORT_SIZE -> {
+                    ConfigUtil.DEFAULT_FILE_SORT_SIZE -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.length() }
                         }else{
                             tmpSort.sortBy { it.length() }
                         }
                     }
-                    ConfigUtil.VAL_FILE_SORT_MODIFY_TIME -> {
+                    ConfigUtil.DEFAULT_FILE_SORT_MODIFY_TIME -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.lastModified() }
                         }else{
                             tmpSort.sortBy { it.lastModified() }
                         }
                     }
-                    ConfigUtil.VAL_FILE_SORT_NAME -> {
+                    ConfigUtil.DEFAULT_FILE_SORT_NAME -> {
                         if (isReverse){
                             tmpSort.sortByDescending { if (isCaseSensitive){ it.name }else{ it.name.toUpperCase() } }
                         }else{
