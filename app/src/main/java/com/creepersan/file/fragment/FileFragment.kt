@@ -560,7 +560,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         return mTitle
     }
     override fun getIcon(): Int {
-        return R.drawable.ic_file_file
+        return R.drawable.ic_file_icon
     }
 
     /**
@@ -696,7 +696,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 mFileMoreDialog.setTitle(item.name)
                 mFileMoreDialog.show()
             }
-            holder.setMoreButtonVisiable(!isMultiChoosing)
+            holder.setMoreButtonVisible(!isMultiChoosing)
 
             holder.itemView.setOnClickListener{
                 if (isMultiChoosing){ // 正在多选
@@ -743,11 +743,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
             if (state){
                 itemView.setBackgroundColor(context?.getColor(R.color.lightgray) ?: DEFAULT_COLOR)
             }else{
-                itemView.background = null
+                itemView.setBackgroundResource(R.drawable.ripple_default)
             }
         }
-        fun setMoreButtonVisiable(isVisable:Boolean){
-            if (isVisable){
+        fun setMoreButtonVisible(isVisible:Boolean){
+            if (isVisible){
                 more.visibility = View.VISIBLE
                 more.isEnabled = true
             }else{

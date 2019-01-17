@@ -6,6 +6,7 @@ import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.utils.getFileModifyTimeShortString
 import com.creepersan.file.utils.getFileSize
+import com.creepersan.file.utils.getTypeIconID
 import java.io.File
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -41,11 +42,7 @@ class FileItem private constructor(){
             item.modifyTime = file.getFileModifyTimeShortString()
 
             // 获取图标
-            if (item.isFolder){
-                item.icon = R.drawable.ic_file_folder
-            }else{
-                item.icon = R.drawable.ic_file_file
-            }
+            item.icon = file.getTypeIconID()
             return item
         }
     }

@@ -2,10 +2,11 @@ package com.creepersan.file.function.music.bean
 
 import android.media.MediaMetadataRetriever
 import java.io.File
+import java.lang.IllegalStateException
 
-class MusicBean(receiver: MediaMetadataRetriever, file:File) {
+class MusicBean(retriever: MediaMetadataRetriever, file:File) {
 
-    constructor(receiver: MediaMetadataRetriever, path:String):this(receiver, File(path))
+    constructor(retriever: MediaMetadataRetriever, path:String):this(retriever, File(path))
 
     var name = ""
     var title = ""
@@ -15,11 +16,11 @@ class MusicBean(receiver: MediaMetadataRetriever, file:File) {
     var duration = -1L
 
     init {
-        receiver.setDataSource(file.absolutePath)
+        retriever.setDataSource(file.absolutePath)
         name = file.name
-        title = receiver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-        author = receiver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR)
-        album = receiver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
+        title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+        author = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+        album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)
         path = file.path
     }
 

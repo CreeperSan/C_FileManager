@@ -33,7 +33,7 @@
             android:layout_gravity="start"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:lines="1"
+            android:maxLines="2"
             tools:text="KILL☆ER☆TUNE☆R"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>

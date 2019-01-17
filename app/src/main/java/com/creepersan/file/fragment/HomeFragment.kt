@@ -20,7 +20,7 @@ class HomeFragment : BaseMainActivityFragment() {
 
     private val mOperationList by lazy { ArrayList<OperationIcon>().apply {
         add(OperationIcon(ID_OPERATION_IMAGE, R.drawable.ic_home_image, getString(R.string.homeFragmentOperationTitleImage), R.drawable.bg_home_fragment_operation_light_green))
-        add(OperationIcon(ID_OPERATION_MUSIC, R.drawable.ic_home_music, getString(R.string.homeFragmentOperationTitleMusic), R.drawable.bg_home_fragment_operation_yellow))
+        add(OperationIcon(ID_OPERATION_MUSIC, R.drawable.ic_music_icon, getString(R.string.homeFragmentOperationTitleMusic), R.drawable.bg_home_fragment_operation_yellow))
         add(OperationIcon(ID_OPERATION_VIDEO, R.drawable.ic_home_video, getString(R.string.homeFragmentOperationTitleVideo), R.drawable.bg_home_fragment_operation_purple))
         add(OperationIcon(ID_OPERATION_DOCUMENT, R.drawable.ic_home_document, getString(R.string.homeFragmentOperationTitleDocument), R.drawable.bg_home_fragment_operation_blue))
         add(OperationIcon(ID_OPERATION_APPLICATION, R.drawable.ic_home_application, getString(R.string.homeFragmentOperationTitleApplication), R.drawable.bg_home_fragment_operation_red))

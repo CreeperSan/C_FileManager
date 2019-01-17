@@ -121,6 +121,8 @@
     <string name="booleanTrue">是</string>
     <string name="booleanFalse">否</string>
 
+    <string name="musicNotificationChannelName">音乐播放器</string>
+
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>

@@ -4,11 +4,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.SeekBar
 import com.creepersan.file.R
 import com.creepersan.file.activity.BaseActivity
+import com.creepersan.file.function.music.MUSIC_DEFAULT_IMAGE_ID
+import com.creepersan.file.function.music.MUSIC_DEFAULT_INFO_STR
 import com.creepersan.file.function.music.service.MusicPlayerService
 import com.creepersan.file.utils.toFormattedHourMinuteTime
 import kotlinx.android.synthetic.main.activity_music_player.*
@@ -19,6 +22,7 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
 
     private lateinit var mMusicServiceBinder: MusicPlayerService.MusicPlayerServiceBinder
     private val mUpdateProgressThread by lazy { UpdateProgressThread() }
+    private var mTmpBitmap:Bitmap? = null
     private var mIntentPath:String = ""
     private var isInit = false
     private var isSeeking = false
@@ -91,19 +95,37 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
 
     /* 生命周期 */
     private fun onInit(){
+        // 播放传送进来的音乐文件
         if (mIntentPath != ""){
-            mMusicServiceBinder.prepareAsync(mIntentPath) {
+            // 让后台服务准备音乐文件
+            mMusicServiceBinder.prepareAsync(mIntentPath) { // 准备完成
+                // 播放音乐
                 mMusicServiceBinder.play()
+                // 获取音乐文件信息以及设置图片
+                val tmpBean = mMusicServiceBinder.getCurrentMusicBean()
+                mTmpBitmap = mMusicServiceBinder.getCurrentMusicImage()
+                if (tmpBean == null){
+                    initMusicInfo()
+                }else{
+                    initMusicInfo(tmpBean.name, tmpBean.author, tmpBean.album, mTmpBitmap)
+                }
             }
         }
+        // 获取进度线程
         mUpdateProgressThread.start()
     }
     override fun onDestroy() {
         super.onDestroy()
+        // 结束刷新进度线程
         if (isInit){
             mUpdateProgressThread.finish()
         }
+        // 断开连接
         disconnectToService()
+        // 回收图片主页图片Bitmap资源
+        if (mTmpBitmap?.isRecycled == true){
+            mTmpBitmap?.recycle()
+        }
     }
     override fun onPause() {
         super.onPause()
@@ -142,11 +164,17 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
             musicPlayerSeekBar.progress = (musicPlayerSeekBar.max.toFloat() * (progress.toFloat() / duration.toFloat())).toInt()
         }
     }
-    private fun initMusicInfo(title:String, artist:String, album:String){
-        musicPlayerTitle.text = title
-        musicPlayerArtist.text = artist
+    private fun initMusicInfo(name:String=MUSIC_DEFAULT_INFO_STR, author:String=MUSIC_DEFAULT_INFO_STR, album:String=MUSIC_DEFAULT_INFO_STR, image:Bitmap?=null){
+        musicPlayerTitle.text = name
+        musicPlayerArtist.text = author
         musicPlayerAlbum.text = album
+        if (image == null){
+            musicPlayerImage.setImageResource(MUSIC_DEFAULT_IMAGE_ID)
+        }else{
+            musicPlayerImage.setImageBitmap(image)
+        }
     }
+
 
     /* 一些事件回调方法 */
     override fun onServiceDisconnected(name: ComponentName?) {}

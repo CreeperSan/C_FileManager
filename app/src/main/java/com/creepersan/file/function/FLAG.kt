@@ -1,0 +1,5 @@
+package com.creepersan.file.function
+
+const val ID_MUSIC_NOTIFICATION = 65218
+const val ID_MUSIC_NOTIFICATION_CHANNEL = "com.creepersan.file.NOTIFICATION_CHANNEL_ID.MUSIC"
+const val REQUEST_CODE_MUSIC_PENDING_INTENT_PLAY_PAUSE = 100

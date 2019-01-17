@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -66,12 +67,6 @@
         </activity>
 
         <service android:name=".function.music.service.MusicPlayerService"/>
-
-        <receiver android:name=".function.music.broadcast.MusicPlayerBroadcastReceiver">
-            <intent-filter>
-                <action android:name="com.creepersan.c_filemanager.musicplayer"/>
-            </intent-filter>
-        </receiver>
 
     </application>
 
