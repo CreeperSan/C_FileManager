@@ -25,6 +25,7 @@ import com.creepersan.file.function.ID_MUSIC_NOTIFICATION
 import com.creepersan.file.function.ID_MUSIC_NOTIFICATION_CHANNEL
 import com.creepersan.file.function.REQUEST_CODE_MUSIC_PENDING_INTENT_PLAY_PAUSE
 import com.creepersan.file.function.music.MUSIC_DEFAULT_IMAGE_ID
+import com.creepersan.file.function.music.MUSIC_PLAYER_LOOP_NO
 import com.creepersan.file.function.music.bean.MusicBean
 import com.creepersan.file.service.BaseService
 import com.creepersan.file.utils.Logger
@@ -74,6 +75,8 @@ class MusicPlayerService : BaseService() {
             .setSmallIcon(R.drawable.ic_music_icon)
             .build()
     }
+    private val mConfigUtil by lazy { FileApplication.getConfigInstance() }
+    private var mLoopMode = MUSIC_PLAYER_LOOP_NO
 
     companion object {
         const val STATE_NOT_PREPARE = 0
@@ -105,6 +108,8 @@ class MusicPlayerService : BaseService() {
         super.onCreate()
         // 注册广播接收器
         registerReceiver(mBroadcastReceiver, mBroadcastReceiverIntentFiler)
+        // 初始化参数
+        initPlayerParam()
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -141,6 +146,12 @@ class MusicPlayerService : BaseService() {
         stopForeground(false)
     } // 暂停播放音乐是的后续
 
+    /* 初始化 */
+    private fun initPlayerParam(){
+        // 初始化循环模式
+        mLoopMode = mConfigUtil.getMusicPlayerLoopMode()
+    }
+
     /* 内部处理方法 */
     private fun getMusicBean(filePath:String):MusicBean?{
         return mCurrentMusicBean
@@ -157,7 +168,7 @@ class MusicPlayerService : BaseService() {
     }
     @TargetApi(Build.VERSION_CODES.O)
     private fun getNotificationChannel():NotificationChannel{
-        val notificationChannel = NotificationChannel(ID_MUSIC_NOTIFICATION_CHANNEL, applicationContext.getString(R.string.musicNotificationChannelName), NotificationManager.IMPORTANCE_NONE)
+        val notificationChannel = NotificationChannel(ID_MUSIC_NOTIFICATION_CHANNEL, applicationContext.getString(R.string.musicPlayerNotificationChannelName), NotificationManager.IMPORTANCE_NONE)
         notificationChannel.lightColor = Color.BLUE
         notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(notificationChannel)
@@ -315,6 +326,16 @@ class MusicPlayerService : BaseService() {
     fun getCurrentMusicImage():Bitmap?{
         return getMusicImage(mCurrentMusicBean?.path ?: "")
     }
+    // TODO : 设置播放模式
+    fun setPlayerLoopMode(loopMode: Int){
+        // 更改参数
+        mLoopMode = loopMode
+        // 写入参数
+        mConfigUtil.setMusicPlayerLoopMode(mLoopMode)
+    }
+    fun getPlayerLoopMode():Int{
+        return mLoopMode
+    }
 
 
 
@@ -398,6 +419,12 @@ class MusicPlayerService : BaseService() {
             return this@MusicPlayerService.getCurrentMusicImage()
         }
 
+        fun setPlayerLoopMode(loopMode:Int){
+            this@MusicPlayerService.setPlayerLoopMode(loopMode)
+        }
+        fun getPlayerLoopMode():Int{
+            return mLoopMode
+        }
 
     }
 

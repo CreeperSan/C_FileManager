@@ -1,4 +1,4 @@
-package com.creepersan.file.fragment
+package com.creepersan.file.function.file.fragment
 
 import android.app.AlertDialog
 import android.graphics.Color
@@ -13,7 +13,12 @@ import android.view.ViewGroup
 import android.widget.*
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
-import com.creepersan.file.bean.FileItem
+import com.creepersan.file.function.file.bean.FileItem
+import com.creepersan.file.fragment.BaseMainActivityFragment
+import com.creepersan.file.function.file.FILE_SORT_MODIFY_TIME
+import com.creepersan.file.function.file.FILE_SORT_NAME
+import com.creepersan.file.function.file.FILE_SORT_SIZE
+import com.creepersan.file.function.file.FILE_SORT_TYPE
 import com.creepersan.file.utils.*
 import com.creepersan.file.view.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_file.*
@@ -37,7 +42,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         private const val KEY_ROOT_PATH = "RootPath"
         private val DEFAULT_ROOT_PATH = Environment.getExternalStorageState()
 
-        fun newInstance(rootPath:String = DEFAULT_ROOT_PATH):FileFragment{
+        fun newInstance(rootPath:String = DEFAULT_ROOT_PATH): FileFragment {
             val fragment = FileFragment()
             fragment.arguments = Bundle().apply {
                 putString(KEY_ROOT_PATH, rootPath)
@@ -108,14 +113,30 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     private val mFileMoreDialog by lazy {
         val dialog = SimpleDialog(context!!, SimpleDialog.DIRECTION_BOTTOM, SimpleDialog.TYPE_LIST)
             .setItems(arrayListOf(
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open, ID_MORE_ACTION_OPEN),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy, ID_MORE_ACTION_COPY),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut, ID_MORE_ACTION_CUT),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopyAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_COPY_APPEND),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCutAppend), R.drawable.ic_file_operation_list_add, ID_MORE_ACTION_CUT_APPEND),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationRename), R.drawable.ic_file_rename, ID_MORE_ACTION_RENAME),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info, ID_MORE_ACTION_INFO),
-                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete, ID_MORE_ACTION_DELETE)
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationOpen), R.drawable.ic_file_open,
+                    ID_MORE_ACTION_OPEN
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopy), R.drawable.ic_file_copy,
+                    ID_MORE_ACTION_COPY
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCut), R.drawable.ic_file_cut,
+                    ID_MORE_ACTION_CUT
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCopyAppend), R.drawable.ic_file_operation_list_add,
+                    ID_MORE_ACTION_COPY_APPEND
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationCutAppend), R.drawable.ic_file_operation_list_add,
+                    ID_MORE_ACTION_CUT_APPEND
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationRename), R.drawable.ic_file_rename,
+                    ID_MORE_ACTION_RENAME
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationInfo), R.drawable.ic_file_info,
+                    ID_MORE_ACTION_INFO
+                ),
+                SimpleDialog.DialogListItem(getString(R.string.dialogFileFragmentFileOperationDelete), R.drawable.ic_file_delete,
+                    ID_MORE_ACTION_DELETE
+                )
             ),object : SimpleDialog.OnDialogListItemClickListener{
                 override fun onItemClick(dialog: SimpleDialog, item: SimpleDialog.DialogListItem, pos: Int) {
                     when(item.id){
@@ -195,7 +216,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
         }
         dialog.setCustomView(layoutInflater.inflate(R.layout.dialog_base_custom_view_file_info, dialog.viewCustomViewGroup, false))
             .setTitle(getString(R.string.dialogFileFragmentFileOperationInfo))
-            .setPosButton(getString(R.string.baseDialogPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+            .setPosButton(getString(R.string.dialogButtonPosText), object : SimpleDialog.OnDialogButtonClickListener{
                 override fun onButtonClick(dialog: SimpleDialog) {
                 dialog.dismiss()
                 }
@@ -256,7 +277,10 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
 
     private fun initArgument(){
         val bundle = arguments ?: return
-        bundle.getString(KEY_ROOT_PATH, DEFAULT_ROOT_PATH)
+        bundle.getString(
+            KEY_ROOT_PATH,
+            DEFAULT_ROOT_PATH
+        )
     }
     private fun initToolbar(){
         fragmentFileActionBarToolbar.inflateMenu(R.menu.fragment_file)
@@ -309,7 +333,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
 
         val tmpPath = mFileStack.last.mPath
         mFileStack.removeLast()
-        mFileStack.addLast(FileStackInfo.fromPath(tmpPath))
+        mFileStack.addLast(
+            FileStackInfo.fromPath(
+                tmpPath
+            )
+        )
         mFileAdapter.notifyDataSetChanged()
         mPathAdapter.notifyDataSetChanged()
     }
@@ -346,7 +374,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
             mMessageDialog.setMessage(getString(R.string.dialogFileFragmentFilesDeleteConfirmMessage))
         }
         // 设置点击的按钮事件
-        mMessageDialog.setPosButton(getString(R.string.baseDialogPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+        mMessageDialog.setPosButton(getString(R.string.dialogButtonPosText), object : SimpleDialog.OnDialogButtonClickListener{
             override fun onButtonClick(dialog: SimpleDialog) {
                 // 检查里面是否存在不存在的文件
                 val fileList = ArrayList<File>()
@@ -399,7 +427,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 dialog.dismiss()
             }
         })
-        mMessageDialog.setNegButton(getString(R.string.baseDialogNegativeButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+        mMessageDialog.setNegButton(getString(R.string.dialogButtonNegText), object : SimpleDialog.OnDialogButtonClickListener{
             override fun onButtonClick(dialog: SimpleDialog) {
                 dialog.dismiss()
             }
@@ -460,7 +488,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
             mRenameDialog.setTitle(getString(R.string.titleDialogFileFileFragmentRenameFilesText))
         }
         mRenameDialog
-            .setPosButton(getString(R.string.baseDialogPositiveButtonText),object : SimpleDialog.OnDialogButtonClickListener{
+            .setPosButton(getString(R.string.dialogButtonPosText),object : SimpleDialog.OnDialogButtonClickListener{
                 override fun onButtonClick(dialog: SimpleDialog) {
                     val nameFile = mRenameDialog.getNewName().trim()
                     val isMultiFile = mFileMoreDialogTmpFilePathArrayList.size > 1
@@ -498,7 +526,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                     dialog.dismiss()
                 }
             })
-            .setNegButton(getString(R.string.baseDialogNegativeButtonText),object : SimpleDialog.OnDialogButtonClickListener{
+            .setNegButton(getString(R.string.dialogButtonNegText),object : SimpleDialog.OnDialogButtonClickListener{
                 override fun onButtonClick(dialog: SimpleDialog) {
                     dialog.dismiss()
                 }
@@ -712,7 +740,11 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                         mFileStack.last.mScrollYAxisPosition = mTmpFileRecyclerViewScrollPos
                         mTmpFileRecyclerViewScrollPos = 0
                         // 添加新的文件栈
-                        mFileStack.addLast(FileStackInfo.fromFile(item.getFile()))
+                        mFileStack.addLast(
+                            FileStackInfo.fromFile(
+                                item.getFile()
+                            )
+                        )
                         // 刷新显示
                         updatePathRecyclerView()
                         updateFileRecyclerView()
@@ -795,11 +827,13 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
     class FileStackInfo private constructor(){
 
         companion object {
-            fun fromExternalStorage():FileStackInfo{
-                return fromFile(Environment.getExternalStorageDirectory())
+            fun fromExternalStorage(): FileStackInfo {
+                return fromFile(
+                    Environment.getExternalStorageDirectory()
+                )
             }
 
-            fun fromFile(file:File):FileStackInfo{
+            fun fromFile(file:File): FileStackInfo {
                 val mStackInfo = FileStackInfo()
                 // 初始化当前目录的基础信息
                 mStackInfo.mName = file.name
@@ -817,28 +851,28 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 val isCaseSensitive = tmpConfig.getFileIsSortCaseSensitive()
 
                 when(sortType){
-                    ConfigUtil.DEFAULT_FILE_SORT_TYPE -> {
+                    FILE_SORT_TYPE -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.name }
                         }else{
                             tmpSort.sortBy { it.name }
                         }
                     }
-                    ConfigUtil.DEFAULT_FILE_SORT_SIZE -> {
+                    FILE_SORT_SIZE -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.length() }
                         }else{
                             tmpSort.sortBy { it.length() }
                         }
                     }
-                    ConfigUtil.DEFAULT_FILE_SORT_MODIFY_TIME -> {
+                    FILE_SORT_MODIFY_TIME -> {
                         if (isReverse){
                             tmpSort.sortByDescending { it.lastModified() }
                         }else{
                             tmpSort.sortBy { it.lastModified() }
                         }
                     }
-                    ConfigUtil.DEFAULT_FILE_SORT_NAME -> {
+                    FILE_SORT_NAME -> {
                         if (isReverse){
                             tmpSort.sortByDescending { if (isCaseSensitive){ it.name }else{ it.name.toUpperCase() } }
                         }else{
@@ -868,8 +902,12 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
                 return mStackInfo
             }
 
-            fun fromPath(path:String):FileStackInfo{
-                return fromFile(File(path))
+            fun fromPath(path:String): FileStackInfo {
+                return fromFile(
+                    File(
+                        path
+                    )
+                )
             }
         }
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      tools:ignore="AlwaysShowAction">
+
+
+    <item
+            android:icon="@drawable/ic_music_unlike_white"
+            android:id="@+id/menuMusicPlayerLike"
+            app:showAsAction="always"
+            android:title="@string/musicPlayerMenuLike"/>
+
+    <item
+            android:id="@+id/menuMusicPlayerLrc"
+            android:icon="@drawable/ic_music_player_lrc_white"
+            app:showAsAction="always"
+            android:title="@string/musicPlayerMenuLrc"/>
+
+    <item
+            android:icon="@drawable/ic_music_player_loop_random_white"
+            android:id="@+id/menuMusicPlayerLoop"
+            app:showAsAction="always"
+            android:title="@string/musicPlayerMenuLoop"/>
+
+    <item
+            android:icon="@drawable/ic_music_player_play_list_white"
+            android:id="@+id/menuMusicPlayerList"
+            app:showAsAction="always"
+            android:title="@string/musicPlayerMenuList"/>
+
+</menu>

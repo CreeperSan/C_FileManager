@@ -1,22 +1,15 @@
-package com.creepersan.file.bean
+package com.creepersan.file.function.file.bean
 
 import android.content.Context
-import android.support.v7.app.AlertDialog
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.utils.getFileModifyTimeShortString
 import com.creepersan.file.utils.getFileSize
 import com.creepersan.file.utils.getTypeIconID
 import java.io.File
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class FileItem private constructor(){
     companion object {
-        private var mTimeFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        private val mDecimalFormatter = DecimalFormat("#.00")
-
         fun fromFile(file:File, context: Context):FileItem{
             val item = FileItem()
             item.name = file.name

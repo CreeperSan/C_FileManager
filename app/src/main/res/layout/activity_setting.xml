@@ -10,6 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         <android.support.v7.widget.Toolbar
+                app:navigationIcon="@drawable/ic_arrow_left_white"
                 app:titleTextColor="@color/white"
                 app:title="@string/settingToolbarTitle"
                 android:id="@+id/settingToolbar"
@@ -18,7 +19,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/settingSettingList"
+            android:id="@+id/settingList"
             app:layout_constraintTop_toBottomOf="@id/settingAppBarLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.creepersan.file.fragment
+package com.creepersan.file.function.home.fragment
 
 import android.os.Bundle
 import android.os.Environment
@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.creepersan.file.FileApplication
 import com.creepersan.file.R
+import com.creepersan.file.fragment.BaseMainActivityFragment
 import com.creepersan.file.utils.toFormattedStorageString
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -55,7 +56,8 @@ class HomeFragment : BaseMainActivityFragment() {
     }
 
     private fun initOperationList(){
-        homeFragmentOperationList.layoutManager = GridLayoutManager(activity, OPERATION_HORIZONTAL_ICON_NUM, GridLayoutManager.VERTICAL, false)
+        homeFragmentOperationList.layoutManager = GridLayoutManager(activity,
+            OPERATION_HORIZONTAL_ICON_NUM, GridLayoutManager.VERTICAL, false)
         homeFragmentOperationList.adapter = mOperationAdapter
     }
     private fun initStorageListData(){
@@ -69,7 +71,7 @@ class HomeFragment : BaseMainActivityFragment() {
             R.drawable.ic_home_storage_sdcard,
             storageFile.name,
             "${usableSpace.toFormattedStorageString(activity)} / ${totalSpace.toFormattedStorageString(activity)}",
-            STORAGE_PROGRESSBAR_MAX - ((usableSpace.toDouble()/totalSpace.toDouble())*STORAGE_PROGRESSBAR_MAX).toInt()
+            STORAGE_PROGRESSBAR_MAX - ((usableSpace.toDouble()/totalSpace.toDouble())* STORAGE_PROGRESSBAR_MAX).toInt()
         )
         mStorageList.add(storageItem)
 
@@ -131,7 +133,7 @@ class HomeFragment : BaseMainActivityFragment() {
             layout.setOnClickListener(listenet)
         }
 
-        fun initHolder(item:StorageItem){
+        fun initHolder(item: StorageItem){
             imageIcon.setImageResource(item.icon)
             textTitle.text = item.title
             textSpace.text = item.spaceText

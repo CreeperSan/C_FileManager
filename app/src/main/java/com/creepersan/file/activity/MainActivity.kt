@@ -23,10 +23,9 @@ import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.I
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_HOME
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_INTERNAL_STORAGE
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_SETTING
-import com.creepersan.file.fragment.ApplicationFragment
 import com.creepersan.file.fragment.BaseMainActivityFragment
-import com.creepersan.file.fragment.FileFragment
-import com.creepersan.file.fragment.HomeFragment
+import com.creepersan.file.function.file.fragment.FileFragment
+import com.creepersan.file.function.home.fragment.HomeFragment
 import com.creepersan.file.utils.Logger
 import com.creepersan.file.utils.getTypeIconID
 import com.creepersan.file.view.SimpleDialog
@@ -139,7 +138,7 @@ class MainActivity : BaseActivity() {
         }
             .setTitle(getString(R.string.mainTitleWindowManager))
             .setCustomView(layoutInflater.inflate(R.layout.dialog_main_window_manager, null))
-            .setPosButton(getString(R.string.baseDialogPositiveButtonText), object :SimpleDialog.OnDialogButtonClickListener{
+            .setPosButton(getString(R.string.dialogButtonPosText), object :SimpleDialog.OnDialogButtonClickListener{
                 override fun onButtonClick(dialog: SimpleDialog) {
                     dialog.dismiss()
                 }
@@ -149,6 +148,8 @@ class MainActivity : BaseActivity() {
     private var isShowFloatingActionButton = false
     private var mPrevBackTime : Long = 0
     private val mBackPressedTimeMax by lazy { mConfig.getMainConfirmOnExitDelay() }
+    // 下面是一些对话框
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -189,9 +190,9 @@ class MainActivity : BaseActivity() {
     }
     private fun initViewPager(){
         mainViewPager.offscreenPageLimit = Int.MAX_VALUE
-        mFragmentList.add(HomeFragment())
+//        mFragmentList.add(HomeFragment())
         mFragmentList.add(FileFragment())
-        mFragmentList.add(ApplicationFragment())
+//        mFragmentList.add(ApplicationFragment())
         mainViewPager.adapter = mFragmentPagerAdapter
         mFragmentPagerAdapter.notifyDataSetChanged()
         mainViewPager.addOnPageChangeListener(mViewPagerPageChangeListener)
@@ -233,7 +234,7 @@ class MainActivity : BaseActivity() {
     }
     private fun activityOnBackPressed(){
         val currentTime = System.currentTimeMillis()
-        if(mConfig.getConfirmOnExit()){
+        if(mConfig.getMainConfirmOnExit()){
             if (currentTime - mPrevBackTime > mBackPressedTimeMax){
                 toast(getString(R.string.mainToastConfirmOnBackPressed))
                 mPrevBackTime = currentTime
@@ -300,6 +301,10 @@ class MainActivity : BaseActivity() {
      *  一系列操作
      */
     fun onClickFloatActionButton(){
+        if (mDrawerEndFileList.isEmpty()){
+            toast(R.string.mainToastDrawerEndFileListEmpty)
+            return
+        }
         mDrawerEndFileList.forEach { item ->
             val currentFragment = mFragmentList[mainViewPager.currentItem]
             if (currentFragment is FileFragment){
@@ -391,7 +396,7 @@ class MainActivity : BaseActivity() {
                     EndOperationItem.DELETE_ALL -> {
                         mMessageDialog.setTitle(getString(R.string.textMainDialogTitleDeleteFiles))
                         mMessageDialog.setMessage(getString(R.string.textMainDialogMessageDeleteFiles))
-                        mMessageDialog.setPosButton(getString(R.string.baseDialogPositiveButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+                        mMessageDialog.setPosButton(getString(R.string.dialogButtonPosText), object : SimpleDialog.OnDialogButtonClickListener{
                             override fun onButtonClick(dialog: SimpleDialog) {
                                 mDrawerEndFileList.forEach {
                                     it.operation = EndFileItem.OPERATION_DELETE
@@ -400,7 +405,7 @@ class MainActivity : BaseActivity() {
                                 dialog.dismiss()
                             }
                         })
-                        mMessageDialog.setNegButton(getString(R.string.baseDialogNegativeButtonText), object : SimpleDialog.OnDialogButtonClickListener{
+                        mMessageDialog.setNegButton(getString(R.string.dialogButtonNegText), object : SimpleDialog.OnDialogButtonClickListener{
                             override fun onButtonClick(dialog: SimpleDialog) {
                                 dialog.dismiss()
                             }

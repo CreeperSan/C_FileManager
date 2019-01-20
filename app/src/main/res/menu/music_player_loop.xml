@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:title="@string/musicPlayerLoopNo"
+            android:id="@+id/menuMusicPlayerLoopNo"
+            android:icon="@drawable/ic_music_player_loop_no_white"/>
+
+    <item
+            android:title="@string/musicPlayerLoopSingle"
+            android:id="@+id/menuMusicPlayerLoopSingle"
+            android:icon="@drawable/ic_music_player_loop_single_loop_white"/>
+
+    <item
+            android:title="@string/musicPlayerLoopOrder"
+            android:id="@+id/menuMusicPlayerLoopOrder"
+            android:icon="@drawable/ic_music_player_loop_order_white"/>
+
+    <item
+            android:title="@string/musicPlayerLoopOrderLoop"
+            android:id="@+id/menuMusicPlayerLoopOrderLoop"
+            android:icon="@drawable/ic_music_player_loop_order_loop_white"/>
+
+    <item
+            android:title="@string/musicPlayerLoopRandom"
+            android:id="@+id/menuMusicPlayerLoopRandom"
+            android:icon="@drawable/ic_music_player_loop_random_white"/>
+
+</menu>

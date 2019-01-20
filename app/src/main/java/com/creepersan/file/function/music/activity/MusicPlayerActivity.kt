@@ -7,21 +7,32 @@ import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
+import android.support.v7.widget.Toolbar
+import android.view.MenuItem
+import android.widget.PopupMenu
 import android.widget.SeekBar
+import com.creepersan.file.FileApplication
 import com.creepersan.file.R
 import com.creepersan.file.activity.BaseActivity
-import com.creepersan.file.function.music.MUSIC_DEFAULT_IMAGE_ID
-import com.creepersan.file.function.music.MUSIC_DEFAULT_INFO_STR
+import com.creepersan.file.function.music.*
 import com.creepersan.file.function.music.service.MusicPlayerService
+import com.creepersan.file.utils.ConfigUtil
 import com.creepersan.file.utils.toFormattedHourMinuteTime
 import kotlinx.android.synthetic.main.activity_music_player.*
 
-class MusicPlayerActivity : BaseActivity(), ServiceConnection {
+class MusicPlayerActivity : BaseActivity(), ServiceConnection, PopupMenu.OnMenuItemClickListener,
+    Toolbar.OnMenuItemClickListener {
 
     override val mLayoutID: Int = R.layout.activity_music_player
 
     private lateinit var mMusicServiceBinder: MusicPlayerService.MusicPlayerServiceBinder
     private val mUpdateProgressThread by lazy { UpdateProgressThread() }
+    private val mLoopMenuItem by lazy { musicPlayerToolbar.menu.findItem(R.id.menuMusicPlayerLoop)!! }
+    private val mLikeMenuItem by lazy { musicPlayerToolbar.menu.findItem(R.id.menuMusicPlayerLike)!! }
+    private val mLoopPopupMenu by lazy { PopupMenu(this, musicPlayerToolbar.findViewById(R.id.menuMusicPlayerLoop)).apply {
+        menuInflater.inflate(R.menu.music_player_loop, menu)
+        setOnMenuItemClickListener(this@MusicPlayerActivity)
+    } }
     private var mTmpBitmap:Bitmap? = null
     private var mIntentPath:String = ""
     private var isInit = false
@@ -36,6 +47,7 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
             mIntentPath = intent.data.path ?: ""
         }
 
+        initToolbar()
         initPlayButton()
         initSeekBar()
 
@@ -45,6 +57,18 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
     }
 
     /* 初始化方法 */
+    private fun initToolbar(){
+        musicPlayerToolbar.apply {
+            // Navigation Icon
+            setNavigationIcon(R.drawable.ic_close_white)
+            setNavigationOnClickListener {
+                finish()
+            }
+            // Menu
+            inflateMenu(R.menu.music_player)
+            setOnMenuItemClickListener(this@MusicPlayerActivity)
+        }
+    }
     private fun initPlayButton(){
         musicPlayerControlPlay.setOnClickListener {
             // 是否准备好
@@ -93,8 +117,49 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
         })
     }
 
+    /* 事件回调 */
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menuMusicPlayerLike -> {
+
+            }
+            R.id.menuMusicPlayerLrc -> {
+
+            }
+            R.id.menuMusicPlayerLoop -> {
+                mLoopPopupMenu.show()
+            }
+            R.id.menuMusicPlayerList -> {
+
+            }
+            R.id.menuMusicPlayerLoopNo -> {
+                setLoopModeIcon(MUSIC_PLAYER_LOOP_NO)
+                mMusicServiceBinder.setPlayerLoopMode(MUSIC_PLAYER_LOOP_NO)
+            }
+            R.id.menuMusicPlayerLoopSingle -> {
+                setLoopModeIcon(MUSIC_PLAYER_LOOP_SINGLE_LOOP)
+                mMusicServiceBinder.setPlayerLoopMode(MUSIC_PLAYER_LOOP_SINGLE_LOOP)
+            }
+            R.id.menuMusicPlayerLoopOrder -> {
+                setLoopModeIcon(MUSIC_PLAYER_LOOP_ORDER)
+                mMusicServiceBinder.setPlayerLoopMode(MUSIC_PLAYER_LOOP_ORDER)
+            }
+            R.id.menuMusicPlayerLoopOrderLoop -> {
+                setLoopModeIcon(MUSIC_PLAYER_LOOP_ORDER_LOOP)
+                mMusicServiceBinder.setPlayerLoopMode(MUSIC_PLAYER_LOOP_ORDER_LOOP)
+            }
+            R.id.menuMusicPlayerLoopRandom -> {
+                setLoopModeIcon(MUSIC_PLAYER_LOOP_RANDOM)
+                mMusicServiceBinder.setPlayerLoopMode(MUSIC_PLAYER_LOOP_RANDOM)
+            }
+        }
+        return true
+    }
+
     /* 生命周期 */
     private fun onInit(){
+        // 设置图标
+        setLoopModeIcon(mMusicServiceBinder.getPlayerLoopMode())
         // 播放传送进来的音乐文件
         if (mIntentPath != ""){
             // 让后台服务准备音乐文件
@@ -174,7 +239,36 @@ class MusicPlayerActivity : BaseActivity(), ServiceConnection {
             musicPlayerImage.setImageBitmap(image)
         }
     }
-
+    private fun setIsLike(isLike: Boolean){
+        if (isLike){
+            mLikeMenuItem.setIcon(R.drawable.ic_music_like)
+        }else{
+            mLikeMenuItem.setIcon(R.drawable.ic_music_unlike_white)
+        }
+    }
+    private fun setLoopModeIcon(loopMode: Int){
+        when(loopMode){
+            MUSIC_PLAYER_LOOP_NO -> {
+                mLoopMenuItem.setIcon(R.drawable.ic_music_player_loop_no_white)
+            }
+            MUSIC_PLAYER_LOOP_SINGLE_LOOP -> {
+                mLoopMenuItem.setIcon(R.drawable.ic_music_player_loop_single_loop_white)
+            }
+            MUSIC_PLAYER_LOOP_ORDER -> {
+                mLoopMenuItem.setIcon(R.drawable.ic_music_player_loop_order_white)
+            }
+            MUSIC_PLAYER_LOOP_ORDER_LOOP -> {
+                mLoopMenuItem.setIcon(R.drawable.ic_music_player_loop_order_loop_white)
+            }
+            MUSIC_PLAYER_LOOP_RANDOM -> {
+                mLoopMenuItem.setIcon(R.drawable.ic_music_player_loop_random_white)
+            }
+            else -> {
+                toast(R.string.musicPlayerToastLoopModeNotSupport)
+                return
+            }
+        }
+    }
 
     /* 一些事件回调方法 */
     override fun onServiceDisconnected(name: ComponentName?) {}

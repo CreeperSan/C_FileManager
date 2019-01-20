@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:clickable="true"
+                                             android:focusable="true"
+                                             android:background="@drawable/ripple_default"
+                                             android:paddingStart="10dp"
+                                             android:paddingEnd="10dp"
+                                             android:paddingTop="8dp"
+                                             android:paddingBottom="8dp"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content">
+
+    <ImageView
+            android:id="@+id/itemSettingNormalIcon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:src="@drawable/ic_file_apk"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
+    <TextView
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/itemSettingNormalSubTitle"
+            tools:text="这只是常规设置的标题"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@id/itemSettingNormalIcon"
+            app:layout_constraintEnd_toStartOf="@id/itemSettingNormalSwitch"
+            android:id="@+id/itemSettingNormalTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/itemSettingNormalTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:maxLines="3"
+            tools:text="这只是常规设置的相关描述信息"
+            app:layout_constraintStart_toEndOf="@id/itemSettingNormalIcon"
+            app:layout_constraintEnd_toStartOf="@id/itemSettingNormalSwitch"
+            android:id="@+id/itemSettingNormalSubTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    <Switch
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:checked="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:id="@+id/itemSettingNormalSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</android.support.constraint.ConstraintLayout>

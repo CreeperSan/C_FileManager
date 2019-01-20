@@ -101,8 +101,11 @@ abstract class BaseActivity : AppCompatActivity() {
         Logger.logE(content, javaClass.simpleName)
     }
 
-    fun toast(message:String){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    fun toast(message:String, length:Int=Toast.LENGTH_SHORT){
+        Toast.makeText(this, message, length).show()
+    }
+    fun toast(strID:Int, length:Int=Toast.LENGTH_SHORT){
+        Toast.makeText(this, strID, length).show()
     }
 
 }

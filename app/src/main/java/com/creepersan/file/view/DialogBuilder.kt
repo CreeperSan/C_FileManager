@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.creepersan.file.R
+import com.creepersan.file.utils.Logger
 import org.w3c.dom.Text
 import java.lang.RuntimeException
 
@@ -91,13 +92,33 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
         return this
     }
 
+    fun setTitleID(titleStrID:Int):SimpleDialog{
+        viewTitle.text = context.getString(titleStrID)
+        return this
+    }
+
+    override fun setTitle(strID:Int){
+        Logger.logE("请使用 SimpleDialog#setTitleID(Int) 代替", "SimpleDialog")
+        throw IllegalStateException()
+    }
+
     fun setPosButton(name:String, listener:OnDialogButtonClickListener):SimpleDialog{
         _setDialogButton(viewPosButton, name, listener)
         return this
     }
 
+    fun setPosButton(nameID:Int, listener:OnDialogButtonClickListener):SimpleDialog{
+        _setDialogButton(viewPosButton, context.getString(nameID), listener)
+        return this
+    }
+
     fun setNegButton(name:String, listener:OnDialogButtonClickListener):SimpleDialog{
         _setDialogButton(viewNegButton, name, listener)
+        return this
+    }
+
+    fun setNegButton(nameID:Int, listener:OnDialogButtonClickListener):SimpleDialog{
+        _setDialogButton(viewNegButton, context.getString(nameID), listener)
         return this
     }
 
@@ -131,12 +152,16 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
         return this
     }
 
+    fun setMessage(messageStrID:Int):SimpleDialog{
+        return setMessage(context.getString(messageStrID))
+    }
+
     fun _setDialogButton(view:TextView, name:String, listener: OnDialogButtonClickListener){
         if (name == ""){
             view.isClickable = false
             view.isFocusable = false
             view.background = null
-            view.visibility = View.INVISIBLE
+            view.visibility = View.GONE
         }else{
             view.text = name
             view.isClickable = true
