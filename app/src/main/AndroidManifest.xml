@@ -25,6 +25,8 @@
         <activity android:name=".activity.MainActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activity.AboutActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activity.SettingActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PermissionDescriptionActivity" android:screenOrientation="portrait"/>
+
         <activity android:name=".function.music.activity.MusicPlayerActivity" android:screenOrientation="portrait" android:label="音乐播放器">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -67,7 +69,6 @@
         </activity>
 
         <service android:name=".function.music.service.MusicPlayerService"/>
-        <service android:name=".function.video.service.VideoPlayerService"/>
 
     </application>
 

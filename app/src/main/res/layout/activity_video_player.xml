@@ -73,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <LinearLayout
+                android:id="@+id/videoPlayerBottomBarProgressLayout"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
                 android:gravity="center"
@@ -87,6 +88,7 @@
                     android:layout_width="52dp"
                     android:layout_height="wrap_content"/>
             <SeekBar
+                    android:max="1000"
                     android:id="@+id/videoPlayerSeekBar"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -101,12 +103,16 @@
         </LinearLayout>
 
         <LinearLayout
+                android:id="@+id/videoPlayerBottomBarButtonLayout"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/ripple_white"
                     android:id="@+id/videoPlayerPrevious"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
@@ -115,6 +121,9 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"/>
             <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/ripple_white"
                     android:id="@+id/videoPlayerBackward"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
@@ -123,6 +132,9 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"/>
             <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/ripple_white"
                     android:id="@+id/videoPlayerPlayerOrPause"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
@@ -131,6 +143,9 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"/>
             <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/ripple_white"
                     android:id="@+id/videoPlayerForward"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
@@ -139,6 +154,9 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"/>
             <ImageView
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/ripple_white"
                     android:id="@+id/videoPlayerNext"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="6dp"
@@ -182,21 +200,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         <ImageView
-                android:id="@+id/videoPlayerHintImage"
-                android:src="@drawable/ic_video_player_volumn"
+                android:id="@+id/videoPlayerHintLayoutImage"
+                android:src="@drawable/ic_video_player_volume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         <TextView
-                android:id="@+id/videoPlayerHintText"
+                android:id="@+id/videoPlayerHintLayoutText"
                 android:layout_marginStart="6dp"
                 android:textColor="@color/white"
                 android:textSize="30sp"
-                android:text="6"
+                tools:text="6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <ImageView
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/videoPlayerToolbar"
