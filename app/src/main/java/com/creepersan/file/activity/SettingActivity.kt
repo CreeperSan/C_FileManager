@@ -34,9 +34,14 @@ class SettingActivity : BaseActivity(){
         private const val TYPE_NORMAL_SIMPLE_ICON_SWITCH = 4
 
         private const val ID_CATALOG_GENERAL_SETTING        = 0
-        private const val ID_NORMAL_CONFIRM_ON_EXIT         = 1
-        private const val ID_NORMAL_CONFIRM_ON_EXIT_DELAY   = 2
+        private const val ID_GENERAL_CONFIRM_ON_EXIT         = 1
+        private const val ID_GENERAL_CONFIRM_ON_EXIT_DELAY   = 2
+
         private const val ID_CATALOG_FILE_SETTING           = 1000
+        private const val ID_FILE_SHOW_HIDDEN_FILE          = 1001
+        private const val ID_FILE_ORDER_REVERSE             = 1002
+        private const val ID_FILE_CASE_SENSITIVE            = 1003
+        private const val ID_FILE_FOLDER_FIRST            = 1004
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,14 +59,14 @@ class SettingActivity : BaseActivity(){
     private fun initRecyclerViewData(){
         // 常规设置
         mSettingBeanList.add(SettingCatalog(getString(R.string.settingGeneralSettingTitle), ID_CATALOG_GENERAL_SETTING))
-        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_NORMAL_CONFIRM_ON_EXIT, mConfig.getMainConfirmOnExit(), getString(R.string.settingGeneralConfirmOnExitTitle), getString(R.string.settingGeneralConfirmOnExitSubtitle), { tmpBean, tmpHolder ->
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_GENERAL_CONFIRM_ON_EXIT, mConfig.getMainConfirmOnExit(), getString(R.string.settingGeneralConfirmOnExitTitle), getString(R.string.settingGeneralConfirmOnExitSubtitle), { tmpBean, tmpHolder ->
             val bean = tmpBean as SettingNormalSimpleSwitch
             val holder = tmpHolder as SettingNormalSimpleHolder
             bean.state = !bean.state
             holder.setCheck(bean.state)
             mConfig.setMainConfirmOnExit(bean.state)
         }))
-        mSettingBeanList.add(SettingNormalSimple(ID_NORMAL_CONFIRM_ON_EXIT, getString(R.string.settingGeneralConfirmOnExitDelayTitle), getString(R.string.settingGeneralConfirmOnExitDelaySubtitle), { _,_ ->
+        mSettingBeanList.add(SettingNormalSimple(ID_GENERAL_CONFIRM_ON_EXIT_DELAY, getString(R.string.settingGeneralConfirmOnExitDelayTitle), getString(R.string.settingGeneralConfirmOnExitDelaySubtitle), { _, _ ->
             mSeekBarDialog
                 .setMax(9)
                 .setProgress(mConfig.getMainConfirmOnExitDelay()/100 - 1)
@@ -110,6 +115,35 @@ class SettingActivity : BaseActivity(){
 
         // 文件设置
         mSettingBeanList.add(SettingCatalog(getString(R.string.settingFileSettingTitle), ID_CATALOG_FILE_SETTING))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_FILE_SHOW_HIDDEN_FILE, mConfig.getFileIsShowHiddenFile(), getString(R.string.settingFileSettingShowHiddenFileTitle), getString(R.string.settingFileSettingShowHiddenFileSubtitle), {tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.setFileIsShowHiddenFile(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_FILE_ORDER_REVERSE, mConfig.getFileIsOrderReverse(), getString(R.string.settingFileSettingOrderReverseTitle), getString(R.string.settingFileSettingOrderReverseSubtitle), {tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.setFileIsOrderReverse(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_FILE_CASE_SENSITIVE, mConfig.getFileIsSortCaseSensitive(), getString(R.string.settingFileSettingCaseSensitiveTitle), getString(R.string.settingFileSettingCaseSensitiveSubtitle), { tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.setFileIsSortCaseSensitive(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_FILE_FOLDER_FIRST, mConfig.getFileIsFolderFirst(), getString(R.string.settingFileSettingFolderFirstTitle), getString(R.string.settingFileSettingFolderFirstSubtitle), { tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.setFileIsFolderFirst(bean.state)
+        }))
+
     }
     private fun initRecyclerView(){
         settingList.layoutManager = mSettingLayoutManager

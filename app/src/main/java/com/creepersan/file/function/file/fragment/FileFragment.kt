@@ -773,7 +773,7 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
 
         fun setChoose(state:Boolean){
             if (state){
-                itemView.setBackgroundColor(context?.getColor(R.color.lightgray) ?: DEFAULT_COLOR)
+                itemView.setBackgroundColor(context?.getColor(R.color.lightGray) ?: DEFAULT_COLOR)
             }else{
                 itemView.setBackgroundResource(R.drawable.ripple_default)
             }

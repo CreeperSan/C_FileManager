@@ -55,7 +55,7 @@
                 <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".function.video.VideoPlayerActivity" android:screenOrientation="portrait" android:label="视频播放器">
+        <activity android:name=".function.video.activity.VideoPlayerActivity" android:screenOrientation="portrait" android:label="视频播放器">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -67,6 +67,7 @@
         </activity>
 
         <service android:name=".function.music.service.MusicPlayerService"/>
+        <service android:name=".function.video.service.VideoPlayerService"/>
 
     </application>
 

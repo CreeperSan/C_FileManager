@@ -47,12 +47,16 @@ class HomeFragment : BaseMainActivityFragment() {
 
     override val mLayoutID: Int = R.layout.fragment_home
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initTitle()
         initOperationList()
         initStorageListData()
         initStorageList()
+    }
+
+    private fun initTitle() {
+        fragmentHomeToolbar.setTitle(R.string.homeFragmentToolbarTitle)
     }
 
     private fun initOperationList(){

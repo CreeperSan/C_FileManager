@@ -49,7 +49,6 @@ class MainActivity : BaseActivity() {
     private val mDrawerStartAdapter by lazy { StartDrawerAdapter() }
     private val mDrawerStartItemList by lazy {
         ArrayList<StartActionBaseItem>().apply {
-            add(StartActionCatalogItem(R.drawable.ic_main_create_window, getString(R.string.mainStartDrawerCatalogCreateWindow), true))
             add(StartActionSimpleItem(R.drawable.ic_file_home, getString(R.string.mainStartDrawerCatalogItemHome), ID_HOME))
             add(StartActionSimpleItem(R.drawable.ic_file_phone, getString(R.string.mainStartDrawerCatalogItemInternalStorage), ID_INTERNAL_STORAGE))
             add(StartActionSimpleItem(R.drawable.ic_file_setting, getString(R.string.mainStartDrawerSetting), StartActionBaseItem.ID_SETTING))

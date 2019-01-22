@@ -15,11 +15,13 @@ class ConfigUtil(context:Context) {
     private val mMainConfig by lazy { context.getSharedPreferences(NAME_MAIN_CONFIG, Context.MODE_PRIVATE) }
     private val mFileConfig by lazy { context.getSharedPreferences(NAME_FILE_CONFIG, Context.MODE_PRIVATE) }
     private val mMusicPlayerConfig by lazy { context.getSharedPreferences(NAME_MUSIC_PLAYER_CONFIG, Context.MODE_PRIVATE) }
+    private val mVideoPlayerConfig by lazy { context.getSharedPreferences(NAME_VIDEO_PLAYER_CONFIG, Context.MODE_PRIVATE) }
 
     companion object {
         private const val NAME_FILE_CONFIG = "file"
         private const val NAME_MAIN_CONFIG = "main"
         private const val NAME_MUSIC_PLAYER_CONFIG = "music_player"
+        private const val NAME_VIDEO_PLAYER_CONFIG = "music_player"
 
         // Main
         private const val KEY_MAIN_IS_CONFIRM_ON_EXIT = "is_confirm_on_exit"
@@ -40,6 +42,14 @@ class ConfigUtil(context:Context) {
 
         // Music Player
         private const val KEY_MUSIC_PLAYER_LOOP_MODE = "loop_mode"
+
+        // Video Player
+        private const val KEY_VIDEO_PLAYER_RIGHT_SLIDE_VOLUME = "right_slide"
+        private const val DEFAULT_VIDEO_PLAYER_RIGHT_SLIDE_VOLUME = true
+        private const val KEY_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS = "left_slide"
+        private const val DEFAULT_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS = true
+        private const val KEY_VIDEO_PLAYER_SLIDE_PROGRESS = "slide"
+        private const val DEFAULT_VIDEO_PLAYER_SLIDE_PROGRESS = true
 
     }
 
@@ -121,6 +131,26 @@ class ConfigUtil(context:Context) {
                 Logger.log("写入未知的LoopMode", Logger.TAG_MUSIC_PLAYER)
             }
         }
+    }
+
+    /* Video Player 相关 */
+    fun videoPlayerIsRightSlideVolume():Boolean{
+        return mVideoPlayerConfig.getBoolean(KEY_VIDEO_PLAYER_RIGHT_SLIDE_VOLUME, DEFAULT_VIDEO_PLAYER_RIGHT_SLIDE_VOLUME)
+    }
+    fun videoPlayerSetRightSlideVolume(state:Boolean){
+        mVideoPlayerConfig.edit().putBoolean(KEY_VIDEO_PLAYER_RIGHT_SLIDE_VOLUME, state).apply()
+    }
+    fun videoPlayerIsLeftSlideBrightness():Boolean{
+        return mVideoPlayerConfig.getBoolean(KEY_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS, DEFAULT_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS)
+    }
+    fun videoPlayerSetLeftSlideBrightness(state:Boolean){
+        mVideoPlayerConfig.edit().putBoolean(KEY_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS, state).apply()
+    }
+    fun videoPlayerIsSlideProgress():Boolean{
+        return mVideoPlayerConfig.getBoolean(KEY_VIDEO_PLAYER_SLIDE_PROGRESS, DEFAULT_VIDEO_PLAYER_SLIDE_PROGRESS)
+    }
+    fun videoPlayerSetSlideProgress(state:Boolean){
+        mVideoPlayerConfig.edit().putBoolean(KEY_VIDEO_PLAYER_SLIDE_PROGRESS, state).apply()
     }
 
 }

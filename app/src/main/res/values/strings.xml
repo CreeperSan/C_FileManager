@@ -97,6 +97,7 @@
     <string name="mainToastConfirmOnBackPressed">请再按一下返回退出</string>
     <string name="mainToastDrawerEndFileListEmpty">还没有选择要操作的文件哦</string>
 
+    <string name="homeFragmentToolbarTitle">主页</string>
     <string name="homeFragmentOperationTitleImage">图片</string>
     <string name="homeFragmentOperationTitleMusic">音乐</string>
     <string name="homeFragmentOperationTitleVideo">视频</string>
@@ -144,6 +145,14 @@
     <string name="settingDialogGeneralConfirmOnExitDelayHintTemplate">当前时间 : %s ms</string>
     <string name="settingDialogGeneralConfirmOnExitDelayTimeTooShortHint">我们认为低于300ms的触发时间太短了，这将加大触发返回退出的难度，您确定要这样设置吗？</string>
     <string name="settingFileSettingTitle">文件设置</string>
+    <string name="settingFileSettingShowHiddenFileTitle">显示隐藏文件</string>
+    <string name="settingFileSettingShowHiddenFileSubtitle">是否在文件浏览器中显示隐藏文件</string>
+    <string name="settingFileSettingOrderReverseTitle">倒序显示</string>
+    <string name="settingFileSettingOrderReverseSubtitle">是否倒序显示文件</string>
+    <string name="settingFileSettingCaseSensitiveTitle">大小写敏感</string>
+    <string name="settingFileSettingCaseSensitiveSubtitle">是否大小写敏感(大写字母优于小写字母)</string>
+    <string name="settingFileSettingFolderFirstTitle">文件夹置顶</string>
+    <string name="settingFileSettingFolderFirstSubtitle">将文件夹排列在所有文件的上面</string>
 
 
     <string name="debugProcessing">正在开发中…</string>
