@@ -41,7 +41,13 @@ class SettingActivity : BaseActivity(){
         private const val ID_FILE_SHOW_HIDDEN_FILE          = 1001
         private const val ID_FILE_ORDER_REVERSE             = 1002
         private const val ID_FILE_CASE_SENSITIVE            = 1003
-        private const val ID_FILE_FOLDER_FIRST            = 1004
+        private const val ID_FILE_FOLDER_FIRST              = 1004
+
+        private const val ID_CATALOG_VIDEO_PLAYER           = 2000
+        private const val ID_VIDEO_ENABLE_HORIZONTAL_SLIDE    = 2003
+        private const val ID_VIDEO_ENABLE_LEFT_BRIGHTNESS_SLIDE    = 2003
+        private const val ID_VIDEO_ENABLE_RIGHT_VOLUME_SLIDE    = 2003
+        private const val ID_VIDEO_HORIZONTAL_SLIDE_UNIT    = 2004
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,11 +98,7 @@ class SettingActivity : BaseActivity(){
                                         mSeekBarDialog.dismiss()
                                     }
                                 })
-                                .setNegButton(R.string.dialogButtonNegText, object : SimpleDialog.OnDialogButtonClickListener{
-                                    override fun onButtonClick(dialog: SimpleDialog) {
-                                        dialog.dismiss()
-                                    }
-                                })
+                                .setNegButton(R.string.dialogButtonNegText)
                                 .show()
                         }else{// 设置时间
                             mConfig.setMainConfirmOnExitDealy(delay)
@@ -104,11 +106,7 @@ class SettingActivity : BaseActivity(){
                         }
                     }
                 })
-                .setNegButton(R.string.dialogButtonNegText, object :SimpleDialog.OnDialogButtonClickListener{
-                    override fun onButtonClick(dialog: SimpleDialog) {
-                        dialog.dismiss()
-                    }
-                })
+                .setNegButton(R.string.dialogButtonNegText)
                 .show()
 
         }))
@@ -142,6 +140,57 @@ class SettingActivity : BaseActivity(){
             bean.state = !bean.state
             holder.setCheck(bean.state)
             mConfig.setFileIsFolderFirst(bean.state)
+        }))
+
+        // 视频设置
+        mSettingBeanList.add(SettingCatalog(getString(R.string.settingVideoPlayerCatalog), ID_CATALOG_VIDEO_PLAYER))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_VIDEO_ENABLE_LEFT_BRIGHTNESS_SLIDE, mConfig.videoPlayerIsLeftSlideBrightness(), getString(R.string.settingVideoPlayerEnableLeftSlideBrightnessTitle), getString(R.string.settingVideoPlayerEnableLeftSlideBrightnessSubtitle),{ tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.videoPlayerSetLeftSlideBrightness(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_VIDEO_ENABLE_RIGHT_VOLUME_SLIDE, mConfig.videoPlayerIsRightSlideVolume(), getString(R.string.settingVideoPlayerEnableRightSlideVolumeTitle), getString(R.string.settingVideoPlayerEnableRightSlideVolumeTitle),{ tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.videoPlayerSetRightSlideVolume(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimpleSwitch(ID_VIDEO_HORIZONTAL_SLIDE_UNIT, mConfig.videoPlayerIsHorizontalSlideProgress(), getString(R.string.settingVideoPlayerEnableHorizontalSlideVolumeTitle), getString(R.string.settingVideoPlayerEnableHorizontalSlideVolumeSubtitle),{ tmpBean, tmpHolder ->
+            val bean = tmpBean as SettingNormalSimpleSwitch
+            val holder = tmpHolder as SettingNormalSimpleHolder
+            bean.state = !bean.state
+            holder.setCheck(bean.state)
+            mConfig.videoPlayerSetHorizontalSlideProgress(bean.state)
+        }))
+        mSettingBeanList.add(SettingNormalSimple(ID_VIDEO_HORIZONTAL_SLIDE_UNIT, getString(R.string.settingVideoPlayerHorizontalSlideUnitTitle), getString(R.string.settingVideoPlayerHorizontalSlideUnitSubtitle),{ _, _ ->
+            mSeekBarDialog
+                .setMax(5000)
+                .setProgress(mConfig.videoPlayerGetHorizontalSlideUnit())
+                .setHintText(String.format(getString(R.string.settingDialogVideoPlayerHorizontalSlideUnitHintTemplate), mConfig.videoPlayerGetHorizontalSlideUnit()))
+                .setOnSeekBarChange{ seekbar, tmpProgress, fromUser ->
+                    val progress = if (tmpProgress < 1){
+                        seekbar.progress = 1
+                        1
+                    }else{
+                        tmpProgress
+                    }
+                    if (fromUser){
+                        val templateStr = getString(R.string.settingDialogVideoPlayerHorizontalSlideUnitHintTemplate)
+                        mSeekBarDialog.setHintText(String.format(templateStr, progress))
+                    }
+                }
+                .setTitleID(R.string.settingDialogVideoPlayerHorizontalSlideUnitTitle)
+                .setPosButton(R.string.dialogButtonPosText, object :SimpleDialog.OnDialogButtonClickListener{
+                    override fun onButtonClick(dialog: SimpleDialog) {
+                        mConfig.videoPlayerSetHorizontalSlideUnit(mSeekBarDialog.getProgress())
+                        dialog.dismiss()
+                    }
+                })
+                .setNegButton(R.string.dialogButtonNegText)
+                .show()
         }))
 
     }

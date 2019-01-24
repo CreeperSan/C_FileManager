@@ -112,12 +112,12 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
         return this
     }
 
-    fun setNegButton(name:String, listener:OnDialogButtonClickListener):SimpleDialog{
+    fun setNegButton(name:String, listener:OnDialogButtonClickListener?=null):SimpleDialog{
         _setDialogButton(viewNegButton, name, listener)
         return this
     }
 
-    fun setNegButton(nameID:Int, listener:OnDialogButtonClickListener):SimpleDialog{
+    fun setNegButton(nameID:Int, listener:OnDialogButtonClickListener?=null):SimpleDialog{
         _setDialogButton(viewNegButton, context.getString(nameID), listener)
         return this
     }
@@ -156,7 +156,7 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
         return setMessage(context.getString(messageStrID))
     }
 
-    fun _setDialogButton(view:TextView, name:String, listener: OnDialogButtonClickListener){
+    fun _setDialogButton(view:TextView, name:String, listener: OnDialogButtonClickListener?){
         if (name == ""){
             view.isClickable = false
             view.isFocusable = false
@@ -168,7 +168,11 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
             view.isFocusable = true
             view.visibility = View.VISIBLE
             view.setOnClickListener{
-                listener.onButtonClick(this)
+                if (listener == null){
+                    dismiss()
+                }else{
+                    listener.onButtonClick(this)
+                }
             }
         }
     }

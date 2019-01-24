@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menuVideoPlayerLock"
+          app:showAsAction="always"
+          android:icon="@drawable/ic_video_player_lock"
+          android:title="@string/videoPlayerMenuLock"
+          tools:ignore="AlwaysShowAction"/>
+
+    <item android:id="@+id/menuVideoPlayerRotate"
+          app:showAsAction="always"
+          android:icon="@drawable/ic_video_player_rotation"
+          android:title="@string/videoPlayerMenuRotate"/>
+
+    <item android:id="@+id/menuVideoPlayerScale"
+          app:showAsAction="always"
+          android:icon="@drawable/ic_video_player_scale"
+          android:title="@string/videoPlayerMenuScale"/>
+
+</menu>

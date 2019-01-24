@@ -15,6 +15,7 @@
             android:layout_height="match_parent"/>
 
     <Toolbar
+            android:titleTextColor="@color/white"
             android:visibility="gone"
             android:id="@+id/videoPlayerToolbar"
             android:background="@color/blackAlpha50"

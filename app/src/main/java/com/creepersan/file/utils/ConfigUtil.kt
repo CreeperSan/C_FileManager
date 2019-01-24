@@ -50,6 +50,8 @@ class ConfigUtil(context:Context) {
         private const val DEFAULT_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS = true
         private const val KEY_VIDEO_PLAYER_SLIDE_PROGRESS = "slide"
         private const val DEFAULT_VIDEO_PLAYER_SLIDE_PROGRESS = true
+        private const val KEY_HORIZONTAL_SLIDE_PROGRESS_UNIT = "horizontal_slide_progress_unit"
+        private const val DEFAULT_HORIZONTAL_SLIDE_PROGRESS_UNIT = 1000
 
     }
 
@@ -146,11 +148,17 @@ class ConfigUtil(context:Context) {
     fun videoPlayerSetLeftSlideBrightness(state:Boolean){
         mVideoPlayerConfig.edit().putBoolean(KEY_VIDEO_PLAYER_LEFT_SLIDE_BRIGHTNESS, state).apply()
     }
-    fun videoPlayerIsSlideProgress():Boolean{
+    fun videoPlayerIsHorizontalSlideProgress():Boolean{
         return mVideoPlayerConfig.getBoolean(KEY_VIDEO_PLAYER_SLIDE_PROGRESS, DEFAULT_VIDEO_PLAYER_SLIDE_PROGRESS)
     }
-    fun videoPlayerSetSlideProgress(state:Boolean){
+    fun videoPlayerSetHorizontalSlideProgress(state:Boolean){
         mVideoPlayerConfig.edit().putBoolean(KEY_VIDEO_PLAYER_SLIDE_PROGRESS, state).apply()
+    }
+    fun videoPlayerGetHorizontalSlideUnit():Int{
+        return mVideoPlayerConfig.getInt(KEY_HORIZONTAL_SLIDE_PROGRESS_UNIT, DEFAULT_HORIZONTAL_SLIDE_PROGRESS_UNIT)
+    }
+    fun videoPlayerSetHorizontalSlideUnit(unitMillisecond:Int){
+        mVideoPlayerConfig.edit().putInt(KEY_HORIZONTAL_SLIDE_PROGRESS_UNIT, unitMillisecond).apply()
     }
 
 }

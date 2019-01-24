@@ -153,7 +153,23 @@
     <string name="settingFileSettingCaseSensitiveSubtitle">是否大小写敏感(大写字母优于小写字母)</string>
     <string name="settingFileSettingFolderFirstTitle">文件夹置顶</string>
     <string name="settingFileSettingFolderFirstSubtitle">将文件夹排列在所有文件的上面</string>
+    <string name="settingVideoPlayerCatalog">视频播放器设置</string>
+    <string name="settingVideoPlayerEnableLeftSlideBrightnessTitle">滑动调节亮度</string>
+    <string name="settingVideoPlayerEnableLeftSlideBrightnessSubtitle">是否开启滑动左边调节亮度</string>
+    <string name="settingVideoPlayerEnableRightSlideVolumeTitle">滑动调节音量</string>
+    <string name="settingVideoPlayerEnableRightSlideVolumeSubtitle">是否开启滑动友边调节音量</string>
+    <string name="settingVideoPlayerEnableHorizontalSlideVolumeTitle">滑动调节进度</string>
+    <string name="settingVideoPlayerEnableHorizontalSlideVolumeSubtitle">是否开启水平滑动播放进度</string>
+    <string name="settingVideoPlayerHorizontalSlideUnitTitle">滑动调节时间单位</string>
+    <string name="settingVideoPlayerHorizontalSlideUnitSubtitle">设置水平滑动时的调节时间单位</string>
+    <string name="settingDialogVideoPlayerHorizontalSlideUnitHintTemplate">当前时间单位 : %s ms</string>
+    <string name="settingDialogVideoPlayerHorizontalSlideUnitTitle">设定水平滑动单位时间</string>
 
+    <string name="videoPlayerDefaultLight">默认亮度</string>
+    <string name="videoPlayerMenuLock">锁定触摸</string>
+    <string name="videoPlayerMenuRotate">屏幕旋转</string>
+    <string name="videoPlayerMenuScale">视频缩放</string>
+    <string name="videoPlayerFileNotFound">没有找到视频</string>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>
