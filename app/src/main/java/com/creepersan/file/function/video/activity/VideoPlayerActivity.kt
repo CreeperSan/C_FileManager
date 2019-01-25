@@ -15,6 +15,7 @@ import com.creepersan.file.utils.*
 import kotlinx.android.synthetic.main.activity_video_player.*
 import java.io.File
 import java.io.FileNotFoundException
+import java.lang.Exception
 import java.lang.IllegalStateException
 
 class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.Callback,
@@ -32,12 +33,16 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         private const val STATE_SLIDE_RIGHT_VOLUME = 2
         private const val STATE_SLIDE_HORIZONTAL = 3
 
+        private const val SCALE_TYPE_FIT = 0        // 保持比例，全部显示
+        private const val SCALE_TYPE_ZOOM = 1       // 保持比例，裁剪显示
+        private const val SCALE_TYPE_ORIGINAL = 2   // 保持比例，原始大小
+        private const val SCALE_TYPE_FILL = 3       // 石英比例，全部显示
+
         private const val POSITION_UNDEFINE = Int.MIN_VALUE
         private const val TAG = "视频播放器"
     }
     private val MOVE_UNIT_DISTANCE = dp2px(FileApplication.getInstance(), 8f)
 
-    private val mMediaPlayer by lazy { MediaPlayer() }
     private val mThread by lazy { UpdateThread() }
 
     private var isShowingControlPannel = false
@@ -62,6 +67,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     private var isLock = false
     private var mHorizontalScrollUnitTimeMillisecond = mConfig.videoPlayerGetHorizontalSlideUnit()
     private var mHorizontalScrollBasePosition = POSITION_UNDEFINE
+    private var mScaleType = SCALE_TYPE_FIT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +78,9 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         initUnlockLayout()
         refreshVolumeProgressBar()
         refreshBrightnessProgressBar()
+        initTouchZone()
         initSurfaceView()
+        initControlButton()
         mThread.start()
     }
     override fun onDestroy() {
@@ -124,8 +132,110 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         videoPlayerBrightness.setProgress(Math.round((getActivityBrightness() / (getActivityMaxBrightness()-getActivityMinBrightness()))*videoPlayerBrightness.getMax()))
     }
     private fun initSurfaceView(){
-        videoPlayerSurfaceView.setOnTouchListener(this)
         videoPlayerSurfaceView.holder.addCallback(this)
+    }
+    private fun initTouchZone(){
+        videoPlayerTouchZone.setOnTouchListener(this)
+    }
+    private fun initControlButton(){
+        videoPlayerPlayerOrPause.setOnClickListener {
+
+        }
+        videoPlayerForward.setOnClickListener {
+
+        }
+        videoPlayerBackward.setOnClickListener {
+
+        }
+        videoPlayerNext.setOnClickListener {
+
+        }
+        videoPlayerPrevious.setOnClickListener {
+
+        }
+    }
+
+    private fun initScale(){
+        val mWindowWidth = videoPlayerRootLayout.width
+        val mWindowHeight = videoPlayerRootLayout.height
+        val videoWidth = mMediaPlayerManager?.getWidth() ?: 0
+        val videoHeight = mMediaPlayerManager?.getHeight() ?: 0
+        Logger.log("视频 Width:$videoWidth  Height:$videoHeight")
+        val layoutParam = videoPlayerSurfaceView.layoutParams
+        when(mScaleType){
+            SCALE_TYPE_FIT -> {
+                if (mWindowWidth > mWindowHeight){ // 屏幕为横屏
+                    if (videoWidth > videoHeight){ // 视频为横屏
+                        layoutParam.width = mWindowWidth
+                        layoutParam.height= ((videoHeight.toFloat()/videoWidth.toFloat())*mWindowWidth.toFloat()).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }else{ // 视频为竖屏
+                        val scale = mWindowHeight.toFloat() / videoHeight.toFloat()
+                        layoutParam.width = (videoWidth.toFloat() * scale).toInt()
+                        layoutParam.height= (videoHeight.toFloat() * scale).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }
+                }else{ // 屏幕为竖屏
+                    if (videoWidth > videoHeight){ // 视频为横屏
+                        layoutParam.width = mWindowWidth
+                        layoutParam.height= ((videoHeight.toFloat() / videoWidth.toFloat())*mWindowWidth.toFloat()).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }else{ // 视频为竖屏
+                        val scale = mWindowHeight.toFloat() / videoHeight.toFloat()
+                        layoutParam.width = (videoWidth.toFloat() * scale).toInt()
+                        layoutParam.height= (videoHeight.toFloat() * scale).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }
+                }
+            }
+            SCALE_TYPE_ZOOM -> {
+                if (mWindowWidth > mWindowHeight){ // 屏幕为横屏
+                    if (videoWidth > videoHeight){ // 视频为横屏
+                        layoutParam.width = ((videoWidth.toFloat() / videoHeight.toFloat())* mWindowHeight.toFloat()).toInt()
+                        layoutParam.height= mWindowHeight
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }else{ // 视频为竖屏
+                        layoutParam.width = mWindowWidth
+                        layoutParam.height= ((mWindowWidth.toFloat()/mWindowHeight.toFloat())*mWindowWidth.toFloat()).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }
+                }else{ // 屏幕为竖屏
+                    if (videoWidth > videoHeight){ // 视频为横屏
+                        layoutParam.width = ((videoWidth.toFloat() / videoHeight.toFloat())*mWindowHeight).toInt()
+                        layoutParam.height= mWindowHeight
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }else{ // 视频为竖屏
+                        layoutParam.width = mWindowWidth
+                        layoutParam.height= ((videoHeight.toFloat()/videoWidth.toFloat())*mWindowHeight.toFloat()).toInt()
+                        videoPlayerSurfaceView.layoutParams = layoutParam
+                        videoPlayerSurfaceView.invalidate()
+                    }
+                }
+            }
+            SCALE_TYPE_FILL -> {
+                layoutParam.width = mWindowWidth
+                layoutParam.height = mWindowHeight
+                videoPlayerSurfaceView.layoutParams = layoutParam
+                videoPlayerSurfaceView.invalidate()
+            }
+            SCALE_TYPE_ORIGINAL -> {
+                layoutParam.width = videoWidth
+                layoutParam.height = videoHeight
+                videoPlayerSurfaceView.layoutParams = layoutParam
+                videoPlayerSurfaceView.invalidate()
+            }
+            else -> {
+                mScaleType = SCALE_TYPE_FIT
+                initScale()
+            }
+        }
     }
 
     /* 回调 */
@@ -509,6 +619,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             isReady = false
             mMediaPlayer.setDataSource(path)
             mMediaPlayer.setOnPreparedListener {
+                initScale()
                 isReady = true
                 action?.invoke()
                 mMediaPlayer.setOnPreparedListener(null)
@@ -526,6 +637,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             isReady = false
             mMediaPlayer.setDataSource(path)
             mMediaPlayer.prepare()
+            initScale()
             isReady = true
         }
 
@@ -563,11 +675,30 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             return isReady
         }
 
+        fun getWidth():Int{
+            return try {
+                mMediaPlayer.videoWidth
+            }catch (e:Exception){
+                e.printStackTrace()
+                -1
+            }
+        }
+
+        fun getHeight():Int{
+            return try {
+                mMediaPlayer.videoHeight
+            }catch (e:Exception){
+                e.printStackTrace()
+                -1
+            }
+        }
+
         fun destory(){
             mMediaPlayer.setDisplay(null)
             mMediaPlayer.reset()
             mMediaPlayer.release()
         }
+
     }
 
 }

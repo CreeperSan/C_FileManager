@@ -27,7 +27,7 @@
         <activity android:name=".activity.SettingActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activity.PermissionDescriptionActivity" android:screenOrientation="portrait"/>
 
-        <activity android:name=".function.music.activity.MusicPlayerActivity" android:screenOrientation="portrait" android:label="音乐播放器">
+        <activity android:name=".function.music.activity.MusicPlayerActivity" android:icon="@drawable/ic_activity_music_player" android:screenOrientation="portrait" android:label="@string/musicPlayerActivityTitle">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -37,7 +37,7 @@
                 <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".function.text.TextViewerActivity" android:screenOrientation="portrait" android:label="文本浏览器">
+        <activity android:name=".function.text.TextViewerActivity" android:icon="@drawable/ic_activity_text_viewer" android:screenOrientation="portrait" android:label="@string/textViewerActivityTitle">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -47,7 +47,7 @@
                 <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".function.image.ImageViewerActivity" android:screenOrientation="portrait" android:label="图片浏览器">
+        <activity android:name=".function.image.ImageViewerActivity" android:icon="@drawable/ic_activity_image_viewer" android:screenOrientation="portrait" android:label="@string/ImageViewerActivityTitle">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -57,7 +57,7 @@
                 <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".function.video.activity.VideoPlayerActivity" android:screenOrientation="portrait" android:label="视频播放器">
+        <activity android:name=".function.video.activity.VideoPlayerActivity" android:icon="@drawable/ic_activity_video_player" android:screenOrientation="portrait" android:label="@string/videoPlayerActivityTitle">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

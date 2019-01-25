@@ -124,6 +124,7 @@
     <string name="booleanTrue">是</string>
     <string name="booleanFalse">否</string>
 
+    <string name="musicPlayerActivityTitle">音乐播放器</string>
     <string name="musicPlayerNotificationChannelName">音乐播放器</string>
     <string name="musicPlayerMenuLrc">歌词显示</string>
     <string name="musicPlayerMenuLoop">循环模式</string>
@@ -165,11 +166,16 @@
     <string name="settingDialogVideoPlayerHorizontalSlideUnitHintTemplate">当前时间单位 : %s ms</string>
     <string name="settingDialogVideoPlayerHorizontalSlideUnitTitle">设定水平滑动单位时间</string>
 
+    <string name="videoPlayerActivityTitle">视频播放器</string>
     <string name="videoPlayerDefaultLight">默认亮度</string>
     <string name="videoPlayerMenuLock">锁定触摸</string>
     <string name="videoPlayerMenuRotate">屏幕旋转</string>
     <string name="videoPlayerMenuScale">视频缩放</string>
     <string name="videoPlayerFileNotFound">没有找到视频</string>
+
+    <string name="textViewerActivityTitle">文本阅读器</string>
+
+    <string name="ImageViewerActivityTitle">图片浏览器</string>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>
