@@ -1,6 +1,7 @@
 package com.creepersan.file
 
 import android.app.Application
+import android.content.pm.PackageManager
 import com.creepersan.file.utils.ConfigUtil
 
 class FileApplication : Application(){
@@ -23,6 +24,10 @@ class FileApplication : Application(){
                 }
             }
             return mConfig!!
+        }
+
+        fun getPackageManager():PackageManager{
+            return getInstance().packageManager
         }
     }
 

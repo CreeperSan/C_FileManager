@@ -1,5 +1,6 @@
 package com.creepersan.file.function.video.activity
 
+import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.MenuItem
@@ -36,10 +37,20 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         private const val SCALE_TYPE_FIT = 0        // 保持比例，全部显示
         private const val SCALE_TYPE_ZOOM = 1       // 保持比例，裁剪显示
         private const val SCALE_TYPE_ORIGINAL = 2   // 保持比例，原始大小
-        private const val SCALE_TYPE_FILL = 3       // 石英比例，全部显示
+        private const val SCALE_TYPE_FILL = 3       // 适应比例，全部显示
+
+        private const val SCALE_HINT_STAY_TIME = 1000L  // 点击缩放尺寸改变后的提示文本停留时间
 
         private const val POSITION_UNDEFINE = Int.MIN_VALUE
         private const val TAG = "视频播放器"
+
+        private const val ORIENTATION_USER = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
+        private const val ORIENTATION_LANDSCAPE = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        private const val ORIENTATION_PORTRAIT = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+
+        private const val SAVE_POSITION = "SavePosition"
+        private const val SAVE_IS_FORCE_ORIENTATION = "IsForceOrientation"
+        private const val SAVE_SCREEN_ORIENTATION = "CustomOrientation"
     }
     private val MOVE_UNIT_DISTANCE = dp2px(FileApplication.getInstance(), 8f)
 
@@ -47,8 +58,8 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
 
     private var isShowingControlPannel = false
     private var mVideoPath = ""
-    private var mCurrentPosition = 20*60*1000
-    private var mDuration = 1000*60*60
+    private var mCurrentPosition = 0
+    private var mDuration = 0
     private var mTouchStartX = 0f
     private var mTouchStartY = 0f
     private var mTouchPrevX = 0f
@@ -68,6 +79,14 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     private var mHorizontalScrollUnitTimeMillisecond = mConfig.videoPlayerGetHorizontalSlideUnit()
     private var mHorizontalScrollBasePosition = POSITION_UNDEFINE
     private var mScaleType = SCALE_TYPE_FIT
+    private var mForwardMilliseconds = mConfig.videoPlayerGetJumpTimeUnit()
+    private var mHintTextShowTimes = 0 // 用于统计按下了多少次更改尺寸，方便在回调中判断是否该让其隐藏显示
+    private val mWindowWidth  by lazy { videoPlayerRootLayout.width }
+    private val mWindowHeight by lazy { videoPlayerRootLayout.height }
+    private var isForceRotation = false
+    private var mScreenOrientation = ORIENTATION_USER
+    private var mBackgroundColor = mConfig.videoPlayerGetBackgroundColor()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +100,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         initTouchZone()
         initSurfaceView()
         initControlButton()
+        initBackgroundColor()
         mThread.start()
     }
     override fun onDestroy() {
@@ -124,12 +144,12 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     private fun refreshVolumeProgressBar(){
         videoPlayerVolume.setMin(mVolumeManager.getMediaMinVolume())
         videoPlayerVolume.setMax(mVolumeManager.getMediaMaxVolume())
-        videoPlayerVolume.setProgress(mVolumeManager.getMediaCurrentVolume())
+        setVolumeProgress(mVolumeManager.getMediaCurrentVolume())
     }
     private fun refreshBrightnessProgressBar(){
         videoPlayerBrightness.setMax(mVolumeManager.getMediaMaxVolume())
         videoPlayerBrightness.setMin(mVolumeManager.getMediaMinVolume())
-        videoPlayerBrightness.setProgress(Math.round((getActivityBrightness() / (getActivityMaxBrightness()-getActivityMinBrightness()))*videoPlayerBrightness.getMax()))
+        setBrightnessProgress(Math.round((getActivityBrightness() / (getActivityMaxBrightness()-getActivityMinBrightness()))*videoPlayerBrightness.getMax()))
     }
     private fun initSurfaceView(){
         videoPlayerSurfaceView.holder.addCallback(this)
@@ -139,13 +159,20 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     }
     private fun initControlButton(){
         videoPlayerPlayerOrPause.setOnClickListener {
-
+            mMediaPlayerManager?.playOrPause()
+            refreshPlayButton()
         }
         videoPlayerForward.setOnClickListener {
-
+            mMediaPlayerManager?.apply {
+                seek(getPosition() + mForwardMilliseconds)
+            }
+            refreshCurrentProgress()
         }
         videoPlayerBackward.setOnClickListener {
-
+            mMediaPlayerManager?.apply {
+                seek(getPosition() - mForwardMilliseconds)
+            }
+            refreshCurrentProgress()
         }
         videoPlayerNext.setOnClickListener {
 
@@ -154,13 +181,13 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
 
         }
     }
+    private fun initBackgroundColor(){
+        videoPlayerRootLayout.setBackgroundColor(mBackgroundColor)
+    }
 
     private fun initScale(){
-        val mWindowWidth = videoPlayerRootLayout.width
-        val mWindowHeight = videoPlayerRootLayout.height
         val videoWidth = mMediaPlayerManager?.getWidth() ?: 0
         val videoHeight = mMediaPlayerManager?.getHeight() ?: 0
-        Logger.log("视频 Width:$videoWidth  Height:$videoHeight")
         val layoutParam = videoPlayerSurfaceView.layoutParams
         when(mScaleType){
             SCALE_TYPE_FIT -> {
@@ -237,6 +264,11 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             }
         }
     }
+    private fun initRotation(){
+        if (isForceRotation){
+            requestedOrientation = mScreenOrientation
+        }
+    }
 
     /* 回调 */
     override fun onTouch(v: View, event: MotionEvent): Boolean {
@@ -303,7 +335,6 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
                     STATE_SLIDE_LEFT_BRIGHTNESS -> {
                         val adjustValue = mPreviousBrightness - ((y - mTouchStartY) / MOVE_UNIT_DISTANCE).toInt()*((getActivityMaxBrightness()-getActivityMinBrightness())/videoPlayerBrightness.getMax())
                         setActivityBrightness(adjustValue){
-                            Logger.log(adjustValue.toString())
                             refreshBrightnessProgressBar()
                             val progress = videoPlayerBrightness.getProgress()
                             if (adjustValue <= BRIGHTNESS_DEFAULT){
@@ -316,7 +347,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
                     STATE_SLIDE_RIGHT_VOLUME -> {
                         val adjustValue = mPreviousVolume - ((y - mTouchStartY) / MOVE_UNIT_DISTANCE).toInt()
                         mVolumeManager.setMediaVolume(adjustValue){ newVolume ->
-                            videoPlayerVolume.setProgress(newVolume)
+                            setVolumeProgress(newVolume)
                             videoPlayerHintLayoutText.text = newVolume.toString()
                         }
                     }
@@ -332,6 +363,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
                         }else if (mTmpNewPosition > mDuration){
                             mTmpNewPosition = mDuration
                         }
+                        showHintText(mTmpNewPosition)
                     }
                 }
             }
@@ -349,7 +381,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
                         if (!isControlPanelAlreadyShowing){
                             hideControlBar()
                         }
-                        hideHintLayout()
+                        hideHintText()
                         mHorizontalScrollBasePosition = POSITION_UNDEFINE
                     }
                     STATE_SLIDE_RIGHT_VOLUME -> {
@@ -378,7 +410,7 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         mMediaPlayerManager?.start()
     }
     override fun onCompletion(mp: MediaPlayer) {
-
+        refreshPlayButton()
     }
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         when(what){
@@ -424,7 +456,6 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         return true
     }
     override fun onPrepared(mp: MediaPlayer) {
-
     }
     override fun onSeekComplete(mp: MediaPlayer) {
 
@@ -469,10 +500,59 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
                 hideVolumeProgressBar()
             }
             R.id.menuVideoPlayerRotate -> {
-
+                if(isForceRotation){
+                    mScreenOrientation = if (mScreenOrientation == ORIENTATION_PORTRAIT){
+                        ORIENTATION_LANDSCAPE
+                    }else{
+                        ORIENTATION_PORTRAIT
+                    }
+                }else{
+                    isForceRotation = true
+                    mScreenOrientation = if (isProtrait()){
+                        ORIENTATION_LANDSCAPE
+                    }else{
+                        ORIENTATION_PORTRAIT
+                    }
+                }
+                initRotation()
             }
             R.id.menuVideoPlayerScale -> {
-
+                val hintText:String
+                when(mScaleType){
+                    SCALE_TYPE_FIT -> {
+                        mScaleType = SCALE_TYPE_ZOOM
+                        hintText = getString(R.string.videoPlayerScaleTypeZoom)
+                    }
+                    SCALE_TYPE_ZOOM -> {
+                        mScaleType = SCALE_TYPE_ORIGINAL
+                        hintText = getString(R.string.videoPlayerScaleTypeOriginal)
+                    }
+                    SCALE_TYPE_ORIGINAL -> {
+                        mScaleType = SCALE_TYPE_FILL
+                        hintText = getString(R.string.videoPlayerScaleTypeFill)
+                    }
+                    SCALE_TYPE_FILL -> {
+                        mScaleType = SCALE_TYPE_FIT
+                        hintText = getString(R.string.videoPlayerScaleTypeFit)
+                    }
+                    else -> {
+                        mScaleType = SCALE_TYPE_FIT
+                        hintText = getString(R.string.videoPlayerScaleTypeFit)
+                    }
+                }
+                mHintTextShowTimes++
+                showHintText(hintText)
+                mHandler.postDelayed({
+                    mHintTextShowTimes--
+                    if (mHintTextShowTimes <= 0){
+                        try {
+                            hideHintText()
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                        }
+                    }
+                },SCALE_HINT_STAY_TIME)
+                initScale()
             }
         }
         return true
@@ -490,6 +570,22 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     private fun onSetSlideModeToHorizontalProgress(){
 
     }
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.apply {
+            putBoolean(SAVE_IS_FORCE_ORIENTATION, isForceRotation)
+            putInt(SAVE_POSITION, mMediaPlayerManager?.getPosition() ?: 0)
+            putInt(SAVE_SCREEN_ORIENTATION, mScreenOrientation)
+        }
+    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.apply {
+            isForceRotation = getBoolean(SAVE_IS_FORCE_ORIENTATION, false)
+            mCurrentPosition = getInt(SAVE_POSITION, POSITION_UNDEFINE)
+            mScreenOrientation = getInt(SAVE_SCREEN_ORIENTATION, ORIENTATION_USER)
+        }
+    }
 
     /* 内部界面处理 */
     private fun showVolumeHintLayout(){
@@ -503,12 +599,22 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
     private fun hideHintLayout(){
         videoPlayerHintLayout.visibility = View.GONE
     }
-    private fun setHintText(hint:String){
-        videoPlayerHintLayoutText.text = hint
+    private fun showHintText(hint:String){
+        videoPlayerProgressHintText.visibility = View.VISIBLE
+        videoPlayerProgressHintText.text = hint
     }
     private fun showHintText(durationText:String, durationChange:String){
         videoPlayerProgressHintText.visibility = View.VISIBLE
         videoPlayerProgressHintText.text = String.format("%s\n%s", durationText, durationChange)
+    }
+    private fun showHintText(newPosition:Int){
+        val prefixChar = when {
+            mCurrentPosition > newPosition -> "-"
+            mCurrentPosition < newPosition -> "+"
+            else -> ""
+        }
+        val deltaTime = Math.abs(newPosition - mCurrentPosition)
+        showHintText(newPosition.toFormattedHourMinuteTime(), prefixChar+deltaTime.toFormattedHourMinuteTime())
     }
     private fun hideHintText(){
         videoPlayerProgressHintText.visibility = View.GONE
@@ -579,6 +685,16 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             videoPlayerSeekBar.progress = (((videoPlayerSeekBar.max.toFloat()) * ((mCurrentPosition).toFloat()) / mDuration.toFloat())).toInt()
         }
     }
+    private fun refreshPlayButton(){
+        if (true == mMediaPlayerManager?.isPlaying()){
+            videoPlayerPlayerOrPause.setImageResource(R.drawable.ic_video_player_pause)
+        }else{
+            videoPlayerPlayerOrPause.setImageResource(R.drawable.ic_video_player_play)
+        }
+    }
+    private fun isProtrait():Boolean{
+        return mWindowWidth < mWindowHeight
+    }
 
     /* 内部类 */
     private inner class UpdateThread : Thread(){
@@ -619,7 +735,13 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             isReady = false
             mMediaPlayer.setDataSource(path)
             mMediaPlayer.setOnPreparedListener {
+                initRotation()
                 initScale()
+                // 如果之前有保存进度的话，则跳转至旋转屏幕前的进度
+                if (mCurrentPosition != POSITION_UNDEFINE){
+                    mMediaPlayerManager?.seek(mCurrentPosition)
+                    refreshCurrentProgress()
+                }
                 isReady = true
                 action?.invoke()
                 mMediaPlayer.setOnPreparedListener(null)
@@ -637,7 +759,13 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
             isReady = false
             mMediaPlayer.setDataSource(path)
             mMediaPlayer.prepare()
+            initRotation()
             initScale()
+            // 如果之前有保存进度的话，则跳转至旋转屏幕前的进度
+            if (mCurrentPosition != POSITION_UNDEFINE){
+                mMediaPlayerManager?.seek(mCurrentPosition)
+                refreshCurrentProgress()
+            }
             isReady = true
         }
 
@@ -651,6 +779,14 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
 
         fun isPlaying():Boolean{
             return mMediaPlayer.isPlaying
+        }
+
+        fun playOrPause(){
+            if (isPlaying()){
+                mMediaPlayer.pause()
+            }else{
+                mMediaPlayer.start()
+            }
         }
 
         fun getPosition():Int{
@@ -668,7 +804,12 @@ class VideoPlayerActivity : BaseActivity(), View.OnTouchListener, SurfaceHolder.
         }
 
         fun seek(position:Int){
-            mMediaPlayer.seekTo(position)
+            val duration = mMediaPlayer.duration
+            when {
+                position > duration -> mMediaPlayer.seekTo(duration)
+                position < 0 -> mMediaPlayer.seekTo(0)
+                else -> mMediaPlayer.seekTo(position)
+            }
         }
 
         fun isReady():Boolean{

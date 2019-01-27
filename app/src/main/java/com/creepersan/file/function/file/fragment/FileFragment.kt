@@ -708,7 +708,8 @@ class FileFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickListener
             val item = mFileStack.last.mFileList[pos]
             val layoutManager = fragmentFileFileRecyclerView.layoutManager
 
-            holder.icon.setImageResource(item.icon)
+//            holder.icon.setImageResource(item.icon)
+            holder.icon.loadImageGlide(item.icon)
             holder.title.text = item.name
             holder.more.setImageResource(R.drawable.ic_file_more)
             holder.contentExtra.text = item.modifyTime

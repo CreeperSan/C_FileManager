@@ -6,23 +6,33 @@
 
     <android.support.design.widget.AppBarLayout
             app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/applicationFragmentAppBarLayout"
+            android:id="@+id/appViewerAppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         <android.support.v7.widget.Toolbar
+                android:theme="@style/WhiteToolbar"
                 app:titleTextColor="@color/white"
-                app:title="@string/applicationFragmentTitle"
-                android:id="@+id/applicationFragmentToolbar"
+                app:title="@string/appViewerTitle"
+                android:id="@+id/appViewerToolBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-            app:layout_constraintTop_toBottomOf="@id/applicationFragmentAppBarLayout"
+            app:layout_constraintTop_toBottomOf="@id/appViewerAppBarLayout"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/applicationFragmentRecyclerView"
+            android:id="@+id/appViewerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
+
+    <ProgressBar
+            android:id="@+id/appViewerProgressBar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
 </android.support.constraint.ConstraintLayout>

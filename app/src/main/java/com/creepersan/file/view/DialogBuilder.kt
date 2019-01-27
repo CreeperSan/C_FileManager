@@ -226,5 +226,3 @@ open class SimpleDialog(context: Context,direction:Int=DIRECTION_CENTER,val type
     open fun initCustomView(customView:View){}
 }
 
-
-

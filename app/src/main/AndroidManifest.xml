@@ -47,7 +47,7 @@
                 <data android:pathPattern=".*\\..*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".function.image.ImageViewerActivity" android:icon="@drawable/ic_activity_image_viewer" android:screenOrientation="portrait" android:label="@string/ImageViewerActivityTitle">
+        <activity android:name=".function.image.ImageViewerActivity" android:icon="@drawable/ic_activity_image_viewer" android:screenOrientation="portrait" android:label="@string/imageViewerActivityTitle">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

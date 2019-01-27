@@ -15,6 +15,7 @@
                 android:layout_height="?attr/actionBarSize">
             <android.support.v7.widget.Toolbar
                     tools:title="主页"
+                    android:theme="@style/WhiteToolbar"
                     app:titleTextColor="@color/white"
                     android:id="@+id/fragmentHomeToolbar"
                     android:layout_width="match_parent"

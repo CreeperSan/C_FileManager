@@ -2,6 +2,7 @@ package com.creepersan.file.utils
 
 import android.content.Context
 import com.creepersan.file.R
+import java.lang.StringBuilder
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
@@ -47,5 +48,17 @@ fun Int.toFormattedHourMinuteTime():String{
     }
 
     return "$hourStr:$secondStr"
+}
 
+fun Int.toColorString():String{
+    val colorValue = this and 0xFFFFFF
+    val strBuilder = StringBuilder("#")
+    val colorStr = Integer.toHexString(colorValue).toUpperCase()
+    if (colorStr.length < 6){
+        for (i in 0 until 6-colorStr.length){
+            strBuilder.append("0")
+        }
+    }
+    strBuilder.append(colorStr)
+    return strBuilder.toString()
 }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.os.Parcelable
 import android.support.v4.app.ActivityCompat
@@ -29,6 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
     abstract val mLayoutID : Int
     protected val mPermissionUtil by lazy { PermissionUtil }
     protected val mConfig by lazy { FileApplication.getConfigInstance() }
+    protected val mHandler by lazy { Handler() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

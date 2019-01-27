@@ -3,7 +3,7 @@
 
     <string name="bootTitle">文件</string>
 
-    
+    <!-- 基础部分 -->
     <string name="baseAlertPermissionDeniedTitle">请赋予我们权限</string>
     <string name="baseAlertPermissionDeniedMessage">我们需要读取您设备的本地存储的权限来运作，请赋予我们权限</string>
     <string name="dialogButtonPosText">确定</string>
@@ -76,19 +76,19 @@
     <string name="hintDialogFileFragmentRenameNameEmpty">文件名不能为空</string>
     <string name="fileFragmentTitle">文件</string>
 
-    <string name="textMainEndDrawerTitleText">文件剪切板</string>
-    <string name="textMainEndDrawerOperationAllMoveTo">全部移动到</string>
-    <string name="textMainEndDrawerOperationAllPasteTo">全部粘贴到</string>
-    <string name="textMainEndDrawerOperationAllDelete">全部删除</string>
-    <string name="textMainEndDrawerOperationAllClear">全部清除</string>
-    <string name="textMainEndDrawerFileOperationCopy">复制</string>
-    <string name="textMainEndDrawerFileOperationCut">剪切</string>
+    <string name="mainEndDrawerTitleText">文件剪切板</string>
+    <string name="mainEndDrawerOperationAllMoveTo">全部移动到</string>
+    <string name="mainEndDrawerOperationAllPasteTo">全部粘贴到</string>
+    <string name="mainEndDrawerOperationAllDelete">全部删除</string>
+    <string name="mainEndDrawerOperationAllClear">全部清除</string>
+    <string name="mainEndDrawerFileOperationCopy">复制</string>
+    <string name="mainEndDrawerFileOperationCut">剪切</string>
     <string name="mainStartDrawerSetting">设置</string>
     <string name="mainStartDrawerInfo">关于</string>
     <string name="mainStartDrawerExit">退出</string>
-    <string name="toastMainOperationFinish">操作完成</string>
-    <string name="textMainDialogTitleDeleteFiles">删除文件</string>
-    <string name="textMainDialogMessageDeleteFiles">您确定要删除剪切板中的所有文件吗？真的会删掉的哦！</string>
+    <string name="mainOperationFinishToast">操作完成</string>
+    <string name="mainDialogTitleDeleteFiles">删除文件</string>
+    <string name="mainDialogMessageDeleteFiles">您确定要删除剪切板中的所有文件吗？真的会删掉的哦！</string>
     <string name="mainTitleWindowManager">窗口管理器</string>
     <string name="mainToastWindowManagerAlreadyLastWindow">只剩下最后一个窗口了</string>
     <string name="mainStartDrawerCatalogCreateWindow">创建窗口</string>
@@ -112,7 +112,10 @@
     <string name="aboutToolbarTitle">关于</string>
     <string name="aboutDescriptionString">就只是一个自己用的简单的文件管理器</string>
 
-    <string name="applicationFragmentTitle">应用</string>
+    <string name="appViewerTitle">应用</string>
+    <string name="appViewerMenuMultiSelect">多选</string>
+    <string name="appViewerMenuMultiUninstall">卸载</string>
+    <string name="appViewerMenuMultiBackup">备份</string>
 
     <string name="settingToolbarTitle">设置</string>
 
@@ -123,6 +126,10 @@
 
     <string name="booleanTrue">是</string>
     <string name="booleanFalse">否</string>
+
+    <string name="dialogColorSelectorRed">红</string>
+    <string name="dialogColorSelectorGreen">绿</string>
+    <string name="dialogColorSelectorBlue">蓝</string>
 
     <string name="musicPlayerActivityTitle">音乐播放器</string>
     <string name="musicPlayerNotificationChannelName">音乐播放器</string>
@@ -165,6 +172,30 @@
     <string name="settingVideoPlayerHorizontalSlideUnitSubtitle">设置水平滑动时的调节时间单位</string>
     <string name="settingDialogVideoPlayerHorizontalSlideUnitHintTemplate">当前时间单位 : %s ms</string>
     <string name="settingDialogVideoPlayerHorizontalSlideUnitTitle">设定水平滑动单位时间</string>
+    <string name="settingVideoPlayerJumpTimeUnitTitle">快进快退时间调整</string>
+    <string name="settingVideoPlayerJumpTimeUnitSubtitle">设置点击一次快进快退所调整的时间</string>
+    <string name="settingDialogVideoPlayerJumpTimeUnitHintTemplate">当前跳跃时间 : %s ms</string>
+    <string name="settingDialogVideoPlayerJumpTimeUnitTitle">设定快进快退跳跃时间</string>
+    <string name="settingVideoPlayerBackgroundColorTitle">播放器背景颜色</string>
+    <string name="settingVideoPlayerBackgroundColorSubtitle">设置播放器视频画面外的背景颜色</string>
+    <string name="settingDialogVideoPlayerBackgroundColorTitle">设置视频播放器背景颜色</string>
+    <string name="settingTextViewerCatalog">文本浏览器设置</string>
+    <string name="settingTextViewerTextSizeTitle">文本大小</string>
+    <string name="settingTextViewerTextSizeSubtitle">设置文本浏览器的默认文本大小</string>
+    <string name="settingDialogTextViewerTextSizeHintTemplate">当前文本大小 : %s </string>
+    <string name="settingDialogTextViewerTextSizeTitle">设定文本浏览器默认大小</string>
+    <string name="settingTextViewerDefaultCodingTitle">文本默认编码</string>
+    <string name="settingTextViewerDefaultCodingSubtitle">当前文本编码方式为 : %s</string>
+    <string name="settingDialogTextViewerDefaultCodingTitle">设置文本默认编码方式</string>
+    <string name="settingDialogTextViewerDefaultCodingItemDefault">设置为系统默认 : %s</string>
+    <string name="settingImageViewerCatalog">图片浏览器设置</string>
+    <string name="settingImageViewerBackgroundColorTitle">图片浏览器背景颜色</string>
+    <string name="settingImageViewerBackgroundColorSubtitle">设置图片浏览器在浏览图片时的背景颜色</string>
+    <string name="settingDialogImageViewerBackgroundColorTitle">设置图片浏览器的背景颜色</string>
+    <string name="settingOtherCatalog">其他</string>
+    <string name="settingOtherPermissionDescriptionTitle">权限说明</string>
+    <string name="settingOtherPermissionDescriptionSubtitle">关于应用所使用到的所有权限的说明</string>
+
 
     <string name="videoPlayerActivityTitle">视频播放器</string>
     <string name="videoPlayerDefaultLight">默认亮度</string>
@@ -172,10 +203,35 @@
     <string name="videoPlayerMenuRotate">屏幕旋转</string>
     <string name="videoPlayerMenuScale">视频缩放</string>
     <string name="videoPlayerFileNotFound">没有找到视频</string>
+    <string name="videoPlayerScaleTypeFit">适应视图</string>
+    <string name="videoPlayerScaleTypeZoom">缩放显示</string>
+    <string name="videoPlayerScaleTypeOriginal">原始大小</string>
+    <string name="videoPlayerScaleTypeFill">拉伸显示</string>
+
+    <string name="textViewerMenuCoding">选择编码</string>
+    <string name="textViewerMenuEdit">编辑</string>
+    <string name="textViewerMenuSave">保存</string>
+    <string name="textViewerFileNotExistHint">文本文件不存在</string>
+    <string name="textViewerHintFileWritten">文本写入成功</string>
+    <string name="textViewerHintFileWriteFailUnsupportedCharset">文本内容写入失败，不支持的文本编码格式</string>
 
     <string name="textViewerActivityTitle">文本阅读器</string>
 
-    <string name="ImageViewerActivityTitle">图片浏览器</string>
+    <string name="imageViewHintFileNotExist">图片文件不存在</string>
+    <string name="imageViewerActivityTitle">图片浏览器</string>
+    <string name="imageViewerMenuRightRotate90Degree">向右旋转90度</string>
+    <string name="imageViewerMenuLeftRotate90Degree">向左旋转90度</string>
+
+    <string name="permissionDescriptionTitle">权限说明</string>
+    <string-array name="permissionDescriptionDataArray">
+        <item>读取文件</item>
+        <item>用于读取设备本地文件，以供文件管理器的显示。</item>
+        <item>写入文件</item>
+        <item>用于在设备中修改文件，以供文件管理器的删除、剪切，文本编辑器的编辑保存功能。</item>
+        <item>开启前台服务</item>
+        <item>用于在应用程序界面退出后，音乐播放器能继续工作。</item>
+    </string-array>
 
     <string name="debugProcessing">正在开发中…</string>
 </resources>
+

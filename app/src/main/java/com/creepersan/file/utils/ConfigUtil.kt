@@ -1,12 +1,14 @@
 package com.creepersan.file.utils
 
 import android.content.Context
+import android.graphics.Color
 import com.creepersan.file.function.file.FILE_SORT_TYPE
 import com.creepersan.file.function.file.FILE_SORT_CREATE_TIME
 import com.creepersan.file.function.file.FILE_SORT_MODIFY_TIME
 import com.creepersan.file.function.file.FILE_SORT_SIZE
 import com.creepersan.file.function.file.FILE_SORT_NAME
 import com.creepersan.file.function.music.*
+import java.nio.charset.Charset
 
 /**
  *  不要再初始化这个实例，其实可以在Application中获取
@@ -16,12 +18,16 @@ class ConfigUtil(context:Context) {
     private val mFileConfig by lazy { context.getSharedPreferences(NAME_FILE_CONFIG, Context.MODE_PRIVATE) }
     private val mMusicPlayerConfig by lazy { context.getSharedPreferences(NAME_MUSIC_PLAYER_CONFIG, Context.MODE_PRIVATE) }
     private val mVideoPlayerConfig by lazy { context.getSharedPreferences(NAME_VIDEO_PLAYER_CONFIG, Context.MODE_PRIVATE) }
+    private val mTextViewerConfig by lazy { context.getSharedPreferences(NAME_TEXT_VIEWER_CONFIG, Context.MODE_PRIVATE) }
+    private val mImageViewerConfig by lazy { context.getSharedPreferences(NAME_IMAGE_VIEWER_CONFIG, Context.MODE_PRIVATE) }
 
     companion object {
         private const val NAME_FILE_CONFIG = "file"
         private const val NAME_MAIN_CONFIG = "main"
         private const val NAME_MUSIC_PLAYER_CONFIG = "music_player"
-        private const val NAME_VIDEO_PLAYER_CONFIG = "music_player"
+        private const val NAME_VIDEO_PLAYER_CONFIG = "video_player"
+        private const val NAME_TEXT_VIEWER_CONFIG = "text_viewer"
+        private const val NAME_IMAGE_VIEWER_CONFIG = "image_viewer"
 
         // Main
         private const val KEY_MAIN_IS_CONFIRM_ON_EXIT = "is_confirm_on_exit"
@@ -52,6 +58,20 @@ class ConfigUtil(context:Context) {
         private const val DEFAULT_VIDEO_PLAYER_SLIDE_PROGRESS = true
         private const val KEY_HORIZONTAL_SLIDE_PROGRESS_UNIT = "horizontal_slide_progress_unit"
         private const val DEFAULT_HORIZONTAL_SLIDE_PROGRESS_UNIT = 1000
+        private const val KEY_JUMP_TIME_UNIT = "jump_time_unit"
+        private const val DEFAULT_JUMP_TIME_UNIT = 5000
+        private const val KEY_VIDEO_BACKGROUND_COLOR = "background_color"
+        private const val DEFAULT_VIDEO_BACKGROUND_COLOR = Color.BLACK
+
+        // Text Viewer
+        private const val KEY_TEXT_SIZE = "text_size"
+        private const val DEFAULT_TEXT_SIZE = 5
+        private const val KEY_TEXT_CODING = "coding"
+        private       val DEFAULT_TEXT_CODING = Charset.defaultCharset().name()
+
+        // Image Viewer
+        private const val KEY_IMAGE_BACKGROUND_COLOR = "background_color"
+        private const val DEFAULT_IMAGE_BACKGROUND_COLOR = Color.BLACK
 
     }
 
@@ -159,6 +179,50 @@ class ConfigUtil(context:Context) {
     }
     fun videoPlayerSetHorizontalSlideUnit(unitMillisecond:Int){
         mVideoPlayerConfig.edit().putInt(KEY_HORIZONTAL_SLIDE_PROGRESS_UNIT, unitMillisecond).apply()
+    }
+    fun videoPlayerGetJumpTimeUnit():Int{
+        return mVideoPlayerConfig.getInt(KEY_JUMP_TIME_UNIT, DEFAULT_JUMP_TIME_UNIT)
+    }
+    fun videoPlayerSetJumpTimeUnit(unitMillisecond:Int){
+        mVideoPlayerConfig.edit().putInt(KEY_JUMP_TIME_UNIT, unitMillisecond).apply()
+    }
+    fun videoPlayerGetBackgroundColor():Int{
+        val color = mVideoPlayerConfig.getInt(KEY_VIDEO_BACKGROUND_COLOR, DEFAULT_VIDEO_BACKGROUND_COLOR)
+        return color or 0xFF000000.toInt()
+    }
+    fun videoPlayerSetBackgroundColor(color:Int){
+        val saveColor = color or 0xFF000000.toInt()
+        mVideoPlayerConfig.edit().putInt(KEY_VIDEO_BACKGROUND_COLOR, saveColor).apply()
+    }
+
+    /* Text Viewer 相关 */
+    fun textViewerGetTextSize():Int{
+        return mTextViewerConfig.getInt(KEY_TEXT_SIZE, DEFAULT_TEXT_SIZE)
+    }
+    fun textViewerSetTextSize(textSize:Int){
+        mTextViewerConfig.edit().putInt(KEY_TEXT_SIZE, if (textSize<1){1}else{textSize}).apply()
+    }
+    fun textViewerGetTextCoding():String{
+        return mTextViewerConfig.getString(KEY_TEXT_CODING, DEFAULT_TEXT_CODING) ?: DEFAULT_TEXT_CODING
+    }
+    fun textViewerSetTextCoding(textCoding:String){
+        mTextViewerConfig.edit().putString(KEY_TEXT_CODING, textCoding).apply()
+    }
+    fun textViewerGetDefaultTextCoding():String{
+        return DEFAULT_TEXT_CODING
+    }
+    fun textViewerSetTextCodingDefault(){
+        mTextViewerConfig.edit().putString(KEY_TEXT_CODING, DEFAULT_TEXT_CODING).apply()
+    }
+
+    /* Image Viewer 相关 */
+    fun imageViewerGetBackgroundColor():Int{
+        val color = mImageViewerConfig.getInt(KEY_IMAGE_BACKGROUND_COLOR, DEFAULT_IMAGE_BACKGROUND_COLOR)
+        return color or 0xFF000000.toInt()
+    }
+    fun imageViewerSetBackgroundColor(color:Int){
+        val saveColor = color or 0xFF000000.toInt()
+        mImageViewerConfig.edit().putInt(KEY_IMAGE_BACKGROUND_COLOR, saveColor).apply()
     }
 
 }

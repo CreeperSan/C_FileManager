@@ -11,7 +11,7 @@ object Logger{
     const val TAG_MAIN = "Main"
 
 
-    fun log(content:String, tag:String = "调试"){
+    fun log(content:String, tag:String = "${System.currentTimeMillis().toString().substring(9)}调试"){
         if (!isEnableLog) return
         Log.i(tag, content)
     }

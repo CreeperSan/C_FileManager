@@ -24,6 +24,7 @@ import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.I
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_INTERNAL_STORAGE
 import com.creepersan.file.activity.MainActivity.StartActionBaseItem.Companion.ID_SETTING
 import com.creepersan.file.fragment.BaseMainActivityFragment
+import com.creepersan.file.function.app_viewer.fragment.AppViewerFragment
 import com.creepersan.file.function.file.fragment.FileFragment
 import com.creepersan.file.function.home.fragment.HomeFragment
 import com.creepersan.file.utils.Logger
@@ -38,10 +39,10 @@ class MainActivity : BaseActivity() {
     private val mMessageDialog by lazy { SimpleDialog(this, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_MESSAGE) }
 
     private val mOperationActionList by lazy { arrayListOf(
-        EndOperationItem(R.drawable.ic_file_paste, getString(R.string.textMainEndDrawerOperationAllPasteTo), EndOperationItem.PASTE_ALL),
-        EndOperationItem(R.drawable.ic_file_cut, getString(R.string.textMainEndDrawerOperationAllMoveTo), EndOperationItem.CUT_ALL),
-        EndOperationItem(R.drawable.ic_file_delete, getString(R.string.textMainEndDrawerOperationAllDelete), EndOperationItem.DELETE_ALL),
-        EndOperationItem(R.drawable.ic_close, getString(R.string.textMainEndDrawerOperationAllClear), EndOperationItem.CLEAR_ALL)
+        EndOperationItem(R.drawable.ic_file_paste, getString(R.string.mainEndDrawerOperationAllPasteTo), EndOperationItem.PASTE_ALL),
+        EndOperationItem(R.drawable.ic_file_cut, getString(R.string.mainEndDrawerOperationAllMoveTo), EndOperationItem.CUT_ALL),
+        EndOperationItem(R.drawable.ic_file_delete, getString(R.string.mainEndDrawerOperationAllDelete), EndOperationItem.DELETE_ALL),
+        EndOperationItem(R.drawable.ic_close, getString(R.string.mainEndDrawerOperationAllClear), EndOperationItem.CLEAR_ALL)
         ) }
     private val mOperationAdapter by lazy { EndDrawerOperationAdapter() }
     private val mDrawerEndFileList by lazy { ArrayList<EndFileItem>() }
@@ -191,7 +192,7 @@ class MainActivity : BaseActivity() {
         mainViewPager.offscreenPageLimit = Int.MAX_VALUE
 //        mFragmentList.add(HomeFragment())
         mFragmentList.add(FileFragment())
-//        mFragmentList.add(ApplicationFragment())
+        mFragmentList.add(AppViewerFragment())
         mainViewPager.adapter = mFragmentPagerAdapter
         mFragmentPagerAdapter.notifyDataSetChanged()
         mainViewPager.addOnPageChangeListener(mViewPagerPageChangeListener)
@@ -335,7 +336,7 @@ class MainActivity : BaseActivity() {
             }
         }
         // 弹出提示
-        toast(getString(R.string.toastMainOperationFinish))
+        toast(getString(R.string.mainOperationFinishToast))
         // 更新显示
         mDrawerEndFileList.clear()
         mDrawerEndFileAdapter.notifyDataSetChanged()
@@ -393,8 +394,8 @@ class MainActivity : BaseActivity() {
                         onClickFloatActionButton()
                     }
                     EndOperationItem.DELETE_ALL -> {
-                        mMessageDialog.setTitle(getString(R.string.textMainDialogTitleDeleteFiles))
-                        mMessageDialog.setMessage(getString(R.string.textMainDialogMessageDeleteFiles))
+                        mMessageDialog.setTitle(getString(R.string.mainDialogTitleDeleteFiles))
+                        mMessageDialog.setMessage(getString(R.string.mainDialogMessageDeleteFiles))
                         mMessageDialog.setPosButton(getString(R.string.dialogButtonPosText), object : SimpleDialog.OnDialogButtonClickListener{
                             override fun onButtonClick(dialog: SimpleDialog) {
                                 mDrawerEndFileList.forEach {
@@ -437,13 +438,13 @@ class MainActivity : BaseActivity() {
             textPath.text = item.path
             textOperation.text = when(item.operation){
                 EndFileItem.OPERATION_COPY -> {
-                    getString(R.string.textMainEndDrawerFileOperationCopy)
+                    getString(R.string.mainEndDrawerFileOperationCopy)
                 }
                 EndFileItem.OPERATION_CUT -> {
-                    getString(R.string.textMainEndDrawerFileOperationCut)
+                    getString(R.string.mainEndDrawerFileOperationCut)
                 }
                 else -> {
-                    getString(R.string.textMainEndDrawerFileOperationCopy)
+                    getString(R.string.mainEndDrawerFileOperationCopy)
                 }
             }
         }

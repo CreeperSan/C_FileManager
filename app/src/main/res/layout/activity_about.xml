@@ -11,6 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         <android.support.v7.widget.Toolbar
+                android:theme="@style/WhiteToolbar"
                 app:navigationIcon="@drawable/ic_arrow_left_white"
                 app:title="@string/aboutToolbarTitle"
                 app:titleTextColor="@color/white"
@@ -30,13 +31,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <ImageView
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/icon_foreground"
                 android:id="@+id/aboutLogoImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="128dp"
+                android:layout_height="128dp"/>
         <TextView
                 android:textColor="@color/black"
-                android:layout_marginTop="16dp"
                 android:text="@string/aboutDescriptionString"
                 android:id="@+id/aboutDescriptionText"
                 android:layout_width="wrap_content"
