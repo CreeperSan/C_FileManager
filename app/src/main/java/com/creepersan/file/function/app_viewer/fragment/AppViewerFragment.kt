@@ -18,6 +18,7 @@ import com.creepersan.file.R
 import com.creepersan.file.function.app_viewer.bean.AppViewerBean
 import com.creepersan.file.utils.generateAppViewerBean
 import com.creepersan.file.utils.loadImageGlide
+import com.creepersan.file.view.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_application.*
 import java.lang.ref.WeakReference
 import kotlin.collections.ArrayList
@@ -32,6 +33,7 @@ class AppViewerFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickLis
     private var isMultiSelecting = false
     private val mSelectPosPool = HashSet<Int>()
     private val mSelectedColor by lazy { activity.getColor(R.color.lightGray) }
+    private val mAppInfoDialog by lazy { AppInfoDialog() }
 
     override fun getTitle(): String {
         return FileApplication.getInstance().getString(R.string.appViewerTitle)
@@ -101,6 +103,15 @@ class AppViewerFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickLis
         appViewerProgressBar.visibility = View.GONE
         appViewerRecyclerView.visibility = View.VISIBLE
     }
+    private fun showAppInfoDialog(app:AppViewerBean){
+        mAppInfoDialog.setTitle(app.name)
+        mAppInfoDialog.setAppIcon(app.icon)
+        mAppInfoDialog.setAppTitle(app.name)
+        mAppInfoDialog.setAppPackageName(String.format(getString(R.string.appViewerInfoDialogPackageName), app.packageName))
+        mAppInfoDialog.setAppVersion(String.format(getString(R.string.appViewerInfoDialogVersion), app.versionName, app.versionCode))
+        mAppInfoDialog.setAppSize(String.format(getString(R.string.appViewerInfoDialogSize), app.name))
+        mAppInfoDialog.show()
+    }
 
     /* 回调事件 */
     override fun onBackPressed(): Boolean {
@@ -157,7 +168,7 @@ class AppViewerFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickLis
                     }
                     mAdapter.notifyItemChanged(position)
                 }else{                      // 浏览模式下
-
+                    showAppInfoDialog(bean)
                 }
             })
         }
@@ -218,6 +229,51 @@ class AppViewerFragment : BaseMainActivityFragment(), Toolbar.OnMenuItemClickLis
         override fun onPostExecute(result: ArrayList<AppViewerBean>) {
             super.onPostExecute(result)
             mConfig.action.invoke(result)
+        }
+
+    }
+
+    private inner class AppInfoDialog : SimpleDialog(activity, SimpleDialog.DIRECTION_CENTER, SimpleDialog.TYPE_CUSTOM_VIEW),SimpleDialog.OnDialogButtonClickListener{
+        private lateinit var imageIcon : ImageView
+        private lateinit var textTitle : TextView
+        private lateinit var versionTitle : TextView
+        private lateinit var packageNameTitle : TextView
+        private lateinit var sizeTitle : TextView
+
+        init {
+            setCustomView(layoutInflater.inflate(R.layout.dialog_app_viewer_info, viewCustomViewGroup, false))
+        }
+
+        override fun initCustomView(customView: View) {
+            super.initCustomView(customView)
+            imageIcon = customView.findViewById(R.id.dialogAppViewerIcon)
+            textTitle = customView.findViewById(R.id.dialogAppViewerTitle)
+            versionTitle = customView.findViewById(R.id.dialogAppViewerVersion)
+            packageNameTitle = customView.findViewById(R.id.dialogAppViewerPackageName)
+            sizeTitle = customView.findViewById(R.id.dialogAppViewerSize)
+
+            setPosButton(R.string.dialogButtonPosText, this)
+        }
+
+
+        override fun onButtonClick(dialog: SimpleDialog) {
+            dismiss()
+        }
+
+        fun setAppIcon(drawable:Drawable){
+            imageIcon.setImageDrawable(drawable)
+        }
+        fun setAppTitle(title:String){
+            textTitle.text = title
+        }
+        fun setAppVersion(version:String){
+            versionTitle.text = version
+        }
+        fun setAppPackageName(packageName:String){
+            packageNameTitle.text = packageName
+        }
+        fun setAppSize(size:String){
+            sizeTitle.text = size
         }
 
     }

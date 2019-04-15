@@ -116,6 +116,9 @@
     <string name="appViewerMenuMultiSelect">多选</string>
     <string name="appViewerMenuMultiUninstall">卸载</string>
     <string name="appViewerMenuMultiBackup">备份</string>
+    <string name="appViewerInfoDialogVersion">版本 : %s(%s)</string>
+    <string name="appViewerInfoDialogPackageName">包名 : %s</string>
+    <string name="appViewerInfoDialogSize">大小 : %s</string>
 
     <string name="settingToolbarTitle">设置</string>
 
